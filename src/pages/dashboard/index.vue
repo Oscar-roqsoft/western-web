@@ -44,7 +44,7 @@
 
         <!-- Action Button -->
         <NuxtLink
-        to="/secure/buy"
+        to=""
         class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 
         rounded-lg flex justify-center items-center gap-2 transition-all shadow-md hover:shadow-lg"
         >
@@ -87,11 +87,11 @@
             <p class="text-xs text-gray-400 mt-4">Last updated: {{ lastUpdate }}</p>
 
             <div class="grid grid-cols-2 gap-3 mt-4 relative z-10">
-            <NuxtLink to="/secure/wallet" class="card-action bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-300 hover:to-blue-300">
+            <NuxtLink to="/dashboard/wallet" class="card-action bg-gradient-to-r from-blue-100 to-blue-200 hover:from-blue-300 hover:to-blue-300">
                 <ArrowDownCircle class="w-4 h-4 text-blue-600"/>
                 <span class="font-medium text-xs text-blue-700">Secure Crypto</span>
             </NuxtLink>
-            <NuxtLink to="/secure/userCard" class="card-action bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200">
+            <NuxtLink to="/dashboard/userCard" class="card-action bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200">
                 <ArrowUpRight class="w-4 h-4 text-gray-700"/>
                 <span class="font-medium text-xs text-gray-800">Qfs Card</span>
             </NuxtLink>
@@ -140,12 +140,12 @@
 
       <div class="card-header">
         <h2>Qfs Card(s)</h2>
-        <NuxtLink to="/userCard" class="view-all">View All</NuxtLink>
+        <NuxtLink to="" class="view-all">View All</NuxtLink>
       </div>
 
       <div class="card-body">
         <!-- Show request card option -->
-        <NuxtLink to="/secure/userCardRequest" class="card-action">
+        <NuxtLink to="/dashboard/userCard/request" class="card-action">
           <div class="action-icon">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">

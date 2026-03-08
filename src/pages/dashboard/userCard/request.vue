@@ -6,7 +6,7 @@
         <div class="flex gap-2 items-start">
   
           <div class="bg-gray-200 h-9 w-9 rounded-full flex items-center justify-center mt-2">
-            <NuxtLink to="/secure/userCard" class="text-gray-500 hover:text-black">
+            <NuxtLink to="/dashboard/userCard" class="text-gray-500 hover:text-black">
               <ArrowLeft class="w-5 h-5"/>
             </NuxtLink>
           </div>
@@ -193,14 +193,14 @@
   
     try {
   
-      const res = await $fetch("/secure/preordercard", {
+      const res = await $fetch("", {
         method: "POST",
         body: payload
       })
   
       if (res.status) {
         alert("Card request submitted successfully")
-        navigateTo("/secure/userCardRequest")
+        navigateTo("/dashboard/userCard/request")
       }
   
     } catch (err) {

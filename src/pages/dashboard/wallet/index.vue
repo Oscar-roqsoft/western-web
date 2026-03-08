@@ -70,7 +70,7 @@ const wallets = ref([
 ]);
 
 const addWallet = () => {
-  navigateTo("/dashboard/wallet/secure");
+  navigateTo("/dashboard/wallet");
   console.log("Add wallet clicked");
 };
 </script>

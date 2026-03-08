@@ -63,7 +63,7 @@
                   </label>
   
                   <NuxtLink
-                    to="/reset"
+                    to=""
                     class="text-sm text-primary-600 hover:text-primary-700"
                   >
                     Forgot password?
