@@ -1,6 +1,6 @@
 <template>
 
-    <div class="max-w-md mx-auto p-6">
+    <div class="max-w-md mx-auto md:p-6">
     
     <h1 class="text-xl font-bold mb-6">
     Swap Tokens

@@ -18,8 +18,8 @@
   
         <!-- Profile -->
         <div class="mx-4 mt-5 p-4 bg-gray-100 rounded-xl flex items-center gap-3">
-          <div class="w-11 h-11 rounded-full bg-primary-600 flex items-center justify-center text-white">
-            <User class="menu-icon"/>
+          <div class="w-11 h-11 bg-blue-600 rounded-full bg-primary-600 flex items-center justify-center text-white">
+            <User class="menu-icon text-white"/>
           </div>
           <div>
             <p class="text-sm font-semibold">Harrison Stanley</p>
@@ -59,7 +59,7 @@
               :class="['menu-item', route.path === '/dashboard/wallet' ? 'active-menu' : '']"
             >
               <ShieldAlertIcon class="menu-icon"/>
-              dashboard Crypto
+              Secure Crypto
             </NuxtLink>
   
             <NuxtLink
@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
   .menu-icon{
     width: 20px;
     height: 20px;
-    color: #6b7280; /* gray-500 */
+    /* color: #6b7280; gray-500 */
   }
   .active-menu{
     background: #eff6ff; /* primary-50 */

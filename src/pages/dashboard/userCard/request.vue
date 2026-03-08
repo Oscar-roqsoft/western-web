@@ -1,5 +1,5 @@
 <template>
-    <main class="p-3">
+    <main class="md:p-3">
   
       <!-- Header -->
       <section class="max-w-5xl mx-auto">

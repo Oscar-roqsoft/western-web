@@ -1,5 +1,5 @@
 <template>
-  <section class="max-w-5xl mx-auto p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
+  <section class="max-w-5xl mx-auto md:p-4 flex flex-col md:flex-row items-start md:items-center gap-4">
     <!-- Header -->
     <div class="flex-1">
       <h1 class="text-xl md:text-2xl font-bold">
@@ -70,7 +70,7 @@ const wallets = ref([
 ]);
 
 const addWallet = () => {
-  navigateTo("/dashboard/wallet");
+  navigateTo("/dashboard/wallet/secure");
   console.log("Add wallet clicked");
 };
 </script>
