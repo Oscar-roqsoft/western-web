@@ -96,7 +96,7 @@
 
     import { ref, computed, onMounted } from "vue"
     import QRCode from "qrcode"
-    import BaseModal from "./BaseModal.vue"
+    // import BaseModal from "./BaseModal.vue"
     import { X, Copy } from "lucide-vue-next"
     
     const qrCanvas = ref(null)
