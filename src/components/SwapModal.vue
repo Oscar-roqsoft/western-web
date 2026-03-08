@@ -23,8 +23,8 @@
     
     <script setup>
     
-    import BaseModal from "./BaseModal.vue"
-    import SwapForm from "./SwapForm.vue"
+    // import BaseModal from "./BaseModal.vue"
+    // import SwapForm from "./SwapForm.vue"
     import { X } from "lucide-vue-next"
     
     </script>

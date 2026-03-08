@@ -116,7 +116,7 @@
     ArrowDownUp
     } from "lucide-vue-next"
     
-    import listToken from "@/components/listToken.vue"
+    // import listToken from "@/components/listToken.vue"
     
     const showTokenList = ref(false)
     

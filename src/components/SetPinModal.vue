@@ -64,7 +64,7 @@
 
     import { ref, computed, nextTick, onMounted } from "vue"
     import { X } from "lucide-vue-next"
-    import BaseModal from "./BaseModal.vue"
+    // import BaseModal from "./BaseModal.vue"
     
     const hasPin = ref(false) // simulate if user already has pin
     

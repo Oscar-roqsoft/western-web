@@ -139,7 +139,7 @@ Update Password
     EyeOff
     } from "lucide-vue-next"
     
-    import BaseModal from "./BaseModal.vue"
+    // import BaseModal from "./BaseModal.vue"
     
     const showCurrent = ref(false)
     const showNew = ref(false)

@@ -41,7 +41,7 @@
     
     <script setup>
     
-    import BaseModal from "./BaseModal.vue"
+    // import BaseModal from "./BaseModal.vue"
     import { X } from "lucide-vue-next"
     
     </script>
