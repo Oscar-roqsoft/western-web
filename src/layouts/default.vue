@@ -146,8 +146,9 @@
                 class="flex items-center gap-2 cursor-pointer"
                 @click="profileDropdown = !profileDropdown"
             >
-                <div class="w-8 h-8 bg-blue-600 rounded-full flex justify-center items-center">
-                <User class="w-4 h-4 text-white"/>
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex justify-center items-center overflow-hidden ">
+                   <img v-if="pinia.state.user?.avatar" :src="pinia.state.user?.avatar" class="w-full h-full" alt="">
+                   <User v-else class="w-4 h-4 text-white"/>
                 </div>
                 <span class="hidden md:block font-medium text-gray-700">Harrison Stanley</span>
             </div>
@@ -161,7 +162,8 @@
                 <!-- User Info -->
                 <div class="px-4 pb-4 border-b">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-600 flex justify-center items-center text-white">
+                    <div class="w-10 h-10 rounded-full bg-blue-600 flex justify-center items-center text-white overflow-hidden ">
+                      <img v-if="pinia.state.user?.avatar" :src="pinia.state.user?.avatar" class="w-full h-full" alt="">
                     <User class="w-4 h-4"/>
                     </div>
                     <div>
@@ -213,7 +215,7 @@
         </header>
   
         <!-- Page Content -->
-      <main class="p-6 h-full flex-1 overflow-auto">
+      <main class="p-4 h-full flex-1 overflow-auto">
         <slot />
       </main>
   
@@ -241,8 +243,11 @@
   const sidebarOpen = ref(false)
   const profileDropdown = ref(false)
   const route = useRoute()
+
+  const pinia = useStore()
   
   function logout() {
+    pinia.logout()
     console.log('Logout clicked')
     // add your logout logic here
   }

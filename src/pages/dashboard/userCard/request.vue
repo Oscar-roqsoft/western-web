@@ -155,12 +155,15 @@
   
             <!-- Submit -->
             <button
-              type="submit"
-              class="bg-indigo-700 text-white rounded-lg h-10 flex items-center justify-center gap-2 hover:bg-indigo-800"
-            >
-              <CreditCard class="w-4 h-4"/>
-              Submit Card
-            </button>
+            type="submit"
+            :disabled="isDisabled"
+            class="bg-indigo-600 text-white h-10 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            <CreditCard class="w-4 h-4"/>
+
+            <span v-if="!isSubmitting">Submit Card</span>
+            <Spinner v-else/>
+          </button>
   
           </form>
   
@@ -172,9 +175,22 @@
   </template>
   
   
+
   <script setup>
+  import { ref, reactive, computed, watch } from "vue"
+  import { ArrowLeft, CreditCard ,Info} from "lucide-vue-next"
+  import { requestCard } from "@/composables/requests/card"
+  import { fetchMyUserCards } from "@/composables/actions/index"
+
   
-  import { ArrowLeft } from "lucide-vue-next"
+  const notify = useNotify()
+  const pinia = useStore()
+  
+  /* =========================
+     STATE
+  ========================= */
+  
+  const isSubmitting = ref(false)
   
   const cardType = ref("visa")
   
@@ -184,40 +200,118 @@
     cardpin: ""
   })
   
-  const submitCard = async () => {
-  
-    const payload = {
-      cardtype: cardType.value,
-      ...form
-    }
-  
-    try {
-  
-      const res = await $fetch("", {
-        method: "POST",
-        body: payload
-      })
-  
-      if (res.status) {
-        alert("Card request submitted successfully")
-        navigateTo("/dashboard/userCard/request")
-      }
-  
-    } catch (err) {
-      console.error(err)
-    }
-  
-  }
+  /* =========================
+     CARD PREVIEW (AUTO UPDATE)
+  ========================= */
   
   const formCard = reactive({
     firstname: "Stanley",
     lastname: "Harrison",
-    number: "1234123412341234",
+    number: "1234 1234 1234 1234",
     expiry: "12/29",
-    cvv: "123",
-    address: "",
-    cardlimit: 100,
-    cardpin: ""
+    cvv: "123"
   })
   
+  /* =========================
+     VALIDATIONS
+  ========================= */
+  
+  const isDisabled = computed(() => {
+    return (
+      !form.address ||
+      !form.cardpin ||
+      form.cardpin.length !== 4 ||
+      isSubmitting.value
+    )
+  })
+  
+  /* =========================
+     GENERATE CARD DETAILS
+  ========================= */
+  
+  const generateCardNumber = () => {
+    return "4" + Math.floor(Math.random() * 1e15).toString().padStart(15, "0")
+  }
+  
+  const generateExpiry = () => {
+    const year = new Date().getFullYear() + 3
+    return `12/${year.toString().slice(-2)}`
+  }
+  
+  const generateCVV = () => {
+    return Math.floor(100 + Math.random() * 900).toString()
+  }
+  
+  /* =========================
+     WATCH (LIVE PREVIEW)
+  ========================= */
+  
+  watch(cardType, () => {
+    // regenerate card details when type changes
+    formCard.number = generateCardNumber()
+    formCard.expiry = generateExpiry()
+    formCard.cvv = generateCVV()
+  })
+  
+  /* =========================
+     SUBMIT FUNCTION
+  ========================= */
+  
+  const submitCard = async () => {
+    if (isDisabled.value) return
+  
+    try {
+      isSubmitting.value = true
+  
+      const payload = {
+        cardtype: cardType.value,
+        cardlimit: form.cardlimit,
+        address: form.address,
+        cardpin: form.cardpin
+      }
+      console.log(payload)
+  
+      const res = await requestCard(payload)
+  
+      if (res.success) {
+        notify.success("Card request submitted successfully")
+
+        await fetchMyUserCards()
+  
+        // Reset form
+        form.cardlimit = 100
+        form.address = ""
+        form.cardpin = ""
+  
+        // regenerate preview
+        formCard.number = generateCardNumber()
+        formCard.expiry = generateExpiry()
+        formCard.cvv = generateCVV()
+  
+      } else {
+        notify.error( res.message || "Request failed")
+      }
+  
+    } catch (err) {
+      console.error(err)
+  
+      // notify({
+      //   type: "error",
+      //   text: "Something went wrong"
+      // })
+    } finally {
+      isSubmitting.value = false
+    }
+  }
+  
+  /* =========================
+     INITIAL GENERATION
+  ========================= */
+  
+  formCard.number = generateCardNumber()
+  formCard.expiry = generateExpiry()
+  formCard.cvv = generateCVV()
   </script>
+
+
+

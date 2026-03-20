@@ -49,10 +49,12 @@
     </button>
     
     <button
-    class="btn-primary"
+    class="btn-primary flex justify-center items-center"
     @click="nextStep"
     >
-    Continue
+       
+       <span v-if="!isCreating">Continue</span>
+       <Spinner v-else stroke="#fff" />
     </button>
     
     </div>
@@ -65,25 +67,35 @@
     import { ref, computed, nextTick, onMounted } from "vue"
     import { X } from "lucide-vue-next"
     // import BaseModal from "./BaseModal.vue"
+    import { createPin,updatePin } from '@/composables/requests/pin'; // Adjust path as needed
+
+
+
+    const pinia = useStore()
+    const notify = useNotify()
     
-    const hasPin = ref(false) // simulate if user already has pin
+    const hasPin = ref(pinia.state.user.isPinSet) // simulate if user already has pin
     
     const step = ref(1)
     
     const pin = ref(["","","",""])
+
+    const oldPin = ref("")
     const firstPin = ref("")
     
     const inputs = ref([])
+
+    const isCreating = ref(false)
     
     
     const title = computed(()=>{
     
-    if(!hasPin.value && step.value===1) return "Create PIN"
-    if(!hasPin.value && step.value===2) return "Confirm PIN"
-    
-    if(hasPin.value && step.value===1) return "Enter Current PIN"
-    if(hasPin.value && step.value===2) return "New PIN"
-    if(hasPin.value && step.value===3) return "Confirm PIN"
+        if(!hasPin.value && step.value===1) return "Create PIN"
+        if(!hasPin.value && step.value===2) return "Confirm PIN"
+        
+        if(hasPin.value && step.value===1) return "Enter Current PIN"
+        if(hasPin.value && step.value===2) return "New PIN"
+        if(hasPin.value && step.value===3) return "Confirm PIN"
     
     })
     
@@ -97,7 +109,7 @@
     
     
     const clearPin = ()=>{
-    pin.value = ["","","",""]
+      pin.value = ["","","",""]
     }
     
     
@@ -134,76 +146,111 @@
     
     
     const getPin = ()=>{
-    return pin.value.join("")
+      return pin.value.join("")
     }
     
     
-    const nextStep = ()=>{
+    const nextStep = async()=>{
     
-    const value = getPin()
-    
-    if(value.length !== 4) return
-    
-    // NO PIN FLOW
-    if(!hasPin.value){
-    
-    if(step.value === 1){
-    
-    firstPin.value = value
-    clearPin()
-    step.value = 2
-    focusFirst()
-    
-    }
-    
-    else{
-    
-    if(value !== firstPin.value){
-    alert("PIN does not match")
-    return
-    }
-    
-    alert("PIN CREATED")
-    
-    }
-    
-    }
-    
-    
-    // UPDATE PIN FLOW
-    else{
-    
-    if(step.value === 1){
-    
-    // verify current pin
-    step.value = 2
-    clearPin()
-    focusFirst()
-    
-    }
-    
-    else if(step.value === 2){
-    
-    firstPin.value = value
-    step.value = 3
-    clearPin()
-    focusFirst()
-    
-    }
-    
-    else{
-    
-    if(value !== firstPin.value){
-    alert("PIN mismatch")
-    return
-    }
-    
-    alert("PIN UPDATED")
-    
-    }
-    
-    }
-    
+        const value = getPin()
+        
+        if(value.length !== 4) return
+
+        try{
+
+            // NO PIN FLOW
+            if(!hasPin.value){
+            
+                if(step.value === 1){
+                
+                    firstPin.value = value
+                    clearPin()
+                    step.value = 2
+                    focusFirst()
+                
+                }else{
+                    
+                    if(value !== firstPin.value){
+                        notify.error("PIN does not match")
+                        return
+                    }
+                    
+                    isCreating.value = true
+
+                    const payload ={
+                        userId:pinia.state.user.id,
+                        pin:value
+                    }
+
+                   const data = await createPin(payload)
+                   if(data.success){
+                     notify.success(data.message)
+                     pinia.state.user.isPinSet = true
+                     pin.value = ["","","",""]
+                   }else{
+                     notify.error(data.message)
+                   }
+
+                   isCreating.value = false
+                    
+                }
+            
+            }
+            // UPDATE PIN FLOW
+            else{
+            
+                if(step.value === 1){
+                
+                    // verify current pin
+                    oldPin.value = value
+                    step.value = 2
+                    clearPin()
+                    focusFirst()
+            
+                }else if(step.value === 2){
+                
+                    firstPin.value = value
+                    step.value = 3
+                    clearPin()
+                    focusFirst()
+                
+                }else{
+            
+                    if(value !== firstPin.value){
+                        notify.error("PIN mismatch")
+                        return
+                    }
+                    
+                    isCreating.value = true
+
+                    const payload ={
+                        userId:pinia.state.user.id,
+                        currentPin:oldPin.value ,
+                        newPin:value
+                    }
+
+                    console.log(payload)
+
+                   const data = await updatePin(payload)
+
+                   if(data.success){
+                     notify.success(data.message)
+                     pin.value = ["","","",""]
+                   }else{
+                     notify.error(data.message)
+                   }
+
+                   isCreating.value = false
+                    
+                }
+                    
+            }
+
+        }catch(e){
+          console.log(e)
+        }
+        
+        
     }
     
     

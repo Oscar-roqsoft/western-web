@@ -62,12 +62,12 @@
                     Password
                   </label>
   
-                  <NuxtLink
-                    to=""
-                    class="text-sm text-primary-600 hover:text-primary-700"
+                  <a @click="navigateTo('/password-recovery')"
+                  
+                    class="text-sm text-blue-600 hover:text-primary-700 "
                   >
                     Forgot password?
-                  </NuxtLink>
+                </a>
                 </div>
   
                 <div class="relative">
@@ -109,16 +109,18 @@
               <!-- Login Button -->
               <button
                 type="submit"
-                class="w-full flex items-center justify-center py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold hover:from-primary-700 hover:to-primary-800 transition shadow-lg"
+                class="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold hover:from-primary-700 hover:to-primary-800 transition shadow-lg"
               >
   
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="m10 17 5-5-5-5"/>
                   <path d="M15 12H3"/>
                   <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
                 </svg>
   
                 Sign in
+                <Spinner v-if="isAuthenticating"  stroke="#fff" />
+
   
               </button>
   
@@ -154,23 +156,72 @@
   
   <script setup>
   import { ref } from "vue"
+  import { signIn } from '@/composables/requests/auth'; // Adjust path as needed
+
   definePageMeta(
         {
         layout: 'custom2',
         }
     );
   
+    const notify = useNotify()
+    const pinia = useStore()
   const email = ref("")
   const password = ref("")
   const remember = ref(false)
+  const isAuthenticating = ref(false)
   
-  const login = () => {
-    navigateTo('/dashboard')
-    console.log({
-      email: email.value,
-      password: password.value,
-      remember: remember.value
-    })
+  const login = async() => {
+      isAuthenticating.value = true
+        const payload = {
+            email:email.value,
+            password:password.value,
+         
+        }
+
+        
+        try{
+        
+            const data = await signIn(payload)
+
+
+            if(data.success){
+                pinia.state.email = email.value
+                if(data.data){
+
+                  notify.success(
+                    data.message
+                  )
+                  pinia.setUser(data.data)
+                  navigateTo("/dashboard")
+                  pinia.state.isAuthenticated = true
+
+                }else{
+                  notify.success(
+                    data.message
+                  )
+                  navigateTo("/verify")
+
+                }
+            }else{
+                notify.error(data.message)
+            }
+        
+        
+        
+        }catch(e){
+        
+        notify.error(
+        "Login Failed",
+        e || "Something went wrong"
+        )
+        
+        console.log(e)
+        
+        }
+        
+        isAuthenticating.value = false
+    
   
     // connect API here
   }

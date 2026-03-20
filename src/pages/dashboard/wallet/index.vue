@@ -28,15 +28,15 @@
     <h2 class="font-bold text-lg">Secured Wallet</h2>
 
     <!-- Wallet List -->
-    <div v-if="wallets.length > 0" class="mt-4 flex flex-wrap gap-4">
+    <div v-if="pinia.state.walletInfo.length > 0" class="mt-4 flex flex-wrap gap-4">
       <div
-        v-for="wallet in wallets"
+        v-for="wallet in pinia.state.walletInfo"
         :key="wallet.name"
-        class="flex flex-col items-center p-3 shadow rounded-lg w-36"
+        class="flex flex-col items-center p-3 shadow rounded-lg md:w-40 w-full"
       >
-        <img :src="wallet.icon || '/walleticons/default.png'" alt="wallet icon" class="w-16 h-16 object-contain mb-2" />
+        <img :src="wallet.image || '/walleticons/default.png'" alt="wallet icon" class="w-16 h-16 object-contain mb-2 rounded-md" />
         <span class="font-bold">{{ wallet.name }}</span>
-        <span class="text-gray-400 text-xs">Last Synced {{ wallet.lastSynced }}</span>
+        <span class="text-gray-400 text-xs">Last Synced {{ timeAgo(wallet.updatedAt) }}</span>
       </div>
     </div>
 
@@ -60,6 +60,9 @@
 <script setup>
 import { ref } from "vue";
 import { LockIcon } from "lucide-vue-next";
+import { fetchWalletInfo } from "@/composables/actions/index"
+
+const pinia = useStore()
 
 const wallets = ref([
   {
@@ -73,4 +76,12 @@ const addWallet = () => {
   navigateTo("/dashboard/wallet/secure");
   console.log("Add wallet clicked");
 };
+
+onMounted(async()=>{
+
+     // If already have data, no need to fetch again
+    if (pinia.state.walletInfo && Object.keys(pinia.state.walletInfo).length > 0) return;
+    await fetchWalletInfo()
+
+})
 </script>

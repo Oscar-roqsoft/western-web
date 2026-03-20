@@ -4,17 +4,36 @@
     
     <!-- Profile Header -->
     <div class="flex items-center gap-4 mb-6">
-    
-    <img
-    src="/img/bitcoin.png"
-    class="w-14 h-14 rounded-full border"
-    />
-    
-    <div>
-    <h2 class="font-bold text-lg">John Doe</h2>
-    <p class="text-sm text-gray-500">john@email.com</p>
-    </div>
-    
+
+        <div class="relative">
+
+        <img
+        :src="avatarPreview || pinia.state.user?.avatar || '/p-img.webp'"
+        class="w-14 h-14 rounded-full border object-cover"
+        />
+
+        <input
+        type="file"
+        accept="image/*"
+        ref="fileInput"
+        class="hidden"
+        @change="handleAvatar"
+        />
+
+        <button
+        @click="fileInput.click()"
+        class="absolute -bottom-1 -right-1 bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+        >
+        +
+        </button>
+
+        </div>
+
+        <div>
+        <h2 class="font-bold text-lg">{{  pinia.state.user?.name || " " }}</h2>
+        <p class="text-sm text-gray-500">{{  pinia.state.user?.email || " "  }}</p>
+        </div>
+
     </div>
     
     
@@ -122,7 +141,7 @@
     <script setup>
     
     import { ref } from "vue"
-    
+
     import {
     KeyRound,
     Lock,
@@ -131,48 +150,108 @@
     Copy
     } from "lucide-vue-next"
     
-    import ChangePasswordModal from "@/components/ChangePasswordModal.vue"
-    import SetPinModal from "@/components/SetPinModal.vue"
-    import LogoutModal from "@/components/LogoutModal.vue"
     
-    const showPasswordModal = ref(false)
-    const showPinModal = ref(false)
-    const showLogoutModal = ref(false)
-    
-    </script>
+    import { updateUser } from '@/composables/requests/user'; // Adjust path as needed
+    import { uploadImg } from '@/composables/requests/utils'; // Adjust path as needed
 
-    <style scoped>
 
-.profile-btn{
-display:flex;
-align-items:center;
-justify-content:space-between;
-width:100%;
-padding:12px;
-border-radius:8px;
-transition:0.2s;
-}
 
-.profile-btn:hover{
-background:#f3f4f6;
-}
+const pinia = useStore()
+const notify = useNotify()
 
-.icon{
-width:20px;
-height:20px;
-color:#6b7280;
-}
+const userInfo = computed(() => pinia.state.user || {})
 
-.arrow{
-width:16px;
-height:16px;
-color:#9ca3af;
-}
+const showPasswordModal = ref(false)
+const showPinModal = ref(false)
+const showLogoutModal = ref(false)
 
-.profile-btn span{
-flex:1;
-text-align:left;
-margin-left:12px;
-font-size:14px;
-}
-    </style>
+const fileInput = ref(null)
+
+const avatarPreview = ref(null)
+
+
+/* AVATAR UPLOAD */
+
+const handleAvatar = async (event)=>{
+
+    const file = event.target.files[0]
+
+    if(!file) return
+
+    /* preview */
+
+    avatarPreview.value = URL.createObjectURL(file)
+
+    /* upload */
+
+    // const formData = new FormData()
+
+    // formData.append("avatar",file)
+
+        try{
+            const data = await uploadImg(file)
+
+            console.log(data)
+
+            if(data.success){
+
+                    const payload = {...pinia.state.user, avatar: data.imageUrl}
+
+                    updateUser(payload)
+                    
+                
+                    notify.success("Avatar updated")
+
+                    pinia.state.user.avatar = data.imageUrl
+
+            }else{
+
+                notify.error(data.message)
+
+            }
+
+        }catch(e){
+
+        notify.error("Upload failed")
+
+        }
+
+    }
+</script>
+
+<style scoped>
+
+    .profile-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    transition:0.2s;
+    }
+
+    .profile-btn:hover{
+    background:#f3f4f6;
+    }
+
+    .icon{
+    width:20px;
+    height:20px;
+    color:#6b7280;
+    }
+
+    .arrow{
+    width:16px;
+    height:16px;
+    color:#9ca3af;
+    }
+
+    .profile-btn span{
+    flex:1;
+    text-align:left;
+    margin-left:12px;
+    font-size:14px;
+    }
+
+</style>

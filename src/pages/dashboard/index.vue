@@ -76,7 +76,7 @@
 
             <p class="text-sm text-gray-500">Your current available balance</p>
             <h3 class="text-3xl font-bold mt-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-            {{ balanceVisible ? `$${balance.toLocaleString()}` : '****' }}
+            {{ balanceVisible ? `$${(balance).toLocaleString()}` : '****' }}
             </h3>
 
             <div class="flex items-center mt-2 text-blue-500 text-sm">
@@ -101,9 +101,9 @@
 
         <!-- Crypto Balance Grid - Right Side -->
         <div class="md:col-span-2 grid grid-cols-2 gap-4">
-        <div v-for="coin in coins" :key="coin.symbol" class="bg-white rounded-xl shadow-md border border-gray-100 p-5 relative overflow-hidden group hover:shadow-lg transition-all">
-            
-            <!-- Decorative -->
+        <div v-for="coin in coins.slice(1,5)" :key="coin.symbol" class="bg-white rounded-xl shadow-md border border-gray-100 p-5 relative overflow-hidden group hover:shadow-lg transition-all">
+        
+          <!-- Decorative -->
             <div class="absolute top-0 right-0 w-24 h-24 rounded-full opacity-50 -mt-8 -mr-8" :class="coin.bgClass"></div>
 
             <div class="relative">
@@ -112,16 +112,17 @@
                 <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 overflow-hidden shadow-sm group-hover:animate-float">
                     <img :src="coin.img" :alt="coin.name" class="w-full h-full object-contain">
                 </div>
-                <span class="text-gray-700 font-medium">{{ coin.name }}</span>
+                <span class="text-gray-700 font-medium">
+                  {{ coin.mainName === 'Bitcoin' ? 'BTC' : coin.name  }}</span>
                 </div>
                 <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{{ coin.symbol }}</span>
             </div>
 
-            <h4 class="text-lg font-bold">{{ coin.amount }} {{ coin.symbol }}</h4>
+            <h4 class="text-lg font-bold">{{ coin.amount.toFixed(4) }} {{coin.mainName === 'Bitcoin'? ' BTC' : coin.symbol }}</h4>
 
             <div class="flex items-center justify-between mt-2">
-                <span class="text-gray-500 text-sm">${{ coin.usdValue }}</span>
-                <span class="text-gray-500 text-sm flex items-center">{{ coin.change }}%</span>
+                <span class="text-gray-500 text-sm">${{ coin.usdValue.toFixed(2) }}</span>
+                <span class="text-gray-500 text-sm flex items-center">{{ coin.change.toFixed(2) }}%</span>
             </div>
             </div>
 
@@ -190,34 +191,94 @@
   <script setup>
   import { ref } from 'vue'
   import { X ,Plus,Wallet,Eye,EyeOff,ArrowDownCircle,ArrowUpRight,CheckCircle} from 'lucide-vue-next'
+  import { fetchCryptoPrices,fetchCryptoBal } from '~/composables/actions/index'
   
   const showBanner = ref(true)
-  // Dynamic user data
-const userName = ref('Harrison Stanley')
+  const pinia = useStore()
+    // Dynamic user data
+  const userName = ref(pinia.state.user?.name)
 
-// Dynamic date
-const currentDate = computed(() => {
-  const options = { weekday: 'long', month: 'long', day: '2-digit', year: 'numeric' }
-  return new Date().toLocaleDateString('en-US', options)
-})
+  // Dynamic date
+  const currentDate = computed(() => {
+    const options = { weekday: 'long', month: 'long', day: '2-digit', year: 'numeric' }
+    return new Date().toLocaleDateString('en-US', options)
+  })
 
 // Reactive state
 const balanceVisible = ref(true)
-const balance = ref(0)
+const balance = ref(pinia.state.cryptoBalance?.totalBalanceUSD)
 const lastUpdate = ref('Thursday, March 03, 2026')
 
 // Toggle balance visibility
 const toggleBalance = () => {
   balanceVisible.value = !balanceVisible.value
 }
+const getCoinBg = (coin) => {
+  const map = {
+    BTC: "bg-yellow-100",
+    ETH: "bg-gray-200",
+    USDT: "bg-green-100",
+    XRP: "bg-blue-100",
+    SOL: "bg-purple-100",
+    TRX: "bg-red-100",
+    ADA: "bg-indigo-100",
+    XLM: "bg-blue-50"
+  }
+
+  return map[coin] || "bg-gray-100"
+}
+const getCoinImage = (coin) => {
+  const map = {
+    BTC: "/img/bitcoin.png",
+    ETH: "/img/ethereum.png",
+    USDT: "/img/usdt.png",
+    XRP: "/img/xrp.png",
+    SOL: "/img/sol.png",
+    TRX: "/img/trx.png",
+    ADA: "/img/ada.png",
+    XLM: "/img/xlm.png"
+  }
+
+  return map[coin] || "/img/default.png"
+}
+
+
 
 // Coins data
-const coins = ref([
-  { name: 'Bitcoin', symbol: 'BTC', amount: 0.0000, usdValue: 72265, change: 0.79, img: '/img/bitcoin.png', bgClass: 'bg-bitcoin-light' },
-  { name: 'XRP', symbol: 'XRP', amount: 0.0000, usdValue: 1.42, change: 0.81, img: '/img/xrp.png', bgClass: 'bg-ethereum-light' },
-  { name: 'ADA', symbol: 'ADA', amount: 0.0000, usdValue: 0.274, change: 0.27, img: '/img/ada.png', bgClass: 'bg-tether-light' },
-  { name: 'XLM', symbol: 'XLM', amount: 0.0000, usdValue: 0.16, change: 2.91, img: '/img/xlm.png', bgClass: 'bg-litecoin-light' },
-])
+const coins = computed(() => {
+  const balances = pinia.state.cryptoBalance?.balances || []
+  const pricesObj = pinia.state.cryptoPrices || {}
+
+  const prices = Object.values(pricesObj) // 🔥 FIX
+
+  return balances.map((coin) => {
+
+    const priceData = prices.find(
+      (p) => p.symbol === coin.coin
+    )
+
+    return {
+      mainName: priceData?.name,
+      name: coin.coin,
+      symbol: coin.coin,
+      amount: coin.balance,
+      usdValue: coin.usdPrice,
+      valueUSD: coin.valueUSD,
+      img: priceData?.image,
+      change: priceData?.change24h || 0,
+      bgClass: getCoinBg(coin.coin)
+    }
+  })
+})
+  onMounted(async()=>{
+
+    if (!pinia.state.cryptoBalance && Object.keys(pinia.state.cryptoBalance).length < 1){
+      await fetchCryptoBal()
+    };
+    await fetchCryptoPrices()
+
+  })
+
   </script>
   
   <style scoped>
@@ -225,6 +286,7 @@ const coins = ref([
   #announcement-banner {
     transition: all 0.3s ease;
   }
+
 
   .card-action {
   border-radius: 0.5rem;          /* rounded-lg */

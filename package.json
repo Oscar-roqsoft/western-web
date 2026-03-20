@@ -13,6 +13,7 @@
     "@google-translate-select/vue3": "^0.1.8",
     "@pinia/nuxt": "^0.5.1",
     "@splidejs/vue-splide": "^0.6.12",
+    "browser-image-compression": "^2.0.2",
     "feather-icons": "^4.29.2",
     "gsap": "^3.12.5",
     "lucide-vue-next": "^0.577.0",

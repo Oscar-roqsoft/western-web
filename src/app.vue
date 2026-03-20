@@ -1,15 +1,57 @@
 <template>
-  <div>
-  
-      <NuxtLayout>
-          <NuxtPage/>
-      </NuxtLayout>
+ <div>
+    <n-config-provider :theme-overrides="themeOverrides">
+
+      <n-notification-provider>
+        <NuxtLayout>
+            <NuxtPage/>
+        </NuxtLayout>
+      </n-notification-provider>
+    </n-config-provider>
 
       
   </div>
 </template>
 
 <script setup>
+    import { NNotificationProvider,NConfigProvider } from 'naive-ui'
+    // import { useNotification } from 'naive-ui'
+
+    // const notification = useNotification()
+
+    const route = useRouter()
+    const pinia = useStore()
+
+     const path = ref(route.currentRoute.value.path)
+
+      watch(()=>path.value,(newv)=>{
+
+        console.log(newv)
+
+        if (newv === '/login' || newv ===  '/register'|| newv === '/password-recovery'  || newv ===  '/verify' || pinia.state.isAuthenticated) {
+            navigateTo('/dashboard');
+        }
+    })
+
+    const themeOverrides = {
+      common: {
+        primaryColor: '#f17315',      // Orange for primary
+        successColor: '#28A745',      // Green for success
+        warningColor: '#FFC107',      // Amber for warning
+        errorColor: '#DC3545',        // Red for error
+        infoColor: '#17A2B8',         // Cyan for info
+        primaryColorHover: '#FF8533', // Lighter orange on hover
+        primaryColorPressed: '#E65C00', // Darker orange when pressed
+},
+Button: {
+        textColor: 'black',         // White text on hover for default buttons
+        textColorHover: '#FFFFFF',         // White text on hover for default buttons
+        textColorHoverPrimary: '#FFFFFF',  // White text on primary hover
+        textColorHoverSuccess: '#FFFFFF',  // White text on success hover
+        textColorHoverWarning: '#333333',  // Dark gray text on warning hover
+        textColorHoverError: '#FFFFFF',    // White text on error hover
+    },
+}
 
 
 

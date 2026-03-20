@@ -14,64 +14,51 @@
             </button>
             
             <div class="flex flex-col  items-center justify-center  w-full gap-2">
-                
                 <img
-                src="/img/bitcoin.png"
-                class="w-16 h-16 rounded-full"
+                    :src="selectedCoin.icon"
+                    class="w-16 h-16 rounded-full"
                 />
-                
-                <div class="flex items-center justify-center w-full">
-                    <div class="font-bold text-lg">Bitcoin</div>
-                    <div class="text-gray-400 text-sm">/BTC</div>
+
+                <div class="flex items-center justify-center w-full gap-2">
+                    <div class="font-bold text-lg">{{ selectedCoin.name }}</div>
+                    <div class="text-gray-400 text-sm">/{{ selectedCoin.symbol }}</div>
                 </div>
             </div>
         
         </div>
         
         
-        <!-- Balance -->
+       <!-- Balance -->
         <div class="bg-white rounded-xl shadow p-5 mb-6">
+        <div class="text-gray-400 text-sm">My Balance</div>
         
-            <div class="text-gray-400 text-sm">
-            My Balance
-            </div>
-            
-            <div class="text-2xl font-bold mt-1">
-            0.245 BTC
-            </div>
-            
-            <div class="text-gray-400 text-sm">
-            ≈ $10,430
-            </div>
+        <div class="text-2xl font-bold mt-1">{{ userBalance }} {{ selectedCoin.symbol }}</div>
         
+        <div class="text-gray-400 text-sm">≈ {{ balanceUSD }}</div>
         </div>
         
         
-        <!-- Amount Section -->
+       <!-- Amount Section -->
         <div class="bg-white rounded-xl shadow p-5 mb-6">
+        <div class="text-gray-400 text-sm mb-2">Coin Amount</div>
         
-            <div class="text-gray-400 text-sm mb-2">
-            Coin Amount
-            </div>
-            
-            <input
+        <input
             type="number"
+            v-model="coinAmount"
             placeholder="0.00"
             class="w-full text-2xl font-bold outline-none"
-            />
-            
-            <div class="flex gap-2 mt-4">
-            
+        />
+        
+        <div class="flex gap-2 mt-4">
             <button
             v-for="p in percentages"
             :key="p"
             class="flex-1 border rounded-lg py-1 text-sm hover:bg-gray-100"
+            @click="setPercentageAmount(p)"
             >
             {{p}}%
             </button>
-            
-            </div>
-        
+        </div>
         </div>
         
         
@@ -93,7 +80,7 @@
             Swap
             </button>
             
-            <button @click="openModal('buy')" class="action-btn">
+            <button @click="navigateTo('/dashboard/deposit')" class="action-btn">
             <ShoppingCart class="w-5 h-5"/>
             Buy
             </button>
@@ -126,43 +113,101 @@
     
     
     <script setup>
-    
-    import { ref } from "vue"
+    import { ref, computed } from "vue"
+    import { fetchWalletAddress } from "@/composables/actions/index"
     
     import {
-    ArrowLeft,
-    Send,
-    Download,
-    RefreshCcw,
-    ShoppingCart
+      ArrowLeft,
+      Send,
+      Download,
+      RefreshCcw,
+      ShoppingCart
     } from "lucide-vue-next"
     
+    // import your modals
     // import SendModal from "@/components/modals/SendModal.vue"
     // import ReceiveModal from "@/components/modals/ReceiveModal.vue"
     // import SwapModal from "@/components/modals/SwapModal.vue"
     // import BuyModal from "@/components/modals/BuyModal.vue"
-    
     // import listToken from "@/components/listToken.vue"
     
+    const store = useStore()
+    
     const reveal = ref(false)
-    
     const activeModal = ref(null)
-    
     const percentages = [25,50,75,100]
+    
+    const handleClose = () => {
+      reveal.value = true
+    }
+    
+    const openModal = (type) => {
+        activeModal.value = type
 
-    const handleClose=()=>{
-        reveal.value = true
+        store.setSelectedTransaction({
+            coin: selectedCoin.value,
+            coinAmount: coinAmount.value,
+            balance: userBalance.value,
+            balanceUSD: balanceUSD.value,
+            actionType: type, // send, receive, swap, buy
+        })
     }
     
-    const openModal = (type)=>{
-    activeModal.value = type
+    
+    const navigateBack = () => {
+      reveal.value = false
     }
     
-    const navigateBack = ()=>{
-        reveal.value = false
-    // history.back()
-    }
+    // -----------------------------
+    // Computed for selected coin
+    // -----------------------------
+    const selectedCoin = computed(() => store.state.selectedCryptoPrice || {
+      name: "Bitcoin",
+      symbol: "BTC",
+      icon: "/img/bitcoin.png",
+      price: 0
+    })
     
+    // Example balance (you can replace this with real user balances)
+    const userBalance = computed(() => {
+      const symbol = selectedCoin.value.symbol
+
+      const balances = store.state.cryptoBalance?.balances || []
+
+      const coinData = balances.find(
+        (item) => item.coin === symbol
+      )
+
+      return coinData?.balance || 0
+    })
+
+    console.log('bal',userBalance.value,selectedCoin.value.symbol)
+    
+    // Approximate USD value
+    const balanceUSD = computed(() => {
+      return (userBalance.value * selectedCoin.value.price).toLocaleString(undefined, { style: 'currency', currency: 'USD' })
+    })
+
+
+      // Coin amount input
+        const coinAmount = ref(0)
+
+        // When user clicks percentage button
+        const setPercentageAmount = (p) => {
+        coinAmount.value = ((userBalance.value * p) / 100).toFixed(4) // 8 decimal precision
+        }
+
+
+        // const fetchWalletAddressInfo = async()=>{
+        // }
+        
+        watchEffect(async()=>{
+            if(reveal.value == true){
+                await fetchWalletAddress(store.state.selectedCryptoPrice?.symbol)
+            }
+        })
+
+
     </script>
     
     

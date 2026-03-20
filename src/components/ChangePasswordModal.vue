@@ -4,97 +4,109 @@
 
 <BaseModal>
 
-<!-- Header -->
-<div class="modal-header">
+    <!-- Header -->
+    <div class="modal-header">
 
-<h2 class="modal-title">
-Change Password
-</h2>
+    <h2 class="modal-title">
+    Change Password
+    </h2>
 
-<button
-class="close-btn"
-@click="$emit('close')"
->
-<X size="20"/>
-</button>
+    <button
+    class="close-btn"
+    @click="$emit('close')"
+    >
+    <X size="20"/>
+    </button>
 
-</div>
-
-
-<!-- Description -->
-<p class="modal-desc">
-Update your account password to keep your account secure.
-</p>
+    </div>
 
 
-<!-- Form -->
-<div class="form-group">
-
-<label class="label">
-Current Password
-</label>
-
-<div class="input-wrap">
-
-<input
-:type="showCurrent ? 'text' : 'password'"
-placeholder="Enter current password"
-class="input"
-/>
-
-<button
-class="eye"
-@click="showCurrent = !showCurrent"
->
-<Eye v-if="!showCurrent" size="18"/>
-<EyeOff v-else size="18"/>
-</button>
-
-</div>
-
-</div>
+    <!-- Description -->
+    <p class="modal-desc">
+    Update your account password to keep your account secure.
+    </p>
 
 
-<div class="form-group">
+    <!-- Form -->
+    <div class="form-group">
 
-<label class="label">
-New Password
-</label>
+    <label class="label">
+    Current Password
+    </label>
 
-<div class="input-wrap">
+    <div class="input-wrap">
 
-<input
-:type="showNew ? 'text' : 'password'"
-placeholder="Enter new password"
-class="input"
-/>
+    <input
+    v-model.trim="form.currentPassword"
+    :type="showCurrent ? 'text' : 'password'"
+    placeholder="Enter current password"
+    class="input"
+    />
 
-<button
-class="eye"
-@click="showNew = !showNew"
->
-<Eye v-if="!showNew" size="18"/>
-<EyeOff v-else size="18"/>
-</button>
+    <button
+    class="eye"
+    @click="showCurrent = !showCurrent"
+    >
+    <Eye v-if="!showCurrent" size="18"/>
+    <EyeOff v-else size="18"/>
+    </button>
 
-</div>
+    </div>
 
-</div>
+    </div>
 
 
-<div class="form-group">
+    <div class="form-group">
 
-<label class="label">
-Confirm Password
-</label>
+    <label class="label">
+    New Password
+    </label>
 
-<div class="input-wrap">
+    <div class="input-wrap">
 
-<input
-:type="showConfirm ? 'text' : 'password'"
-placeholder="Confirm password"
-class="input"
-/>
+    <input
+     v-model.trim="form.newPassword"
+    :type="showNew ? 'text' : 'password'"
+    placeholder="Enter new password"
+    class="input"
+    :class="errors.newPassword ? 'border-red-500' : 'border-gray-300'"
+    />
+
+    <p v-if="errors.newPassword" class="text-red-500 text-xs mt-1">
+        {{ errors.newPassword }}
+    </p>
+
+    <button
+    class="eye"
+    @click="showNew = !showNew"
+    >
+    <Eye v-if="!showNew" size="18"/>
+    <EyeOff v-else size="18"/>
+    </button>
+
+    </div>
+
+    </div>
+
+
+    <div class="form-group">
+
+    <label class="label">
+    Confirm Password
+    </label>
+
+    <div class="input-wrap">
+
+    <input
+     v-model.trim="form.password_confirmation"
+    :type="showConfirm ? 'text' : 'password'"
+    placeholder="Confirm password"
+    class="input"
+     :class="errors.password_confirmation ? 'border-red-500' : 'border-gray-300'"
+    />
+    <p v-if="errors.password_confirmation" class="text-red-500 text-xs mt-1">
+        {{ errors.password_confirmation }}
+    </p>
 
 <button
 class="eye"
@@ -119,8 +131,10 @@ class="btn-secondary"
 Cancel
 </button>
 
-<button class="btn-primary">
-Update Password
+<button @click="updatePassword" class="btn-primary text-xs flex justify-center items-center">
+     
+     <span v-if="!isUpdating"  >Update Password</span>
+     <Spinner v-else stroke="#fff" />
 </button>
 
 </div>
@@ -138,12 +152,92 @@ Update Password
     Eye,
     EyeOff
     } from "lucide-vue-next"
+    import { updateUserPassword } from '@/composables/requests/user'; // Adjust path as needed
+
     
     // import BaseModal from "./BaseModal.vue"
+
+    const pinia =  useStore()
+    const notify = useNotify()
     
     const showCurrent = ref(false)
     const showNew = ref(false)
     const showConfirm = ref(false)
+    const isUpdating = ref(false)
+
+    const form = reactive({
+        currentPassword:"",
+        newPassword:"",
+        password_confirmation:"",
+    })
+    
+    const errors = reactive({
+        newPassword:"",
+        password_confirmation:"",
+    })
+
+     /* ---------------- VALIDATION ---------------- */
+    
+    const validateForm = ()=>{
+   
+        errors.newPassword=""
+        errors.password_confirmation=""
+        
+        let valid = true
+        
+        if(!form.newPassword){
+            errors.newPassword="Password is required"
+            valid=false
+        }else if(form.newPassword.length < 6){
+            errors.newPassword="Password must be at least 6 characters"
+            valid=false
+        }
+        
+        if(form.newPassword !== form.password_confirmation){
+            errors.password_confirmation="Passwords do not match"
+            valid=false
+        }
+        
+    
+        
+        return valid
+    }
+
+    const updatePassword = async()=>{
+
+        if(!validateForm()) return
+
+        isUpdating.value =  true
+
+        const payload ={
+            userId: pinia.state.user.id,
+            currentPassword:form.currentPassword,
+            newPassword:form.newPassword,
+        }
+
+        try{
+
+            const data = await updateUserPassword(payload)
+
+            console.log(data)
+
+            if(data.success){
+                
+                    notify.success(data.message)
+            }else{
+
+                notify.error(data.message)
+
+            }
+
+        }catch(e){
+
+        notify.error("failed")
+
+        }
+        isUpdating.value =  false
+         
+    }
     
 </script>
 

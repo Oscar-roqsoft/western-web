@@ -101,13 +101,14 @@
     
     const qrCanvas = ref(null)
     const copied = ref(false)
+    const pinia = useStore()
     
     const coin = ref({
-    name: "Bitcoin",
-    symbol: "BTC",
-    network: "Bitcoin",
-    icon: "/img/bitcoin.png",
-    address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh"
+    name: pinia.state.selectedCryptoPrice?.name,
+    symbol: pinia.state.selectedCryptoPrice?.symbol,
+    network: pinia.state.selectedCryptoPrice?.network,
+    icon: pinia.state.selectedCryptoPrice?.icon,
+    address: pinia.state.walletAddress?.address
     })
     
     
