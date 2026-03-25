@@ -64,7 +64,7 @@
   
                   <a @click="navigateTo('/password-recovery')"
                   
-                    class="text-sm text-blue-600 hover:text-primary-700 "
+                    class="text-sm text-blue-600 hover:text-primary-700 cursor-pointer"
                   >
                     Forgot password?
                 </a>

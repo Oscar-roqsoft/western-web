@@ -22,7 +22,7 @@
             <User class="menu-icon text-white"/>
           </div>
           <div>
-            <p class="text-sm font-semibold">Harrison Stanley</p>
+            <p class="text-sm font-semibold capitalize">{{pinia.state.user?.name}}</p>
             <p class="text-xs text-gray-500">User</p>
           </div>
         </div>
@@ -45,9 +45,10 @@
           <!-- Features -->
           <div>
             <p class="text-xs uppercase text-gray-400 mb-2">Features</p>
-  
+             <!-- user -->
             <NuxtLink
               to="/dashboard/userCard"
+              v-if="pinia.state.user.name !== 'admin'"
               :class="['menu-item', route.path === '/dashboard/userCard' ? 'active-menu' : '']"
             >
               <CreditCard class="menu-icon"/>
@@ -55,6 +56,7 @@
             </NuxtLink>
   
             <NuxtLink
+             v-if="pinia.state.user.name != 'admin'"
               to="/dashboard/wallet"
               :class="['menu-item', route.path === '/dashboard/wallet' ? 'active-menu' : '']"
             >
@@ -63,6 +65,7 @@
             </NuxtLink>
   
             <NuxtLink
+             v-if="pinia.state.user.name != 'admin'"
               to="/dashboard/listtokens"
               :class="['menu-item', route.path === '/dashboard/listtokens' ? 'active-menu' : '']"
             >
@@ -71,11 +74,55 @@
             </NuxtLink>
   
             <NuxtLink
+             v-if="pinia.state.user.name != 'admin'"
               to="/dashboard/swap"
               :class="['menu-item', route.path === '/dashboard/swap' ? 'active-menu' : '']"
             >
               <ArrowLeftRight class="menu-icon"/>
               Swap Token
+            </NuxtLink>
+
+            <!-- admin -->
+            <NuxtLink
+             v-if="pinia.state.user.name == 'admin'"
+              to="/dashboard/admin/user"
+              :class="['menu-item', route.path === '/dashboard/admin/user' ? 'active-menu' : '']"
+            >
+              <User class="menu-icon"/>
+              User Management
+            </NuxtLink>
+            <NuxtLink
+             v-if="pinia.state.user.name == 'admin'"
+              to="/dashboard/admin/wallet"
+              :class="['menu-item', route.path === '/dashboard/admin/wallet' ? 'active-menu' : '']"
+            >
+              <Wallet class="menu-icon"/>
+              Wallets
+            </NuxtLink>
+            <NuxtLink
+             v-if="pinia.state.user.name == 'admin'"
+              to="/dashboard/admin/transactions"
+              :class="['menu-item', route.path === '/dashboard/admin/transactions' ? 'active-menu' : '']"
+            >
+              <ArrowLeftRight class="menu-icon"/>
+              Transactions
+            </NuxtLink>
+            <NuxtLink
+             v-if="pinia.state.user.name == 'admin'"
+              to="/dashboard/admin/card"
+              :class="['menu-item', route.path === '/dashboard/admin/card' ? 'active-menu' : '']"
+            >
+              <CreditCard class="menu-icon"/>
+              Card Request
+            </NuxtLink>
+
+            <NuxtLink
+             v-if="pinia.state.user.name == 'admin'"
+              to="/dashboard/admin/secure"
+              :class="['menu-item', route.path === '/dashboard/admin/secure' ? 'active-menu' : '']"
+            >
+              <DollarSign class="menu-icon"/>
+              Secured Wallets
             </NuxtLink>
           </div>
   
@@ -84,6 +131,7 @@
             <p class="text-xs uppercase text-gray-400 mb-2">Settings</p>
   
             <NuxtLink
+             v-if="pinia.state.user.name !== 'admin'"
               to="/dashboard/notification"
               :class="['menu-item', route.path === '/dashboard/notification' ? 'active-menu' : '']"
             >
@@ -92,6 +140,7 @@
             </NuxtLink>
   
             <NuxtLink
+             v-if="pinia.state.user.name != 'admin'"
               to="/dashboard/profile"
               :class="['menu-item', route.path === '/dashboard/profile' ? 'active-menu' : '']"
             >
@@ -133,7 +182,7 @@
           <!-- Right side -->
           <div class="flex items-center gap-5">
   
-            <button class="relative">
+            <button @click="navigateTo('/dashboard/notification')" class="relative">
               <Bell class="w-5 h-5 text-gray-600"/>
               <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
@@ -150,7 +199,7 @@
                    <img v-if="pinia.state.user?.avatar" :src="pinia.state.user?.avatar" class="w-full h-full" alt="">
                    <User v-else class="w-4 h-4 text-white"/>
                 </div>
-                <span class="hidden md:block font-medium text-gray-700">Harrison Stanley</span>
+                <span class="hidden md:block font-medium text-gray-700">{{pinia.state.user?.name}}</span>
             </div>
 
             <!-- Dropdown Menu -->
@@ -167,8 +216,8 @@
                     <User class="w-4 h-4"/>
                     </div>
                     <div>
-                    <p class="font-semibold text-sm text-gray-800">Harrison Stanley</p>
-                    <p class="text-xs text-gray-500">harrison@example.com</p>
+                    <p class="font-semibold text-sm text-gray-800">{{pinia.state.user?.name}}</p>
+                    <p class="text-xs text-gray-500">{{pinia.state.user?.email}}</p>
                     </div>
                 </div>
                 </div>
@@ -237,6 +286,7 @@
     ArrowLeftRight,
     MenuIcon,
     LogOutIcon,
+    DollarSign,
     HelpCircle
   } from 'lucide-vue-next'
   

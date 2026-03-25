@@ -146,7 +146,7 @@ import { fetchCryptoBal } from "@/composables/actions/index"
   const notify = useNotify()
   
   /* INIT FROM STORE */
-  const fromCoin = ref(store.state.selectedTransaction.coin || store.state.cryptoPrices[1] )
+  const fromCoin = ref(store.state.selectedTransaction?.coin || store.state.cryptoPrices[1] )
   const toCoin = ref(store.state.cryptoPrices[3]) // default first coin
   
   const fromAmount = ref("")

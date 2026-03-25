@@ -32,7 +32,7 @@
         <div class="bg-white rounded-xl shadow p-5 mb-6">
         <div class="text-gray-400 text-sm">My Balance</div>
         
-        <div class="text-2xl font-bold mt-1">{{ userBalance }} {{ selectedCoin.symbol }}</div>
+        <div class="text-2xl font-bold mt-1">{{ userBalance.toFixed(4) }} {{ selectedCoin.symbol }}</div>
         
         <div class="text-gray-400 text-sm">≈ {{ balanceUSD }}</div>
         </div>

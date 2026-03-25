@@ -16,6 +16,24 @@ export const getMyUserCard = async () => {
 
 };
 
+export const getAllUserCard = async () => {
+
+    const pinia = useStore();
+
+    const url = `${baseURL}/card/all`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pinia.state.user?.token}`
+        }
+    };
+
+    return await asyncRequest(url, options);
+
+};
+
 
 export const requestCard = async (payload) => {
     const pinia = useStore();
@@ -36,7 +54,22 @@ export const approveCard = async (payload) => {
     const pinia = useStore();
     const url = `${baseURL}/card/approve`;
     const options = {
-        method: 'POST',
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pinia.state.user?.token}`
+        },
+        body: JSON.stringify(payload)
+    };
+
+    return await asyncRequest(url, options);
+};
+
+export const blockCard = async (payload) => {
+    const pinia = useStore();
+    const url = `${baseURL}/card/block`;
+    const options = {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${pinia.state.user?.token}`

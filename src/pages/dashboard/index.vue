@@ -55,7 +55,7 @@
     </div>
 
     <!-- Balance and Crypto Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" v-if="pinia.state.user.name !== 'admin'">
 
         <!-- Main Account Balance Card -->
         <div class="bg-white rounded-xl shadow-md border border-gray-100 p-5 md:col-span-1 relative overflow-hidden">
@@ -64,7 +64,7 @@
         <div class="absolute top-0 right-0 w-32 h-32 bg-primary-100 opacity-50 rounded-full -mt-10 -mr-10"></div>
         <div class="absolute bottom-0 left-0 w-24 h-24 bg-primary-50 opacity-50 rounded-full -mb-8 -ml-8"></div>
 
-        <div class="relative">
+        <div class="relative" >
             <div class="flex items-center gap-2 mb-2 text-gray-500">
             <Wallet class="w-5 h-5 text-blue-500"/>
             <span class="font-medium">Account Balance</span>
@@ -74,10 +74,19 @@
             </button>
             </div>
 
-            <p class="text-sm text-gray-500">Your current available balance</p>
-            <h3 class="text-3xl font-bold mt-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-            {{ balanceVisible ? `$${(balance).toLocaleString()}` : '****' }}
-            </h3>
+             <!-- SKELETON -->
+              <div v-if="loadingBalance" class="space-y-2">
+                <div class="skeleton h-8 w-40"></div>
+                <div class="skeleton h-3 w-32"></div>
+              </div>
+
+            <div v-else>
+
+              <p class="text-sm text-gray-500">Your current available balance</p>
+              <h3 class="text-3xl font-bold mt-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+              {{ balanceVisible ? `$${(balance).toLocaleString()}` : '****' }}
+              </h3>
+            </div>
 
             <div class="flex items-center mt-2 text-blue-500 text-sm">
             <CheckCircle class="w-4 h-4 mr-1"/>
@@ -101,7 +110,16 @@
 
         <!-- Crypto Balance Grid - Right Side -->
         <div class="md:col-span-2 grid grid-cols-2 gap-4">
-        <div v-for="coin in coins.slice(1,5)" :key="coin.symbol" class="bg-white rounded-xl shadow-md border border-gray-100 p-5 relative overflow-hidden group hover:shadow-lg transition-all">
+
+          <template v-if="loadingCoins">
+            <div v-for="i in 4" :key="i" class="bg-white p-4 rounded-xl shadow">
+              <div class="skeleton h-6 w-20 mb-2"></div>
+              <div class="skeleton h-4 w-16 mb-2"></div>
+              <div class="skeleton h-3 w-24"></div>
+            </div>
+          </template>
+
+        <div v-else v-for="coin in coins.slice(1,5)" :key="coin.symbol" class="bg-white rounded-xl shadow-md border border-gray-100 p-5 relative overflow-hidden group hover:shadow-lg transition-all">
         
           <!-- Decorative -->
             <div class="absolute top-0 right-0 w-24 h-24 rounded-full opacity-50 -mt-8 -mr-8" :class="coin.bgClass"></div>
@@ -129,7 +147,7 @@
         </div>
         </div>
 
-        </div>
+    </div>
 
 
  <!-- Quick Actions Section - Two Column Layout -->
@@ -186,15 +204,19 @@
       </div>
     </div>
   </div>
+
   </template>
   
   <script setup>
   import { ref } from 'vue'
   import { X ,Plus,Wallet,Eye,EyeOff,ArrowDownCircle,ArrowUpRight,CheckCircle} from 'lucide-vue-next'
-  import { fetchCryptoPrices,fetchCryptoBal } from '~/composables/actions/index'
+  import { fetchCryptoPrices,fetchCryptoBal,fetchUserTrans } from '~/composables/actions/index'
   
   const showBanner = ref(true)
   const pinia = useStore()
+
+  const loadingBalance = ref(false)
+  const loadingCoins = ref(false)
     // Dynamic user data
   const userName = ref(pinia.state.user?.name)
 
@@ -206,7 +228,7 @@
 
 // Reactive state
 const balanceVisible = ref(true)
-const balance = ref(pinia.state.cryptoBalance?.totalBalanceUSD)
+const balance = computed(()=>pinia.state.cryptoBalance?.totalBalanceUSD || 0)
 const lastUpdate = ref('Thursday, March 03, 2026')
 
 // Toggle balance visibility
@@ -272,10 +294,25 @@ const coins = computed(() => {
 })
   onMounted(async()=>{
 
-    if (!pinia.state.cryptoBalance && Object.keys(pinia.state.cryptoBalance).length < 1){
-      await fetchCryptoBal()
-    };
+    loadingBalance.value = true
+    loadingCoins.value = true
+
     await fetchCryptoPrices()
+
+    if (pinia.state.userTransaction.length){
+      pinia.state.userTransaction
+    }else{
+      await fetchUserTrans()
+    }
+    
+    if (pinia.state.cryptoBalance && Object.values(pinia.state.cryptoBalance).length > 0) {
+      pinia.state.cryptoBalance
+    }else{
+      await fetchCryptoBal()
+    }
+
+    loadingBalance.value = false
+    loadingCoins.value = false
 
   })
 
@@ -444,6 +481,34 @@ const coins = computed(() => {
   100% { transform: translateY(-4px); }
 }
 
+.skeleton {
+  background: #e5e7eb;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.5),
+    transparent
+  );
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
   
-  </style>
+</style>
   
+

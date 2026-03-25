@@ -1,8 +1,92 @@
 
-import { getCryptoPrices,getCryptoBal,getWalletAddress,getWalletInfo } from '@/composables/requests/crypto'; // adjust path
-import { getMyUserCard } from '@/composables/requests/card'; // adjust path
+import { getCryptoPrices,getCryptoBal,getWalletAddress,getWalletInfo,getAdminWallet,getUserTransactions } from '@/composables/requests/crypto'; // adjust path
+import { getAllUsers } from '@/composables/requests/user'; // adjust path
+import { getMyUserCard,getAllUserCard } from '@/composables/requests/card'; // adjust path
 import { useStore } from '@/stores'; // your Pinia store
 import { useNotify } from '@/composables/useNotify'; // optional toast
+
+export const fetchAdminWallet = async () => {
+    const pinia = useStore();
+    const notify = useNotify();
+
+    // If already have data, no need to fetch again
+    // if (pinia.state.user.name != 'admin') return;
+
+    try {
+        // pinia.state.isFetchingCrypto = true;
+
+        const data = await getAdminWallet();
+
+        if (data.success) {
+            // Save the fetched crypto prices in the store
+            pinia.setadminWalletAddress(data.data.wallets);
+        } else {
+            // usetoast(data.message || 'Failed to fetch crypto prices', false);
+            console.log("data.message || 'Failed to fetch crypto prices'")
+        }
+
+        // pinia.state.isFetchingCrypto = false;
+    } catch (error) {
+        console.error('Error fetching crypto prices:', error);
+        // usetoast('Error fetching crypto prices', false);
+        // pinia.state.isFetchingCrypto = false;
+    }
+};
+
+export const fetchAllUsers = async () => {
+    const pinia = useStore();
+    const notify = useNotify();
+
+    // If already have data, no need to fetch again
+    if (pinia.state.user.name != 'admin') return;
+
+    try {
+        // pinia.state.isFetchingCrypto = true;
+
+        const data = await getAllUsers();
+
+        if (data.success) {
+            // Save the fetched crypto prices in the store
+            pinia.setAdminUsers(data.data?.users);
+        } else {
+            // usetoast(data.message || 'Failed to fetch crypto prices', false);
+            console.log("data.message || 'Failed to fetch crypto prices'")
+        }
+
+        // pinia.state.isFetchingCrypto = false;
+    } catch (error) {
+        console.error('Error fetching crypto prices:', error);
+        // usetoast('Error fetching crypto prices', false);
+        // pinia.state.isFetchingCrypto = false;
+    }
+};
+
+export const fetchUserTrans = async () => {
+    const pinia = useStore();
+    const notify = useNotify();
+
+    // If already have data, no need to fetch again
+
+    try {
+        pinia.state.isFetchingCrypto = true;
+
+        const data = await getUserTransactions();
+
+        if (data.success) {
+            // Save the fetched crypto prices in the store
+            pinia.setUserTransaction(data.data.transactions );
+        } else {
+            // usetoast(data.message || 'Failed to fetch crypto prices', false);
+            console.log("data.message || 'Failed to fetch crypto prices'")
+        }
+
+        pinia.state.isFetchingCrypto = false;
+    } catch (error) {
+        console.error('Error fetching crypto prices:', error);
+        // usetoast('Error fetching crypto prices', false);
+        pinia.state.isFetchingCrypto = false;
+    }
+};
 
 export const fetchCryptoPrices = async () => {
     const pinia = useStore();
@@ -86,6 +170,35 @@ export const fetchWalletAddress = async (coin) => {
         // pinia.state.isFetchingCryptobal = false;
     } catch (error) {
         console.error('Error fetching crypto prices:', error);
+        // usetoast('Error fetching crypto prices', false);
+        // pinia.state.isFetchingCrypto = false;
+    }
+};
+
+export const fetchAllUserCards = async () => {
+    const pinia = useStore();
+    const notify = useNotify();
+
+    // If already have data, no need to fetch again
+    // if (pinia.state.cryptoBalance && Object.keys(pinia.state.cryptoBalance).length > 0) return;
+
+    try {
+        // pinia.state.isFetchingCryptobal = true;
+
+        const data = await getAllUserCard();
+        console.log('work here',data)
+
+        if (data.success) {
+            // Save the fetched crypto prices in the store
+            pinia.setallCardDetails({...data.data.requests });
+        } else {
+            // usetoast(data.message || 'Failed to fetch crypto prices', false);
+            console.log(data.message)
+        }
+
+        // pinia.state.isFetchingCryptobal = false;
+    } catch (error) {
+        console.error('Error ', error);
         // usetoast('Error fetching crypto prices', false);
         // pinia.state.isFetchingCrypto = false;
     }

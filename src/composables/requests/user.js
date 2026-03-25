@@ -31,4 +31,23 @@ export const updateUserPassword = async (payload) => {
 };
 
 
+export const getAllUsers = async () => {
+
+    const pinia = useStore();
+
+    const url = `${baseURL}/user/getUser`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pinia.state.user?.token}`
+        }
+    };
+
+    return await asyncRequest(url, options);
+
+};
+
+
 
