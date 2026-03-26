@@ -157,9 +157,9 @@
     Copy
     } from "lucide-vue-next"
     
-    import { updateProfile } from '@/composables/requests/user'
+    import { updateUser } from '@/composables/requests/user'
     import { uploadImg } from '@/composables/requests/utils'
-    import { useStore } from "@/stores";
+    
     import { useNotify } from "@/composables/useNotify";
     
     
