@@ -41,7 +41,7 @@
     ========================== -->
     <section class="max-w-6xl mx-auto">
 
-      <div v-if="cards" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="cards.length && cards" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         <div v-for="card in cards" :key="card._id">
 
