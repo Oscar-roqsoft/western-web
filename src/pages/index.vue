@@ -360,7 +360,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
       
       <Services
-        icon="credit-List"
+        icon="credit-card"
         title="Wallet Security"
         text="Our system is developed to stop any form of cyber attacks that could result in loss of assets."
       />
@@ -657,6 +657,8 @@
 <script setup>
     import { Splide, SplideSlide } from '@splidejs/vue-splide'
     import '@splidejs/vue-splide/css'
+    import { CreditCard} from 'lucide-vue-next'
+
 
     definePageMeta(
         {

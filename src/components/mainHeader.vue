@@ -98,7 +98,7 @@
           <div class="border-t border-white/10 pt-4 space-y-3">
             <NuxtLink to="/login">
               <button
-                class="px-5 w-full py-2 border border-white/30 text-white rounded-full text-sm hover:bg-white hover:text-black transition-all"
+                class="px-5 w-full py-3 border border-white/30 text-white rounded-full  hover:bg-white hover:text-black transition-all"
               >
                 Log In →
               </button>
@@ -107,7 +107,7 @@
 
           <NuxtLink to="/dashboard">
             <button
-              class="w-full mt-4 py-3 bg-[#fff] text-black font-semibold rounded-full hover:bg-[#ffd24d] transition-all duration-300"
+              class="w-full mt-2 py-3 bg-[#fff] text-black font-semibold rounded-full hover:bg-[#ffd24d] transition-all duration-300"
             >
               Access Dashboard
             </button>

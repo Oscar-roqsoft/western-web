@@ -44,12 +44,12 @@
 
         <!-- Action Button -->
         <NuxtLink
-        to=""
+        to="/dashboard/listtokens"
         class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 
         rounded-lg flex justify-center items-center gap-2 transition-all shadow-md hover:shadow-lg"
         >
         <Plus class="w-4 h-4"/>
-        <span class="text-xs">Buy XRP</span>
+        <span class="text-xs">Buy Coin</span>
         </NuxtLink>
 
     </div>

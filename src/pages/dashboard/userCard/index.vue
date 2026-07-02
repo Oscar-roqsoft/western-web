@@ -20,9 +20,9 @@
       <!-- INFO -->
       
 
-       <div class="bg-gradient-to-r from-indigo-50 to-white border rounded-xl p-5 flex gap-4"> 
-        <div class="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-600 text-white"> 
-          <CreditCard class="w-6 h-6"/> 
+       <div class="bg-gradient-to-r from-indigo-50 to-white border rounded-xl p-4 flex gap-4"> 
+        <div class="w-24 h-12 flex items-center justify-center rounded-full bg-indigo-600 text-white"> 
+          <CreditCard class="w-4 h-4"/> 
         </div> 
         <div> 
           <h2 class="font-semibold text-lg">Virtual Cards</h2> 
@@ -107,9 +107,16 @@
       </div>
 
       <!-- EMPTY -->
-      <div v-else class="text-center py-16">
+      <div v-else class="text-center py-16 flex flex-col items-center">
         <CreditCard class="w-10 h-10 mx-auto text-gray-400"/>
         <h3 class="mt-3 font-semibold">No Cards Yet</h3>
+        <NuxtLink
+          to="/dashboard/userCard/request"
+          class="flex items-center gap-2 bg-indigo-600 mt-4 text-white px-4 py-2 rounded-lg text-sm shadow"
+        >
+          <Plus class="w-4 h-4"/>
+          Request Card
+        </NuxtLink>
       </div>
 
     </section>
