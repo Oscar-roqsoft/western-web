@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['nuxtjs-naive-ui', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt',],
  
-  ssr:true,
+  ssr:false,
   debug: true, // Enable debugging
 
   // debug: true, 
