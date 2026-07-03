@@ -5,9 +5,9 @@
       <div class="w-full max-w-md">
   
         <!-- Logo -->
-        <div class="text-center mb-8">
+        <div class="text-center">
           <NuxtLink to="/">
-            <img src="/logo/8.png" class="h-16 mx-auto" />
+            <img src="/clogo1.png" class="h-36 mx-auto" />
             
           </NuxtLink>
         </div>

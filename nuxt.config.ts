@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/logo/5.png' },
+        { rel: 'icon', type: 'image/png', href: '/q.png' },
         // { rel: 'icon', type: 'image/x-icon', href: '/Asset18.png' }, // For the standard favicon
         // { rel: 'icon', type: 'image/png', href: '/favicon-32x32.png' }, // Example for other formats
         // { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }, // For iOS devices

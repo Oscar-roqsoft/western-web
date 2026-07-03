@@ -10,9 +10,9 @@
       >
   
         <!-- Logo -->
-        <div class="p-5 border-b flex items-center justify-center">
+        <div class="border-b flex items-center justify-center">
           <NuxtLink to="/">
-            <img src="/logo/8.png" class="h-10" />
+            <img src="/clogo1.png" class="h-20" />
           </NuxtLink>
         </div>
   

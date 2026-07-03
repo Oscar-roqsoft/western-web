@@ -11,7 +11,7 @@
         @click="navigateTo('home')"
       >
         <img
-         src="/logo/8.png"
+         src="/clogo2.png"
           alt="Deroly"
           class="w-full object-contain"
         />
