@@ -74,33 +74,65 @@
     <!-- Security -->
     <div class="bg-white rounded-xl shadow-sm border p-4 mb-4">
     
-    <h3 class="text-sm font-semibold text-gray-500 mb-3">
-    Security
-    </h3>
-    
-    <div class="space-y-2">
-    
-    <button
-    class="profile-btn"
-    @click="showPasswordModal = true"
-    >
-    <KeyRound class="icon"/>
-    <span>Change Password</span>
-    <ChevronRight class="arrow"/>
-    </button>
-    
-    
-    <button
-    class="profile-btn"
-    @click="showPinModal = true"
-    >
-    <Lock class="icon"/>
-    <span>Set / Change PIN</span>
-    <ChevronRight class="arrow"/>
-    </button>
-    
-    </div>
-    
+        <h3 class="text-sm font-semibold text-gray-500 mb-3">
+        Security
+        </h3>
+        
+        <div class="space-y-2">
+        
+            <button
+                class="profile-btn"
+                @click="showPasswordModal = true"
+                >
+                <KeyRound class="icon"/>
+                <span>Change Password</span>
+                <ChevronRight class="arrow"/>
+            </button>
+            
+            
+            <button
+                class="profile-btn"
+                @click="showPinModal = true"
+                >
+                <Lock class="icon"/>
+                <span>Set / Change PIN</span>
+                <ChevronRight class="arrow"/>
+            </button>
+
+            <button
+                class="profile-btn"
+                @click="handleVerification()"
+                >
+                <ShieldCheck
+                    v-if="pinia.state.user?.isVerified"
+                    class="icon text-green-600"
+                />
+
+                <ShieldAlert
+                    v-else
+                    class="icon text-amber-500"
+                />
+
+                <div class="flex flex-col items-start flex-1">
+                    <span>Account Verification</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <span
+                    class="text-xs font-medium bg-gray-100 rounded-md px-2 py-1"
+                    :class="pinia.state.user?.isVerified
+                        ? 'text-green-600 bg-green-100'
+                        : 'text-amber-500 bg-amber-100'"
+                    >
+                    {{ pinia.state.user?.isVerified ? 'Verified' : 'Not Verified' }}
+                    </span>
+
+                    <ChevronRight class="arrow" />
+                </div>
+            </button>
+        
+        </div>
+        
     </div>
     
     
@@ -147,7 +179,7 @@
     Lock,
     LogOut,
     ChevronRight,
-    Copy
+    Copy,ShieldCheck, ShieldAlert
     } from "lucide-vue-next"
     
     
@@ -216,7 +248,16 @@ const handleAvatar = async (event)=>{
 
         }
 
-    }
+}
+
+const handleVerification = () => {
+//   if (pinia.state.user?.isVerified) {
+//     // usetoast("Your account is already verified.", true);
+//     return;
+//   }
+
+  navigateTo("/dashboard/verify-account");
+};
 </script>
 
 <style scoped>

@@ -10,6 +10,7 @@ export const useStore = defineStore('Crypto', () => {
     adminUsers:[],
     isAuthenticated:false,
     email:null,
+    currentStep:1,
     selectedCryptoPrice: null,
     cryptoPrices:[],
     notification:[],
@@ -29,6 +30,20 @@ export const useStore = defineStore('Crypto', () => {
     isloadingPriceCard:false,
     isFetchingCryptobal:false,
     isFetchingCrypto:false,
+    verificationForm: {
+      firstName: "",
+      lastName: "",
+      dob: "",
+      nationality: "",
+      address: "",
+
+      documentType: "",
+      documentNumber: "",
+
+      frontFile: null,
+      backFile: null,
+      selfieFile: null,
+    },
   });
 
     const setUser = (payload)=>{
@@ -91,7 +106,18 @@ export const useStore = defineStore('Crypto', () => {
     state.selectedTransaction = null
     state.isFetchingCryptobal = false
     state.isAuthenticated = false
-
+    state.verificationForm = {
+      firstName: "",
+      lastName: "",
+      dob: "",
+      nationality: "",
+      address: "",
+      documentType: "",
+      documentNumber: "",
+      frontFile: null,
+      backFile: null,
+      selfieFile: null,
+    }
   }
   const logout =()=>{
     state.cryptoPrices = []
@@ -112,6 +138,18 @@ export const useStore = defineStore('Crypto', () => {
     state.isFetchingCryptobal = false
     state.isAuthenticated = false
     state.walletAddress = null
+    state.verificationForm = {
+      firstName: "",
+      lastName: "",
+      dob: "",
+      nationality: "",
+      address: "",
+      documentType: "",
+      documentNumber: "",
+      frontFile: null,
+      backFile: null,
+      selfieFile: null,
+    }
     navigateTo("/login")
 
   }
