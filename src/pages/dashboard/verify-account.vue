@@ -308,131 +308,155 @@
 
             </div>
 
-            <!-- Upload Cards -->
+          <!-- Upload Cards -->
+              <div class="grid md:grid-cols-2 gap-6 mt-8">
 
-            <div class="grid md:grid-cols-2 gap-6 mt-8">
+              <!-- ================= FRONT ================= -->
 
-                <!-- FRONT -->
-
-                <label
+              <label
                 class="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer hover:border-blue-500 transition"
-                >
+              >
 
                 <input
-                    hidden
-                    type="file"
-                    accept="image/*,.pdf"
-                    @change="uploadFront"
+                  hidden
+                  type="file"
+                  accept="image/*,.pdf"
+                  @change="uploadFront"
                 />
 
-                <div v-if="!frontFile">
+                <!-- Empty -->
 
-                    <div class="text-5xl">📄</div>
+                <div v-if="!form.frontFile">
 
-                    <p class="font-semibold mt-3">
-                        Upload Front
-                    </p>
+                  <div class="text-5xl">
+                    📄
+                  </div>
 
-                    <p class="text-gray-500 text-sm">
-                        JPG, PNG or PDF
-                    </p>
+                  <p class="font-semibold mt-3">
+                    Upload Front
+                  </p>
+
+                  <p class="text-gray-500 text-sm">
+                    JPG, PNG or PDF
+                  </p>
 
                 </div>
 
-                <div v-else class="flex flex-col justify-center items-center">
+                <!-- Uploaded -->
 
-                    <div v-if="frontPreview" class="w-48 h-48 object-cover rounded-xl">
-                        <img
-                           
-                            :src="frontPreview"
-                            class="w-full h-full object-cover rounded-xl"
-                        >
-                    </div>
+                <div v-else>
+
+                  <div class="flex flex-col items-center">
+
+                    <!-- IMAGE -->
+
+                    <img
+                      v-if="!form.frontFile.toLowerCase().endsWith('.pdf')"
+                      :src="form.frontFile"
+                      class="w-48 h-48 object-cover rounded-xl border"
+                    >
+
+                    <!-- PDF -->
 
                     <div
-                        v-else
-                        class="h-48 flex items-center justify-center bg-gray-100 rounded-xl"
+                      v-else
+                      class="w-48 h-48 rounded-xl border bg-gray-100 flex items-center justify-center text-6xl"
                     >
-                        📑 PDF Uploaded
+                      📑
                     </div>
 
-                    <p class=" font-semibold mt-3 max-w-40 truncate">
-                        {{ frontFile.name }}
+                    <p class="mt-3 font-semibold truncate w-48">
+                      Front Uploaded
                     </p>
 
                     <button
-                        type="button"
-                        class="mt-3 text-red-500 text-sm hover:underline"
-                        @click.stop.prevent="removeFront"
+                      type="button"
+                      class="mt-2 text-red-500 hover:underline"
+                      @click.stop.prevent="removeFront"
                     >
-                        Remove
+                      Remove
                     </button>
 
+                  </div>
+
                 </div>
 
-                </label>
+              </label>
 
-                <!-- BACK -->
 
-                <label
+              <!-- ================= BACK ================= -->
+
+              <label
                 class="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer hover:border-blue-500 transition"
-                >
+              >
 
                 <input
-                    hidden
-                    type="file"
-                    accept="image/*,.pdf"
-                    @change="uploadBack"
+                  hidden
+                  type="file"
+                  accept="image/*,.pdf"
+                  @change="uploadBack"
                 />
 
-                <div v-if="!backFile" >
+                <!-- Empty -->
 
-                    <div class="text-5xl">🪪</div>
+                <template v-if="!form.backFile">
 
-                    <p class="font-semibold mt-3">
-                        Upload Back
-                    </p>
+                  <div class="text-5xl">
+                    🪪
+                  </div>
 
-                    <p class="text-gray-500 text-sm">
-                        JPG, PNG or PDF
-                    </p>
+                  <p class="font-semibold mt-3">
+                    Upload Back
+                  </p>
 
-                </div>
+                  <p class="text-gray-500 text-sm">
+                    JPG, PNG or PDF
+                  </p>
 
-                <div v-else class="flex flex-col justify-center items-center">
+                </template>
 
-                    <div v-if="backPreview" class="w-48 h-48 object-cover rounded-xl">
+                <!-- Uploaded -->
 
-                        <img
-                            
-                            :src="backPreview"
-                            class="w-full h-full object-cover rounded-xl"
-                        >
-                    </div>
+                <template v-else>
+
+                  <div class="flex flex-col items-center">
+
+                    <!-- IMAGE -->
+
+                    <img
+                      v-if="!form.backFile.toLowerCase().endsWith('.pdf')"
+                      :src="form.backFile"
+                      class="w-48 h-48 object-cover rounded-xl border"
+                    >
+
+                    <!-- PDF -->
 
                     <div
-                        v-else
-                        class="h-48 flex items-center justify-center bg-gray-100 rounded-xl"
+                      v-else
+                      class="w-48 h-48 rounded-xl border bg-gray-100 flex items-center justify-center text-6xl"
                     >
-                        📑 PDF Uploaded
+                      📑
                     </div>
 
-                    <p class="font-semibold mt-3   max-w-40 truncate">
-                        {{ backFile.name }}
+                    <p class="mt-3 font-semibold truncate w-48">
+                      Back Uploaded
                     </p>
 
                     <button
-                        type="button"
-                        class="mt-3 text-red-500 text-sm hover:underline"
-                        @click.stop.prevent="removeBack"
+                      type="button"
+                      class="mt-2 text-red-500 hover:underline"
+                      @click.stop.prevent="removeBack"
                     >
-                        Remove
+                      Remove
                     </button>
 
-                </div>
-                </label>
+                  </div>
 
-            </div>
+                </template>
+
+              </label>
+
+              </div>
 
             <!-- Tips -->
 
@@ -767,7 +791,7 @@
 
             <button
             @click="submitVerification"
-            :disabled="!accepted || !selfieFile || submitting"
+            :disabled="!accepted || !form.selfieFile || submitting"
             class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-10 py-3 rounded-xl font-semibold"
             >
 
@@ -989,298 +1013,300 @@
   </template>
   
   <script setup>
-  import { computed, ref } from "vue";
-  import { uploadImg } from '@/composables/requests/utils'; // Adjust path as needed
-  
-  const currentStep = ref(1);
-  const accepted = ref(false);
+  import { computed, ref, watch, onMounted } from "vue";
+  import { uploadImg } from "@/composables/requests/utils";
+  import { updateUser } from "@/composables/requests/user";
+  import { compressImage } from "@/composables/utils/compressImage";
   const pinia = useStore();
-  // const frontFile = ref(null);
-// const backFile = ref(null);
-// const selfieFile = ref(null);
-
-const frontPreview = ref("");
-const backPreview = ref("");    
-const selfiePreview = ref("");
-    const submitting = ref(false);
-
-    const reviewSubmitted = ref(false);
-
-    const frontFile = computed({
-  get: () => pinia.state.verificationForm.frontFile,
-  set: value => pinia.state.verificationForm.frontFile = value
-})
-
-const backFile = computed({
-  get: () => pinia.state.verificationForm.backFile,
-  set: value => pinia.state.verificationForm.backFile = value
-})
-
-const selfieFile = computed({
-  get: () => pinia.state.verificationForm.selfieFile,
-  set: value => pinia.state.verificationForm.selfieFile = value
-})
-    
-  const steps = [
-  {
-    title: "Personal",
-    subtitle: "Your details",
-  },
-  {
-    title: "Documents",
-    subtitle: "Upload ID",
-  },
-  {
-    title: "Review",
-    subtitle: "Submit",
-  },
-  {
-    title: "Review",
-    subtitle: "Pending",
-  },
-];
+  const notify = useNotify();
+  
+  const accepted = ref(false);
+  const submitting = ref(false);
+  const reviewSubmitted = ref(false);
+  
+  const frontUploading = ref(false);
+  const backUploading = ref(false);
+  const selfieUploading = ref(false);
   
   const form = computed(() => pinia.state.verificationForm);
   
+  const frontPreview = ref("");
+  const backPreview = ref("");
+  const selfiePreview = ref("");
+  
   const percentage = computed(() => {
-  
-    if(pinia.state.currentStep===1) return 25;
-  
-    if(pinia.state.currentStep===2) return 50;
-
-    if(pinia.state.currentStep===3) return 75;
-  
-    return 100;
-  
+    switch (pinia.state.currentStep) {
+      case 1:
+        return 25;
+      case 2:
+        return 50;
+      case 3:
+        return 75;
+      default:
+        return 100;
+    }
   });
 
- const handleUpload = async(event, fileRef, previewRef,fileRefName) => {
-  const file = event.target.files?.[0]; 
-  if (!file) return; 
+  const steps = [ 
+    { title: "Personal", subtitle: "Your details", },
+     { title: "Documents", subtitle: "Upload ID", },
+      { title: "Review", subtitle: "Submit", },
+       { title: "Review", subtitle: "Pending", 
+
+       }, 
+      ];
   
-  // console.log(fileRefName,'fileRef');
+  const disabled1 = computed(() => {
+    return !(
+      form.value.firstName &&
+      form.value.lastName &&
+      form.value.dob &&
+      form.value.nationality &&
+      form.value.address
+    );
+  });
   
-  // console.log(pinia.state.verificationForm,fileRef); 
-   // // 5MB limit 
-   if (file.size > 5 * 1024 * 1024){ 
-     // usetoast("File size must be below 5MB", false); 
-     return;
-    }
-    // allow images & pdf 
-    const allowed = [ "image/jpeg", "image/png", "image/jpg", "application/pdf", ];
-    if (!allowed.includes(file.type)) {
-      //  usetoast("Only JPG, PNG and PDF are allowed.", false); 
-      return; 
-    } 
-      
-      fileRef.value = file;
-       // preview images only
-       if (file.type.startsWith("image/")) { 
-        previewRef.value = URL.createObjectURL(file); 
+  const disabled2 = computed(() => {
+    return !(
+      form.value.documentType &&
+      form.value.documentNumber &&
+      form.value.frontFile &&
+      form.value.backFile
+    );
+  });
+  
+  /*
+  |--------------------------------------------------------------------------
+  | Upload Image
+  |--------------------------------------------------------------------------
+  */
+  
+  const handleUpload = async (
+  event,
+  fileRef,
+  previewRef,
+  fileName
+) => {
 
-        const data = await uploadImg(file)
+  if (!fileName) {
+    console.error("fileRefName is undefined");
+    return;
+  }
 
-        console.log(data)
 
-        if(data.success){
+  let file = event.target.files?.[0];
 
-                // const payload = {...pinia.state.user, avatar: data.imageUrl}
-                // updateUser(payload)
-                
-                 pinia.state.verificationForm[fileRefName] = data.imageUrl
-                 notify.success("file uploaded")
+  if (!file) return;
 
-                pinia.state.user.avatar = data.imageUrl
+  const allowed = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "application/pdf",
+  ];
 
-        }else{
+  if (!allowed.includes(file.type)) {
+    notify.error("Only JPG, PNG and PDF allowed.");
+    return;
+  }
 
-            notify.error(data.message)
+  if (file.size > 10 * 1024 * 1024) {
+    notify.error("Maximum file size is 10MB.");
+    return;
+  }
 
-        }
-      } else { 
-        previewRef.value = ""; 
+  try {
 
-      } 
-  };
-
-  watch(frontFile, file => {
-    if (!file) {
-        frontPreview.value = ""
-        return
-    }
-
-    if (file instanceof File && file.type.startsWith("image/")) {
-        frontPreview.value = URL.createObjectURL(file)
-    }
-})
-
-watch(backFile, file => {
-    if (!file) {
-        backPreview.value = ""
-        return
+    // Compress only images
+    if (file.type.startsWith("image/")) {
+      file = await compressImage(file);
     }
 
-    if (file instanceof File && file.type.startsWith("image/")) {
-        backPreview.value = URL.createObjectURL(file)
-    }
-})
-
-watch(selfieFile, file => {
-    if (!file) {
-        selfiePreview.value = ""
-        return
+    // Preview
+    if (file.type.startsWith("image/")) {
+      previewRef.value = URL.createObjectURL(file);
+    } else {
+      previewRef.value = "";
     }
 
-    if (file instanceof File && file.type.startsWith("image/")) {
-        selfiePreview.value = URL.createObjectURL(file)
-    }
-})
+    notify.info("Uploading...");
 
+    const response = await uploadImg(file);
+
+    if (!response.success) {
+      throw new Error(response.message);
+    }
+
+    pinia.state.verificationForm[fileName] =
+      response.imageUrl;
+
+    notify.success("Upload successful");
+
+  } catch (err) {
+
+    console.error(err);
+
+    notify.error(err.message || "Upload failed");
+
+  }
+
+};
+  
 const uploadFront = (e) => {
-  handleUpload(e, frontFile, frontPreview,'frontFile');
+  handleUpload(e, form.value.frontFile, frontPreview, "frontFile");
 };
 
 const uploadBack = (e) => {
-  handleUpload(e, backFile, backPreview,'backFile');
+  handleUpload(e, form.value.backFile, backPreview, "backFile");
 };
 
 const uploadSelfie = (e) => {
-  handleUpload(e, selfieFile, selfiePreview ,'selfieFile');
+  handleUpload(e, form.value.selfieFile, selfiePreview, "selfieFile");
 };
-
-const removeFront = () => {
-  if (frontPreview.value) {
-    URL.revokeObjectURL(frontPreview.value);
-  }
-
-  frontPreview.value = "";
-  frontFile.value = null;
-};
-
-const removeBack = () => {
-  if (backPreview.value) {
-    URL.revokeObjectURL(backPreview.value);
-  }
-
-  backPreview.value = "";
-  backFile.value = null;
-};
-
-  const disabled1 = computed(() => {
-  return !(
-    
-    form.value.firstName &&
-    form.value.lastName &&
-    form.value.dob &&
-    form.value.nationality &&
-    form.value.address
-
-  );
-});
-
-const disabled2 = computed(() => {
-  return !(
-    form.value.documentType &&
-    form.value.documentNumber &&
-    
-    frontFile.value &&
-    backFile.value 
-
-  );
-});
-  const nextStep=()=>{
   
-    if(
-      !form.value.firstName||
-      !form.value.lastName||
-      !form.value.dob||
-      !form.value.nationality||
-      !form.value.address
-    ){
+  /*
+  |--------------------------------------------------------------------------
+  | Preview
+  |--------------------------------------------------------------------------
+  */
   
-    //   usetoast("Please complete all fields",false);
-        disabled1.value = true;
-        per
+  watch(
+    () => form.value.frontFile,
+    (value) => {
+      frontPreview.value = value || "";
+    },
+    { immediate: true }
+  );
+  
+  watch(
+    () => form.value.backFile,
+    (value) => {
+      backPreview.value = value || "";
+    },
+    { immediate: true }
+  );
+  
+  watch(
+    () => form.value.selfieFile,
+    (value) => {
+      selfiePreview.value = value || "";
+    },
+    { immediate: true }
+  );
+  
+  /*
+  |--------------------------------------------------------------------------
+  | Remove
+  |--------------------------------------------------------------------------
+  */
+  
+  const removeFront = () => {
+    form.value.frontFile = "";
+    frontPreview.value = "";
+  };
+  
+  const removeBack = () => {
+    form.value.backFile = "";
+    backPreview.value = "";
+  };
+  
+  const removeSelfie = () => {
+    form.value.selfieFile = "";
+    selfiePreview.value = "";
+  };
+  
+  /*
+  |--------------------------------------------------------------------------
+  | Navigation
+  |--------------------------------------------------------------------------
+  */
+  
+  const nextStep = () => {
+    if (disabled1.value) {
+      notify.error("Please complete all personal information.");
       return;
     }
   
-    pinia.state.currentStep =2;
+    pinia.state.currentStep = 2;
+  };
   
-  }
-  const nextToStep3 =async ()=>{
-    if(
-      !form.value.documentType||
-      !form.value.documentNumber||
-      !frontFile.value||
-      !backFile.value
-      
-    ){
+  const nextToStep3 = () => {
+    if (disabled2.value) {
+      notify.error("Please upload all required documents.");
       return;
     }
-    pinia.state.currentStep =3;
-  }
-
+  
+    pinia.state.currentStep = 3;
+  };
+  
+  /*
+  |--------------------------------------------------------------------------
+  | Submit
+  |--------------------------------------------------------------------------
+  */
+  
   const submitVerification = async () => {
+    if (!form.value.selfieFile) {
+      notify.error("Please upload your selfie.");
+      return;
+    }
+  
+    if (!accepted.value) {
+      notify.error("Please accept the declaration.");
+      return;
+    }
+  
+    submitting.value = true;
+  
+    try {
+      const payload = {
+      ...pinia.state.user,
 
-        if (!selfieFile.value) {
-        return alert("Please upload your selfie.");
-        }
+      userIdentity: {
+        ...pinia.state.verificationForm,
+      },
 
-        if (!accepted.value) {
-        return alert("Please accept the declaration.");
-        }
+      verificationStatus: "pending",
+      submittedAt: new Date(),
+    };
 
-        submitting.value = true;
+       await updateUser(payload);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+  
+      pinia.state.user = response.user;
+  
+      reviewSubmitted.value = true;
+  
+      pinia.state.currentStep = 4;
+  
+      notify.success(
+        "Verification submitted successfully."
+      );
+    } catch (err) {
+      notify.error(
+        err.response?.data?.message ||
+          err.message ||
+          "Submission failed."
+      );
+    } finally {
+      submitting.value = false;
+    }
+  };
+  
+  onMounted(() => {
 
-        try {
+    frontPreview.value =
+      pinia.state.verificationForm.frontFile || "";
 
-        const formData = new FormData();
+    backPreview.value =
+      pinia.state.verificationForm.backFile || "";
 
-        Object.entries(form.value).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
+    selfiePreview.value =
+      pinia.state.verificationForm.selfieFile || "";
 
-        formData.append("front", frontFile.value);
-        formData.append("back", backFile.value);
-        formData.append("selfie", selfieFile.value);
-
-        // await api.submitVerification(formData)
-
-        reviewSubmitted.value = true;
-   pinia.state.currentStep = 4;
-
-        alert("Verification submitted successfully.");
-
-        } finally {
-
-        submitting.value = false;
-
-        }
-
-};
-
-
-onMounted(() => {
-
-  // if (pinia.state.verificationForm.frontFile instanceof File) {
-  //   frontPreview.value = URL.createObjectURL(
-  //     pinia.state.verificationForm.frontFile
-  //   );
-  // }
-
-  // if (pinia.state.verificationForm.backFile instanceof File) {
-  //   backPreview.value = URL.createObjectURL(
-  //     pinia.state.verificationForm.backFile
-  //   );
-  // }
-
-  // if (pinia.state.verificationForm.selfieFile instanceof File) {
-  //   selfiePreview.value = URL.createObjectURL(
-  //     pinia.state.verificationForm.selfieFile
-  //   );
-  // }
-
-});
+    });
   </script>
   
   <style scoped>

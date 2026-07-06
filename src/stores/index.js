@@ -118,6 +118,7 @@ export const useStore = defineStore('Crypto', () => {
       backFile: null,
       selfieFile: null,
     }
+    state.currentStep = 1
   }
   const logout =()=>{
     state.cryptoPrices = []
@@ -150,6 +151,7 @@ export const useStore = defineStore('Crypto', () => {
       backFile: null,
       selfieFile: null,
     }
+    state.currentStep = 1
     navigateTo("/login")
 
   }
