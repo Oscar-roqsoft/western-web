@@ -15,6 +15,36 @@ export const updateUser = async (payload) => {
     return await asyncRequest(url, options);
 };
 
+export const approveKYC = async (id) => {
+    const pinia = useStore();
+  
+    return await asyncRequest(
+      `${baseURL}/user/${id}/approve-kyc`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${pinia.state.user.token}`,
+        },
+      }
+    );
+  };
+  
+  export const rejectKYC = async (id, reason) => {
+    const pinia = useStore();
+  
+    return await asyncRequest(
+      `${baseURL}/user/${id}/reject-kyc`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${pinia.state.user.token}`,
+        },
+        body: JSON.stringify({ reason }),
+      }
+    );
+  };
+
 export const updateUserPassword = async (payload) => {
     const pinia = useStore();
     const url = `${baseURL}/user/updateUserPassword`;

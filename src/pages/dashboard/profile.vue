@@ -120,11 +120,11 @@
                 <div class="flex items-center gap-2">
                     <span
                     class="text-xs font-medium bg-gray-100 rounded-md px-2 py-1"
-                    :class="pinia.state.user?.isVerified
+                    :class="pinia.state.user?.twoFactorVerification
                         ? 'text-green-600 bg-green-100'
-                        : 'text-amber-500 bg-amber-100'"
+                        : 'text-red-500 bg-red-100'"
                     >
-                    {{ pinia.state.user?.isVerified ? 'Verified' : 'Not Verified' }}
+                    {{ pinia.state.user?.twoFactorVerification ? 'Verified' : 'Not Verified' }}
                     </span>
 
                     <ChevronRight class="arrow" />

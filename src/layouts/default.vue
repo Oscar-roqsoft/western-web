@@ -17,16 +17,28 @@
         </div>
   
         <!-- Profile -->
-        <div class="mx-4 mt-5 p-4 bg-gray-100 rounded-xl flex items-center gap-3">
-          <div class="w-11 h-11 bg-blue-600 rounded-full bg-primary-600 flex items-center justify-center text-white">
-            <User class="menu-icon text-white"/>
-          </div>
-          <div>
-            <p class="text-sm font-semibold capitalize">{{pinia.state.user?.name}}</p>
-            <p class="text-xs text-gray-500">User</p>
-          </div>
-        </div>
-  
+         <div class=" mx-4 mt-5 p-4 flex flex-col  items-start gap-2 bg-gray-100 rounded-xl">
+
+           <div class="w-full flex items-center gap-3">
+             <div class="w-11 h-11 bg-blue-600 rounded-full bg-primary-600 flex items-center justify-center text-white">
+              <img v-if="pinia.state.user?.avatar" :src="pinia.state.user?.avatar" class=" rounded-full marker:w-full h-full" alt="">
+               <User v-else class="menu-icon  rounded-full text-white"/>
+             </div>
+             <div>
+               <p class="text-sm font-semibold capitalize">{{pinia.state.user?.name}}</p>
+               <!-- <p class="text-xs text-gray-500">User</p> -->
+               <span
+                 class="text-xs font-medium bg-gray-100 rounded-md px-2 py-1"
+                 :class="pinia.state.user?.twoFactorVerification
+                     ? 'text-green-600 bg-green-100'
+                     : 'text-red-500 bg-red-100'"
+                 >
+                 {{ pinia.state.user?.twoFactorVerification ? 'Verified' : 'Not Verified' }}
+                 </span>
+             </div>
+           </div>
+     
+         </div>
         <!-- Menu -->
         <nav class="flex-1 overflow-y-auto px-4 mt-6 space-y-6">
   
@@ -48,7 +60,7 @@
              <!-- user -->
             <NuxtLink
               to="/dashboard/userCard"
-              v-if="pinia.state.user.name !== 'admin'"
+              v-if="pinia.state.user?.name !== 'admin'"
               :class="['menu-item', route.path === '/dashboard/userCard' ? 'active-menu' : '']"
             >
               <CreditCard class="menu-icon"/>
@@ -56,7 +68,7 @@
             </NuxtLink>
   
             <NuxtLink
-             v-if="pinia.state.user.name != 'admin'"
+             v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/wallet"
               :class="['menu-item', route.path === '/dashboard/wallet' ? 'active-menu' : '']"
             >
@@ -65,7 +77,7 @@
             </NuxtLink>
   
             <NuxtLink
-             v-if="pinia.state.user.name != 'admin'"
+             v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/listtokens"
               :class="['menu-item', route.path === '/dashboard/listtokens' ? 'active-menu' : '']"
             >
@@ -74,7 +86,7 @@
             </NuxtLink>
   
             <NuxtLink
-             v-if="pinia.state.user.name != 'admin'"
+             v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/swap"
               :class="['menu-item', route.path === '/dashboard/swap' ? 'active-menu' : '']"
             >
@@ -84,7 +96,7 @@
 
             <!-- admin -->
             <NuxtLink
-             v-if="pinia.state.user.name == 'admin'"
+             v-if="pinia.state.user?.name == 'admin'"
               to="/dashboard/admin/user"
               :class="['menu-item', route.path === '/dashboard/admin/user' ? 'active-menu' : '']"
             >
@@ -92,7 +104,7 @@
               User Management
             </NuxtLink>
             <NuxtLink
-             v-if="pinia.state.user.name == 'admin'"
+             v-if="pinia.state.user?.name == 'admin'"
               to="/dashboard/admin/wallet"
               :class="['menu-item', route.path === '/dashboard/admin/wallet' ? 'active-menu' : '']"
             >
@@ -100,7 +112,7 @@
               Wallets
             </NuxtLink>
             <NuxtLink
-             v-if="pinia.state.user.name == 'admin'"
+             v-if="pinia.state.user?.name == 'admin'"
               to="/dashboard/admin/transactions"
               :class="['menu-item', route.path === '/dashboard/admin/transactions' ? 'active-menu' : '']"
             >
@@ -108,7 +120,7 @@
               Transactions
             </NuxtLink>
             <NuxtLink
-             v-if="pinia.state.user.name == 'admin'"
+             v-if="pinia.state.user?.name == 'admin'"
               to="/dashboard/admin/card"
               :class="['menu-item', route.path === '/dashboard/admin/card' ? 'active-menu' : '']"
             >
@@ -117,7 +129,7 @@
             </NuxtLink>
 
             <NuxtLink
-             v-if="pinia.state.user.name == 'admin'"
+             v-if="pinia.state.user?.name == 'admin'"
               to="/dashboard/admin/secure"
               :class="['menu-item', route.path === '/dashboard/admin/secure' ? 'active-menu' : '']"
             >
@@ -131,7 +143,7 @@
             <p class="text-xs uppercase text-gray-400 mb-2">Settings</p>
   
             <NuxtLink
-             v-if="pinia.state.user.name !== 'admin'"
+             v-if="pinia.state.user?.name !== 'admin'"
               to="/dashboard/notification"
               :class="['menu-item', route.path === '/dashboard/notification' ? 'active-menu' : '']"
             >
@@ -140,7 +152,7 @@
             </NuxtLink>
   
             <NuxtLink
-             v-if="pinia.state.user.name != 'admin'"
+             v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/profile"
               :class="['menu-item', route.path === '/dashboard/profile' ? 'active-menu' : '']"
             >

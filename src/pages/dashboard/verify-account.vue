@@ -64,7 +64,7 @@
                 class="w-14 h-14 rounded-full flex items-center justify-center font-bold transition-all duration-300"
   
                 :class="[
-                  pinia.state.currentStep>index+1
+                  pinia.state.currentStep>index+1 || 4
                   ?'bg-green-500 text-white'
   
                   :pinia.state.currentStep===index+1
@@ -74,10 +74,13 @@
                 ]"
               >
   
-                <span v-if="pinia.state.currentStep>index+1">
+                <span v-if="pinia.state.currentStep>index+1 || 4">
                   ✓
                 </span>
   
+                <!-- <span v v-else-if="pinia.state.currentStep = 4">
+                  ✓
+                </span> -->
                 <span v-else>
                   {{index+1}}
                 </span>
@@ -636,8 +639,8 @@
             >
 
               <img
-                v-if="frontPreview || pinia.state.verificationForm.frontFile"
-                :src="frontPreview || pinia.state.verificationForm.frontFile"
+                v-if="frontPreview || pinia.state.verificationForm.frontFile || form.frontFile"
+                :src="frontPreview || pinia.state.verificationForm.frontFile || form.frontFile"
                 class="w-full h-full object-cover"
               >
 
@@ -668,8 +671,8 @@
             >
 
               <img
-                v-if="backPreview || pinia.state.verificationForm.backFile"
-                :src="backPreview || pinia.state.verificationForm.backFile"
+                v-if="backPreview || pinia.state.verificationForm.backFile || form.backFile"
+                :src="backPreview || pinia.state.verificationForm.backFile || form.backFile"
                 class="w-full h-full object-cover"
               >
 
@@ -702,11 +705,11 @@
             </h3>
 
             <div
-              v-if="selfiePreview"
+              v-if="selfiePreview || pinia.state.verificationForm.selfieFile || form.selfieFile"
               class="w-64 h-64 mx-auto rounded-2xl overflow-hidden border"
             >
               <img
-                :src="selfiePreview"
+                :src="selfiePreview || pinia.state.verificationForm.selfieFile || form.selfieFile"
                 class="w-full h-full object-cover"
               >
             </div>
@@ -751,17 +754,27 @@
             >
               ✅ {{ form.selfieFile.name }}
             </p>
+            <button
+             v-if="form.selfieFile"
+                type="button"
+                class="mt-2 text-center text-red-500 hover:underline w-full"
+                @click.stop.prevent="removeSelfie"
+              >
+                Remove
+              </button>
 
           </div>
         <!-- Declaration -->
 
         <div
+         
             class="bg-blue-50 border border-blue-200 rounded-xl p-5 mt-8"
         >
 
             <label class="flex items-start gap-3">
 
             <input
+          
                 type="checkbox"
                 v-model="accepted"
                 class="mt-1"
@@ -790,6 +803,7 @@
             </button>
 
             <button
+           
             @click="submitVerification"
             :disabled="!accepted || !form.selfieFile || submitting"
             class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-10 py-3 rounded-xl font-semibold"
@@ -798,161 +812,337 @@
             {{ submitting ? "Submitting..." : "Submit Verification" }}
 
             </button>
-
-        </div>
-
-        </div>
-
-
-        <Transition
-            enter-active-class="transition duration-300"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-          >
-            <div
-              v-if="pinia.state.currentStep === 4"
-              class="animate-fadeIn"
+<!-- 
+            <button
+            v-else
+            @click="pinia.state.currentStep = 4"
+            class="px-6 py-3 rounded-xl border bg-blue-600 hover:bg-blue-700 text-white font-semibold"
             >
+             View verification status
+            </button> -->
 
+        </div>
+
+        </div>
+
+
+        
+            <Transition
+              enter-active-class="transition duration-300"
+              enter-from-class="opacity-0 scale-95"
+              enter-to-class="opacity-100 scale-100"
+            >
               <div
-                class="mt-6 bg-white rounded-md  border p-5 md:p-10 text-center"
+                v-if="pinia.state.currentStep === 4"
+                class="animate-fadeIn"
               >
-
-                <!-- Success Circle -->
-
                 <div
-                  class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center mx-auto"
+                  class="mt-6 bg-white rounded-md border p-5 md:p-10 text-center"
                 >
 
-                  <svg
-                    class="w-12 h-12 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    viewBox="0 0 24 24"
+                  <!-- Status Icon -->
+                  <div
+                    class="w-24 h-24 rounded-full flex items-center justify-center mx-auto"
+                    :class="{
+                      'bg-yellow-100': verificationStatus === 'pending',
+                      'bg-green-100': verificationStatus === 'verified',
+                      'bg-red-100': verificationStatus === 'rejected'
+                    }"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M5 13l4 4L19 7"
+
+                    <!-- VERIFIED -->
+                    <svg
+                      v-if="verificationStatus === 'verified'"
+                      class="w-12 h-12 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+
+                    <!-- REJECTED -->
+                    <svg
+                      v-else-if="verificationStatus === 'rejected'"
+                      class="w-12 h-12 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+
+                    <!-- PENDING -->
+                    <svg
+                      v-else
+                      class="w-12 h-12 text-yellow-600 animate-pulse"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="9"
+                      />
+                    </svg>
+
+                  </div>
+
+                  <!-- Title -->
+
+                  <h2 class="text-3xl font-bold mt-8">
+
+                    {{
+                      verificationStatus === "verified"
+                        ? "Verification Approved"
+                        : verificationStatus === "rejected"
+                        ? "Verification Rejected"
+                        : "Verification Submitted"
+                    }}
+
+                  </h2>
+
+                  <!-- Description -->
+
+                  <p class="text-gray-500 mt-3 max-w-xl mx-auto">
+
+                    <template v-if="verificationStatus === 'verified'">
+
+                      Congratulations! Your identity verification has been approved.
+                      Your account now has full access to all platform features.
+
+                    </template>
+
+                    <template v-else-if="verificationStatus === 'rejected'">
+
+                      Unfortunately your verification could not be approved.
+                      Please review the reason below, make the necessary corrections,
+                      and submit your documents again.
+
+                    </template>
+
+                    <template v-else>
+
+                      Your identity verification has been submitted successfully.
+                      Our compliance team is reviewing your documents.
+
+                    </template>
+
+                  </p>
+
+                  <!-- Status Badge -->
+
+                  <div
+                    class="mt-8 inline-flex items-center gap-3 px-6 py-3 rounded-full"
+                    :class="{
+                      'bg-yellow-100 text-yellow-700':
+                        verificationStatus === 'pending',
+
+                      'bg-green-100 text-green-700':
+                        verificationStatus === 'verified',
+
+                      'bg-red-100 text-red-700':
+                        verificationStatus === 'rejected'
+                    }"
+                  >
+
+                    <span
+                      class="w-3 h-3 rounded-full"
+                      :class="{
+                        'bg-yellow-500 animate-pulse':
+                          verificationStatus === 'pending',
+
+                        'bg-green-500':
+                          verificationStatus === 'verified',
+
+                        'bg-red-500':
+                          verificationStatus === 'rejected'
+                      }"
                     />
-                  </svg>
 
-                </div>
+                    {{
+                      verificationStatus === "verified"
+                        ? "Verified"
 
-                <h2 class="text-3xl font-bold mt-8">
-                  Verification Submitted
-                </h2>
+                        : verificationStatus === "rejected"
 
-                <p class="text-gray-500 mt-3 max-w-xl mx-auto">
+                        ? "Rejected"
 
-                  Your identity verification has been submitted successfully.
+                        : "Under Review"
+                    }}
 
-                  Our compliance team is currently reviewing your documents.
+                  </div>
 
-                </p>
+                  <!-- Timeline -->
 
-                <!-- Status -->
+                  <div
+                    class="mt-10 bg-gray-50 rounded-2xl p-6 text-left"
+                  >
 
-                <div
-                  class="mt-8 inline-flex items-center gap-3 bg-yellow-100 text-yellow-700 px-6 py-3 rounded-full"
-                >
+                    <h3 class="font-semibold mb-6">
 
-                  <span
-                    class="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"
-                  ></span>
+                      Verification Progress
 
-                  Under Review
+                    </h3>
 
-                </div>
+                    <div class="space-y-6">
 
-                <!-- Timeline -->
+                      <!-- STEP 1 -->
 
-                <div
-                  class="mt-10 bg-gray-50 rounded-2xl p-6 text-left"
-                >
+                      <div class="flex gap-4">
 
-                  <h3 class="font-semibold mb-5">
+                        <div
+                          class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center"
+                        >
+                          ✓
+                        </div>
 
-                    What happens next?
+                        <div>
 
-                  </h3>
+                          <h4 class="font-semibold">
 
-                  <div class="space-y-5">
+                            Documents Submitted
 
-                    <div class="flex gap-4">
+                          </h4>
+
+                          <p class="text-gray-500 text-sm">
+
+                            Your KYC documents have been uploaded successfully.
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                      <!-- STEP 2 -->
+
+                      <div class="flex gap-4">
+
+                        <div
+                          class="w-8 h-8 rounded-full text-white flex items-center justify-center"
+                          :class="{
+                            'bg-yellow-500 animate-pulse':
+                              verificationStatus === 'pending',
+
+                            'bg-green-500':
+                              verificationStatus === 'verified',
+
+                            'bg-red-500':
+                              verificationStatus === 'rejected'
+                          }"
+                        >
+
+                          {{
+                            verificationStatus === "pending"
+                              ? "•"
+                              : verificationStatus === "verified"
+                              ? "✓"
+                              : "✕"
+                          }}
+
+                        </div>
+
+                        <div>
+
+                          <h4 class="font-semibold">
+
+                            Compliance Review
+
+                          </h4>
+
+                          <p
+                            class="text-gray-500 text-sm"
+                          >
+
+                            <template
+                              v-if="verificationStatus === 'pending'"
+                            >
+
+                              Our compliance team is reviewing your
+                              documents.
+
+                            </template>
+
+                            <template
+                              v-else-if="verificationStatus === 'verified'"
+                            >
+
+                              Your documents have been reviewed and
+                              approved.
+
+                            </template>
+
+                            <template
+                              v-else
+                            >
+
+                              Your verification request was rejected.
+
+                            </template>
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                      <!-- STEP 3 -->
 
                       <div
-                        class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center"
+                        class="flex gap-4"
+                        :class="{
+                          'opacity-50':
+                            verificationStatus !== 'verified'
+                        }"
                       >
-                        ✓
-                      </div>
 
-                      <div>
+                        <div
+                          class="w-8 h-8 rounded-full flex items-center justify-center"
+                          :class="{
+                            'bg-green-500 text-white':
+                              verificationStatus === 'verified',
 
-                        <h4 class="font-semibold">
+                            'border':
+                              verificationStatus !== 'verified'
+                          }"
+                        >
 
-                          Documents Received
+                          {{
+                            verificationStatus === "verified"
+                              ? "✓"
+                              : "3"
+                          }}
 
-                        </h4>
+                        </div>
 
-                        <p class="text-gray-500 text-sm">
+                        <div>
 
-                          Your identity documents have been uploaded successfully.
+                          <h4 class="font-semibold">
 
-                        </p>
+                            Account Activated
 
-                      </div>
+                          </h4>
 
-                    </div>
+                          <p class="text-gray-500 text-sm">
 
-                    <div class="flex gap-4">
+                            Full platform access has been enabled.
 
-                      <div
-                        class="w-8 h-8 rounded-full bg-yellow-500 text-white flex items-center justify-center animate-pulse"
-                      >
-                        •
-                      </div>
+                          </p>
 
-                      <div>
-
-                        <h4 class="font-semibold">
-
-                          Review In Progress
-
-                        </h4>
-
-                        <p class="text-gray-500 text-sm">
-
-                          Our compliance team is reviewing your submission.
-
-                        </p>
-
-                      </div>
-
-                    </div>
-
-                    <div class="flex gap-4 opacity-50">
-
-                      <div
-                        class="w-8 h-8 rounded-full border flex items-center justify-center"
-                      >
-                        3
-                      </div>
-
-                      <div>
-
-                        <h4 class="font-semibold">
-
-                          Account Verified
-
-                        </h4>
-
-                        <p class="text-gray-500 text-sm">
-
-                          You'll receive an email once approved.
-
-                        </p>
+                        </div>
 
                       </div>
 
@@ -960,52 +1150,84 @@
 
                   </div>
 
-                </div>
+                  <!-- Rejection Reason -->
 
-                <!-- Info -->
-
-                <div
-                  class="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-5 text-left"
-                >
-
-                  <h4 class="font-semibold mb-2">
-
-                    Estimated Review Time
-
-                  </h4>
-
-                  <p class="text-gray-600 text-sm">
-
-                    Most verifications are completed within
-                    <strong>5–30 minutes</strong>.
-                    In some cases, reviews may take up to
-                    <strong>24 hours</strong>.
-
-                  </p>
-
-                </div>
-
-                <div class="flex flex-col md:flex-row justify-between mt-10 gap-4">
-                <!-- Button -->
-
-                <button
-                  class="w-full  bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md font-semibold"
-                  @click="navigateTo('/dashboard')"
-                >
-                  Return to Dashboard
-                </button>
-
-                <button
-                  @click="pinia.state.currentStep = 3"
-                  class="px-6 py-3 rounded-md border hover:bg-gray-100"
+                  <div
+                    v-if="verificationStatus === 'rejected'"
+                    class="mt-8 bg-red-50 border border-red-200 rounded-xl p-5 text-left"
                   >
-                  ← Back
-                </button>
+
+                    <h4 class="font-semibold text-red-700">
+
+                      Reason for rejection
+
+                    </h4>
+
+                    <p class="text-red-600 mt-2">
+
+                      {{
+                        pinia.state.user.userIdentity?.rejectionReason
+                      }}
+
+                    </p>
+
+                  </div>
+
+                  <!-- Review Time -->
+
+                  <div
+                    v-if="verificationStatus === 'pending'"
+                    class="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-5 text-left"
+                  >
+
+                    <h4 class="font-semibold">
+
+                      Estimated Review Time
+
+                    </h4>
+
+                    <p class="text-gray-600 text-sm mt-2">
+
+                      Most verifications are completed within
+                      <strong>5–30 minutes</strong>.
+                      Some reviews may take up to
+                      <strong>24 hours.</strong>
+
+                    </p>
+
+                  </div>
+
+                  <!-- Buttons -->
+
+                  <div
+                    class="flex flex-col md:flex-row gap-4 mt-10"
+                  >
+
+                    <button
+                      class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold"
+                      @click="navigateTo('/dashboard')"
+                    >
+
+                      Return to Dashboard
+
+                    </button>
+
+                    <button
+                      v-if="verificationStatus === 'rejected'"
+                      class="flex-1 border hover:bg-gray-100 py-3 rounded-md"
+                      @click="pinia.state.currentStep = 2"
+                    >
+
+                      Resubmit Documents
+
+                    </button>
+
+                  </div>
+
                 </div>
               </div>
+            </Transition>
 
-            </div>
-        </Transition>
   
       </div>
   
@@ -1028,11 +1250,20 @@
   const backUploading = ref(false);
   const selfieUploading = ref(false);
   
-  const form = computed(() => pinia.state.verificationForm);
+  const form = computed(() => pinia.state.user?.userIdentity || pinia.state.verificationForm);
   
   const frontPreview = ref("");
   const backPreview = ref("");
   const selfiePreview = ref("");
+
+
+  const verificationStatus = computed(() =>
+  pinia.state.user?.userIdentity?.status || "not_started"
+)
+
+const isPending = computed(() => verificationStatus.value === "pending")
+const isVerified = computed(() => verificationStatus.value === "verified")
+const isRejected = computed(() => verificationStatus.value === "rejected")
   
   const percentage = computed(() => {
     switch (pinia.state.currentStep) {
@@ -1264,13 +1495,16 @@ const uploadSelfie = (e) => {
 
       userIdentity: {
         ...pinia.state.verificationForm,
+        submittedAt: new Date(),
+        status:"pending",
       },
 
       verificationStatus: "pending",
-      submittedAt: new Date(),
     };
 
-       await updateUser(payload);
+    console.dir(payload, { depth: null });
+
+       const response = await updateUser(payload);
       if (!response.success) {
         throw new Error(response.message);
       }
@@ -1285,6 +1519,7 @@ const uploadSelfie = (e) => {
         "Verification submitted successfully."
       );
     } catch (err) {
+      console.log("error", err);
       notify.error(
         err.response?.data?.message ||
           err.message ||
@@ -1297,6 +1532,10 @@ const uploadSelfie = (e) => {
   
   onMounted(() => {
 
+    if(pinia.state.user?.userIdentity?.status === 'verified'){
+      pinia.state.currentStep = 4;
+
+    }
     frontPreview.value =
       pinia.state.verificationForm.frontFile || "";
 

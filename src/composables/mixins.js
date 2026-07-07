@@ -10,8 +10,8 @@ export const asyncRequest = async (url, options, json = true) => {
    .then(response => {
      const statusCode = response.status;
      if(statusCode == 401){
-      //  pinia.state.isAuthenticated = false
-      // navigateTo("/");
+       pinia.state.isAuthenticated = false
+      navigateTo("/login");
        return;
      }
      return json ? response.json() : response.text();

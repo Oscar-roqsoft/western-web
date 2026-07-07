@@ -14,16 +14,16 @@
             <input
               v-model="search"
               placeholder="Search users..."
-              class="input pl-10"
+              class="input "
             />
           </div>
   
           <!-- Filter -->
-          <select v-model="statusFilter" class="input w-40">
+          <!-- <select v-model="statusFilter" class="input w-40">
             <option value="">All Status</option>
             <option value="active">Active</option>
             <option value="blocked">Blocked</option>
-          </select>
+          </select> -->
   
         </div>
       </div>
@@ -39,7 +39,7 @@
               <th class="th">User</th>
               <th class="th">Country</th>
               <th class="th">Phone</th>
-              <th class="th">Status</th>
+              <th class="th ">Status</th>
               <th class="th text-right">Actions</th>
             </tr>
           </thead>
@@ -75,17 +75,17 @@
                   {{ user.phone}}
                 </td>
               <!-- STATUS -->
-              <td class="td">
+              <td class="td w-[100px_!important]">
                 <span
                   :class="[
-                    'px-2 py-1 rounded text-xs font-semibold',
-                    user.isVerified
+                    'px-2 py-1 rounded text-xs font-semibold w-[200px]',
+                    user.twoFactorVerification
                       ? 'bg-green-100 text-green-600'
                       : 'bg-red-100 text-red-600'
                   ]"
                 >
 
-                  {{ user.isVerified }}
+                  {{ user.twoFactorVerification ? 'verified' : 'not verified' }}
                 </span>
 
               </td>
@@ -93,16 +93,16 @@
               <!-- ACTIONS -->
               <td class="td text-right">
   
-                <div class="flex justify-end gap-2">
+                <div class="flex  gap-2">
   
                   <!-- View -->
-                  <button class="action-btn" @click="openUser(user)">
+                  <button class="action-btn" @click="navigateTo(`/dashboard/admin/user/${user._id}`)">
                     <Eye class="icon"/>
                   </button>
   
                   <!-- Fund -->
                   <button class="action-btn"
-                  @click="$emit('fund', user)">
+                  @click="openUser(user)">
                     <Wallet class="icon"/>
                   </button>
   
@@ -230,12 +230,13 @@ const filteredUsers = computed(() => {
 
 .td {
   padding: 12px;
+  min-width: 140px;
 }
 
 .input {
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  padding: 8px 10px;
+  padding: 8px 30px;
   outline: none;
 }
 
