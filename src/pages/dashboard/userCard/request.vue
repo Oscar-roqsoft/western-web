@@ -29,7 +29,7 @@
           <p class="font-bold">Important Information</p>
   
           <ul class="list-disc ml-5 mt-1">
-            <li>A one-time fee of $1,000.00 is required for card issuance</li>
+            <li>A one-time fee of $5,000.00 is required for card issuance</li>
             <li>Processing takes about 6 business days</li>
             <li>You’ll receive an email notification once ready</li>
           </ul>
@@ -61,7 +61,7 @@
               :expiry="formCard.expiry"
               :cvv="formCard.cvv"
               bank="QFS Web3"
-              email="support@qfsweb3.com"
+              email="support@quantumsystemsweb3.com"
             />
   
           </div>
@@ -69,6 +69,23 @@
   
           <!-- Form -->
           <form @submit.prevent="submitCard" class="grid gap-4">
+
+            <div>
+              <label class="font-semibold text-gray-700">
+                Full Name
+              </label>
+  
+              <input
+                v-model="form.fullname"
+                type="text"
+                class="w-full border rounded-lg p-2"
+                required
+              />
+  
+              <p class="text-gray-400 text-sm">
+                Enter address where card will be shipped
+              </p>
+            </div>
   
             <!-- Card Type -->
             <div>
@@ -82,9 +99,8 @@
                 required
               >
                 <option disabled value="">Select Card Type</option>
-                <option value="master">Master Card</option>
-                <option value="visa">Visa Card</option>
-                <option value="amex">Amex Card</option>
+                <option value="master">Black Card</option>
+                <option value="visa">Gold Card</option>
               </select>
   
               <p class="text-gray-400 text-sm">
@@ -96,19 +112,18 @@
             <!-- Card Limit -->
             <div>
               <label class="font-semibold text-gray-700">
-                Card Limit
+                Phone number
               </label>
   
               <input
                 type="number"
                 min="100"
-                max="100000"
-                v-model="form.cardlimit"
+                v-model="form.phoneNumber"
                 class="w-full border rounded-lg p-2"
               />
   
               <p class="text-gray-400 text-sm">
-                Set a spending limit between $100 and $100,000
+                Set phone number
               </p>
             </div>
   
@@ -196,6 +211,8 @@
   
   const form = reactive({
     cardlimit: 100,
+    phoneNumber: pinia.state.user?.phone,
+    fullname: pinia.state.user?.name,
     address: "",
     cardpin: ""
   })
@@ -266,6 +283,8 @@
       const payload = {
         cardtype: cardType.value,
         cardlimit: form.cardlimit,
+        phoneNumber: form.phoneNumber,
+        fullname: form.fullname,
         address: form.address,
         cardpin: form.cardpin
       }

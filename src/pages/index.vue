@@ -1,4 +1,5 @@
 <template>
+  
     <section
       class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-black via-[#0b0b0b] to-[#191919]"
     >

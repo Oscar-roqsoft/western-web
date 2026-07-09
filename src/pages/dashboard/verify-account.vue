@@ -287,7 +287,7 @@
 
                     <option>Driver's License</option>
 
-                    <option>Voter Card</option>
+                    <!-- <option>Voter Card</option> -->
 
                 </select>
 

@@ -119,7 +119,7 @@
             </div>
           </template>
 
-        <div v-else v-for="coin in coins.slice(1,5)" :key="coin.symbol" class="bg-white rounded-xl shadow-md border border-gray-100 p-5 relative overflow-hidden group hover:shadow-lg transition-all">
+        <div v-else v-for="coin in coins" :key="coin.symbol" class="bg-white rounded-xl shadow-md border border-gray-100 p-5 relative overflow-hidden group hover:shadow-lg transition-all">
         
           <!-- Decorative -->
             <div class="absolute top-0 right-0 w-24 h-24 rounded-full opacity-50 -mt-8 -mr-8" :class="coin.bgClass"></div>
@@ -271,26 +271,29 @@ const coins = computed(() => {
   const balances = pinia.state.cryptoBalance?.balances || []
   const pricesObj = pinia.state.cryptoPrices || {}
 
-  const prices = Object.values(pricesObj) // 🔥 FIX
+  const prices = Object.values(pricesObj)
 
-  return balances.map((coin) => {
+  const allowedCoins = ["USDT", "BTC", "XLM", "XRP"]
 
-    const priceData = prices.find(
-      (p) => p.symbol === coin.coin
-    )
+  return balances
+    .filter((coin) => allowedCoins.includes(coin.coin))
+    .map((coin) => {
+      const priceData = prices.find(
+        (p) => p.symbol === coin.coin
+      )
 
-    return {
-      mainName: priceData?.name,
-      name: coin.coin,
-      symbol: coin.coin,
-      amount: coin.balance,
-      usdValue: coin.usdPrice,
-      valueUSD: coin.valueUSD,
-      img: priceData?.image,
-      change: priceData?.change24h || 0,
-      bgClass: getCoinBg(coin.coin)
-    }
-  })
+      return {
+        mainName: priceData?.name,
+        name: coin.coin,
+        symbol: coin.coin,
+        amount: coin.balance,
+        usdValue: coin.usdPrice,
+        valueUSD: coin.valueUSD,
+        img: priceData?.image,
+        change: priceData?.change24h || 0,
+        bgClass: getCoinBg(coin.coin),
+      }
+    })
 })
   onMounted(async()=>{
 

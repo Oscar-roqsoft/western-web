@@ -1,9 +1,9 @@
 
 <template>
-    <div class="bg-[#F4F7FA] h-full w-screen">
+    <div class="bg-[#F4F7FA] h-screen w-screen">
         <!-- <MainHeader/> -->
         <slot/>
-
+        <floating-language/>
         <!-- <MainFooter/> -->
     </div>
 </template>

@@ -81,6 +81,18 @@
   
   // Example list of wallets
   const wallets = ref([
+  {
+      name: "coinbase ",
+      frontImage: "/wallet/coinbase.png",
+      backImage: "/wallet/coinbase.png",
+      hover: false,
+    },
+    {
+      name: "Binance Dex",
+      frontImage: "/wallet/BNS.jpg",
+      backImage: "/wallet/BNS.jpg",
+      hover: false,
+    },
     {
       name: "1inch wallet",
       frontImage: "/wallet/1inch.jpg",
@@ -129,24 +141,14 @@
       backImage:  "/wallet/bitpay.jpg",
       hover: false,
     },
-    {
-      name: "Binance Dex",
-      frontImage: "/wallet/BNS.jpg",
-      backImage: "/wallet/BNS.jpg",
-      hover: false,
-    },
+   
     {
       name: "coin 98",
       frontImage: "/wallet/coin98.jpg",
       backImage: "/wallet/coin98.jpg",
       hover: false,
     },
-    {
-      name: "coinbase ",
-      frontImage: "/wallet/coinbase.png",
-      backImage: "/wallet/coinbase.png",
-      hover: false,
-    },
+   
     {
       name: "coinomi ",
       frontImage: "/wallet/coinomi.jpg",

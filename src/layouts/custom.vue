@@ -3,6 +3,8 @@
         <MainHeader/>
         <slot/>
 
+        <floating-language/>
+
         <MainFooter/>
     </div>
 </template>
