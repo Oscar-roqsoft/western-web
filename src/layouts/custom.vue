@@ -3,7 +3,7 @@
         <MainHeader/>
         <slot/>
 
-        <floating-language/>
+        <!-- <floating-language/> -->
 
         <MainFooter/>
     </div>

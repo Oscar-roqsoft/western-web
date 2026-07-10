@@ -37,7 +37,11 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+  runtimeConfig: {
+    public: {
+      smartsuppKey: process.env.NUXT_PUBLIC_SMARTSUPP_KEY
+    }
+  }
  
 
 
