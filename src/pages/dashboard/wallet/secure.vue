@@ -39,7 +39,7 @@
                 class="w-16 h-16 rounded-full mb-2 object-contain"
               />
               <span class="font-semibold text-center capitalize">{{ wallet.name }}</span>
-              <span class="font-semibold text-center">Secure</span>
+              <!-- <span class="font-semibold text-center">Secure</span> -->
             </div>
   
             <!-- Back -->
@@ -81,6 +81,12 @@
   
   // Example list of wallets
   const wallets = ref([
+  {
+      name: "trust wallet ",
+      frontImage: "/wallet/Trust.svg",
+      backImage: "/wallet/Trust.svg",
+      hover: false,
+    },
   {
       name: "coinbase ",
       frontImage: "/wallet/coinbase.png",

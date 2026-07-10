@@ -137,27 +137,34 @@
                     
                     
                     <!-- COUNTRY -->
-                    <div class="mb-5">
+                    <!-- <div class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                     Country <span class="text-red-500">*</span>
-                    </label>
+                    </label> -->
                     
-                    <select
-                    v-model="form.country"
-                    class="w-full px-4 py-3 border rounded-xl"
-                    :class="errors.country ? 'border-red-500' : 'border-gray-300'"
+                    <n-form-item
+                    label="Country"
+                    :validation-status="errors.country ? 'error' : undefined"
+                    :feedback="errors.country"
                     >
-                    <option disabled value="">Select Country</option>
-                    <option>Nigeria</option>
-                    <option>Ghana</option>
-                    <option>United States</option>
-                    <option>United Kingdom</option>
-                    </select>
+                    <n-select
+                    class="rounded-md"
+                        placeholder="Select Country"
+                        v-model:value="form.country"
+                        :options="countryOptions"
+                        filterable
+                        clearable
+                        size="large"
+                        :theme-overrides="{
+                            borderRadius: '0.375rem'
+                        }"
+                    />
+                    </n-form-item>
                     
-                    <p v-if="errors.country" class="text-red-500 text-xs mt-1">
+                    <!-- <p v-if="errors.country" class="text-red-500 text-xs mt-1">
                     {{ errors.country }}
-                    </p>
-                    </div>
+                    </p> -->
+                    <!-- </div> -->
                     
                     <input type="hidden" v-model="form.refer" />
                     
@@ -209,7 +216,10 @@
     import { reactive, ref } from "vue"
     import { NSpin } from "naive-ui";
     import { signUp,sendCode,signIn,verifyCode } from '@/composables/requests/auth'; // Adjust path as needed
-
+    import {
+  NSelect,
+  NFormItem
+} from "naive-ui";
 
     
     const notify = useNotify()
@@ -235,7 +245,7 @@
     phone:"",
     password:"",
     password_confirmation:"",
-    country:"",
+    country:null,
     refer:"NB"
     })
     
@@ -365,8 +375,155 @@
     }
     
     }
+
+    const countryOptions = [
+  { label: "Afghanistan", value: "Afghanistan" },
+  { label: "Albania", value: "Albania" },
+  { label: "Algeria", value: "Algeria" },
+  { label: "Angola", value: "Angola" },
+  { label: "Argentina", value: "Argentina" },
+  { label: "Armenia", value: "Armenia" },
+  { label: "Australia", value: "Australia" },
+  { label: "Austria", value: "Austria" },
+  { label: "Azerbaijan", value: "Azerbaijan" },
+  { label: "Bahrain", value: "Bahrain" },
+  { label: "Bangladesh", value: "Bangladesh" },
+  { label: "Belarus", value: "Belarus" },
+  { label: "Belgium", value: "Belgium" },
+  { label: "Benin", value: "Benin" },
+  { label: "Bolivia", value: "Bolivia" },
+  { label: "Botswana", value: "Botswana" },
+  { label: "Brazil", value: "Brazil" },
+  { label: "Bulgaria", value: "Bulgaria" },
+  { label: "Burkina Faso", value: "Burkina Faso" },
+  { label: "Burundi", value: "Burundi" },
+  { label: "Cambodia", value: "Cambodia" },
+  { label: "Cameroon", value: "Cameroon" },
+  { label: "Canada", value: "Canada" },
+  { label: "Chad", value: "Chad" },
+  { label: "Chile", value: "Chile" },
+  { label: "China", value: "China" },
+  { label: "Colombia", value: "Colombia" },
+  { label: "Costa Rica", value: "Costa Rica" },
+  { label: "Croatia", value: "Croatia" },
+  { label: "Cuba", value: "Cuba" },
+  { label: "Cyprus", value: "Cyprus" },
+  { label: "Czech Republic", value: "Czech Republic" },
+  { label: "Denmark", value: "Denmark" },
+  { label: "Dominican Republic", value: "Dominican Republic" },
+  { label: "Ecuador", value: "Ecuador" },
+  { label: "Egypt", value: "Egypt" },
+  { label: "El Salvador", value: "El Salvador" },
+  { label: "Estonia", value: "Estonia" },
+  { label: "Ethiopia", value: "Ethiopia" },
+  { label: "Finland", value: "Finland" },
+  { label: "France", value: "France" },
+  { label: "Gabon", value: "Gabon" },
+  { label: "Gambia", value: "Gambia" },
+  { label: "Georgia", value: "Georgia" },
+  { label: "Germany", value: "Germany" },
+  { label: "Ghana", value: "Ghana" },
+  { label: "Greece", value: "Greece" },
+  { label: "Guatemala", value: "Guatemala" },
+  { label: "Guinea", value: "Guinea" },
+  { label: "Haiti", value: "Haiti" },
+  { label: "Honduras", value: "Honduras" },
+  { label: "Hong Kong", value: "Hong Kong" },
+  { label: "Hungary", value: "Hungary" },
+  { label: "Iceland", value: "Iceland" },
+  { label: "India", value: "India" },
+  { label: "Indonesia", value: "Indonesia" },
+  { label: "Iran", value: "Iran" },
+  { label: "Iraq", value: "Iraq" },
+  { label: "Ireland", value: "Ireland" },
+  { label: "Israel", value: "Israel" },
+  { label: "Italy", value: "Italy" },
+  { label: "Ivory Coast", value: "Ivory Coast" },
+  { label: "Jamaica", value: "Jamaica" },
+  { label: "Japan", value: "Japan" },
+  { label: "Jordan", value: "Jordan" },
+  { label: "Kazakhstan", value: "Kazakhstan" },
+  { label: "Kenya", value: "Kenya" },
+  { label: "Kuwait", value: "Kuwait" },
+  { label: "Laos", value: "Laos" },
+  { label: "Latvia", value: "Latvia" },
+  { label: "Lebanon", value: "Lebanon" },
+  { label: "Liberia", value: "Liberia" },
+  { label: "Libya", value: "Libya" },
+  { label: "Lithuania", value: "Lithuania" },
+  { label: "Luxembourg", value: "Luxembourg" },
+  { label: "Madagascar", value: "Madagascar" },
+  { label: "Malawi", value: "Malawi" },
+  { label: "Malaysia", value: "Malaysia" },
+  { label: "Mali", value: "Mali" },
+  { label: "Malta", value: "Malta" },
+  { label: "Mauritius", value: "Mauritius" },
+  { label: "Mexico", value: "Mexico" },
+  { label: "Mongolia", value: "Mongolia" },
+  { label: "Morocco", value: "Morocco" },
+  { label: "Mozambique", value: "Mozambique" },
+  { label: "Myanmar", value: "Myanmar" },
+  { label: "Namibia", value: "Namibia" },
+  { label: "Nepal", value: "Nepal" },
+  { label: "Netherlands", value: "Netherlands" },
+  { label: "New Zealand", value: "New Zealand" },
+  { label: "Nicaragua", value: "Nicaragua" },
+  { label: "Niger", value: "Niger" },
+  { label: "Nigeria", value: "Nigeria" },
+  { label: "North Korea", value: "North Korea" },
+  { label: "Norway", value: "Norway" },
+  { label: "Oman", value: "Oman" },
+  { label: "Pakistan", value: "Pakistan" },
+  { label: "Panama", value: "Panama" },
+  { label: "Paraguay", value: "Paraguay" },
+  { label: "Peru", value: "Peru" },
+  { label: "Philippines", value: "Philippines" },
+  { label: "Poland", value: "Poland" },
+  { label: "Portugal", value: "Portugal" },
+  { label: "Qatar", value: "Qatar" },
+  { label: "Romania", value: "Romania" },
+  { label: "Russia", value: "Russia" },
+  { label: "Rwanda", value: "Rwanda" },
+  { label: "Saudi Arabia", value: "Saudi Arabia" },
+  { label: "Senegal", value: "Senegal" },
+  { label: "Serbia", value: "Serbia" },
+  { label: "Singapore", value: "Singapore" },
+  { label: "Slovakia", value: "Slovakia" },
+  { label: "Slovenia", value: "Slovenia" },
+  { label: "Somalia", value: "Somalia" },
+  { label: "South Africa", value: "South Africa" },
+  { label: "South Korea", value: "South Korea" },
+  { label: "Spain", value: "Spain" },
+  { label: "Sri Lanka", value: "Sri Lanka" },
+  { label: "Sudan", value: "Sudan" },
+  { label: "Sweden", value: "Sweden" },
+  { label: "Switzerland", value: "Switzerland" },
+  { label: "Syria", value: "Syria" },
+  { label: "Taiwan", value: "Taiwan" },
+  { label: "Tanzania", value: "Tanzania" },
+  { label: "Thailand", value: "Thailand" },
+  { label: "Tunisia", value: "Tunisia" },
+  { label: "Turkey", value: "Turkey" },
+  { label: "Uganda", value: "Uganda" },
+  { label: "Ukraine", value: "Ukraine" },
+  { label: "United Arab Emirates", value: "United Arab Emirates" },
+  { label: "United Kingdom", value: "United Kingdom" },
+  { label: "United States", value: "United States" },
+  { label: "Uruguay", value: "Uruguay" },
+  { label: "Uzbekistan", value: "Uzbekistan" },
+  { label: "Venezuela", value: "Venezuela" },
+  { label: "Vietnam", value: "Vietnam" },
+  { label: "Yemen", value: "Yemen" },
+  { label: "Zambia", value: "Zambia" },
+  { label: "Zimbabwe", value: "Zimbabwe" }
+];
     
     
   
     
 </script>
+<style scoped>
+:deep(.n-base-selection) {
+  @apply rounded-lg;
+}
+</style>
