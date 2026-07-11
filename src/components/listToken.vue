@@ -3,10 +3,13 @@
   
       <!-- Header -->
       <div class="mb-6">
-        <h2 class="text-xl md:text-2xl font-bold">Select Token</h2>
-        <p class="text-gray-500 text-sm mt-1">
-          Choose the cryptocurrency you wish to send, receive, or swap
-        </p>
+        <h2 class="text-xl md:text-2xl font-bold">
+  {{ title }}
+</h2>
+
+<p class="text-gray-500 text-sm mt-1">
+  {{ description }}
+</p>
       </div>
   
       <!-- Search -->
@@ -56,6 +59,18 @@
   import { ref, computed } from "vue"
   import { Search } from "lucide-vue-next"
 //   import { useStore } from "@/stores/store" // adjust path to your Pinia store
+const props = defineProps({
+  description: {
+    type: String,
+    default: "Choose the cryptocurrency you wish to send, receive, or swap"
+  },
+
+  title: {
+    type: String,
+    default: "Select Token"
+  }
+});
+
   
   const pinia = useStore()
   const search = ref("")

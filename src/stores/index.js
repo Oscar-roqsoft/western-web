@@ -30,6 +30,15 @@ export const useStore = defineStore('Crypto', () => {
     isloadingPriceCard:false,
     isFetchingCryptobal:false,
     isFetchingCrypto:false,
+    withdrawal:{
+      step: 1,
+      coin: null,
+      walletAddress: "",
+      network: "",
+      amount: 0,
+      feePaid: false,
+      securityPassed: false
+    },
     verificationForm: {
       firstName: "",
       lastName: "",

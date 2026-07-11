@@ -218,13 +218,15 @@
             title="Asset Protection"
             text="Get onboard today on QFS and get liberated from all financial limitations."
             :delay="0"
+            @click="navigateTo('/register')"
           />
-
+ 
           <Features
            icon="/h.svg"
             title="Humanitarian Project"
             text="Get access to funds once your humanitarian project is approved."
             :delay="100"
+              @click="navigateTo('/register')"
           />
 
           <Features
@@ -232,6 +234,7 @@
             title="Wallet Sync"
             text="Sync your asset to QFS Ledger 3 system."
             :delay="200"
+              @click="navigateTo('/register')"
           />
 
           <Features
@@ -239,6 +242,7 @@
             title="Asset Recovery"
             text="Intercept and recover stolen digital assets with help from international police."
             :delay="300"
+              @click="navigateTo('/register')"
           />
 
         </div>
@@ -664,6 +668,7 @@
     definePageMeta(
         {
         layout: 'custom',
+        middleware: ["auth"],
         }
     );
     

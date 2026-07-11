@@ -54,6 +54,12 @@ Button: {
 }
 
 
+onMounted(()=>{
+  // pinia.clearUser()
+  
+})
+
+
 
 </script>
 

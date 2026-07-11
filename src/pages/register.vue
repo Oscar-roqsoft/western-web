@@ -225,7 +225,8 @@
     const notify = useNotify()
     
     definePageMeta({
-    layout:"custom2"
+    layout:"custom2",
+    middleware: ["auth"],
     })
 
     const pinia = useStore()

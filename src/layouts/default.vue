@@ -84,6 +84,15 @@
               <Wallet class="menu-icon"/>
               Deposit
             </NuxtLink>
+
+            <NuxtLink
+             v-if="pinia.state.user?.name != 'admin'"
+              to="/dashboard/withdrawal"
+              :class="['menu-item', route.path === '/dashboard/listtokens' ? 'active-menu' : '']"
+            >
+              <Wallet class="menu-icon"/>
+                Withdraw
+            </NuxtLink>
   
             <NuxtLink
              v-if="pinia.state.user?.name != 'admin'"

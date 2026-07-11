@@ -161,6 +161,7 @@
   definePageMeta(
         {
         layout: 'custom2',
+        middleware: ["auth"],
         }
     );
   

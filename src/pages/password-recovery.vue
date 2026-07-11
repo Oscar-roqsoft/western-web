@@ -158,7 +158,8 @@ import { ref } from "vue"
 import { sendCode, verifyCode,updatePassword } from '@/composables/requests/auth'
 
 definePageMeta({
-layout:"custom2"
+layout:"custom2",
+middleware: ["auth"],
 })
 
 const notify = useNotify()

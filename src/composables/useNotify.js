@@ -17,7 +17,7 @@ const success = (title, content) => {
 };
 
 const error = (title, content) => {
-  notification.error({
+  notification?.error({
     title,
     content,
     duration: 4000
