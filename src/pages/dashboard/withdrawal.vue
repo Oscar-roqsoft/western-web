@@ -565,7 +565,7 @@
                     </label>
 
                     <!-- User already has a PIN -->
-                    <div v-if="!pinia.state.user?.isPinSet">
+                    <div v-if="pinia.state.user?.isPinSet">
 
                         <n-input
                             v-model:value="pin"
@@ -990,7 +990,7 @@ import { ref, computed } from "vue";
 import { NSelect,useDialog,NInput} from "naive-ui";
 import { useStore } from "@/stores";
 import { Lock } from "lucide-vue-next";
-
+import { createWithdrawal } from "@/composables/requests/withdrawal";
 const notify = useNotify()
 const pinia = useStore();
 const reveal =  ref(false)
@@ -1039,7 +1039,7 @@ const continueStep = ()=>{
 
     notify.error("Insufficient balance.");
 
-    // return;
+    return;
 
   }
 
