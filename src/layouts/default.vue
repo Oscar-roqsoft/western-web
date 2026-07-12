@@ -46,6 +46,7 @@
           <div>
             <p class="text-xs uppercase text-gray-400 mb-2">Main</p>
             <NuxtLink
+            @click="sidebarOpen = false"
               to="/dashboard"
               :class="['menu-item', route.path === '/dashboard' ? 'active-menu' : '']"
             >
@@ -59,6 +60,7 @@
             <p class="text-xs uppercase text-gray-400 mb-2">Features</p>
              <!-- user -->
             <NuxtLink
+             @click="sidebarOpen = false"
               to="/dashboard/userCard"
               v-if="pinia.state.user?.name !== 'admin'"
               :class="['menu-item', route.path === '/dashboard/userCard' ? 'active-menu' : '']"
@@ -68,6 +70,7 @@
             </NuxtLink>
   
             <NuxtLink
+             @click="sidebarOpen = false"
              v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/wallet"
               :class="['menu-item', route.path === '/dashboard/wallet' ? 'active-menu' : '']"
@@ -78,6 +81,7 @@
   
             <NuxtLink
              v-if="pinia.state.user?.name != 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/listtokens"
               :class="['menu-item', route.path === '/dashboard/listtokens' ? 'active-menu' : '']"
             >
@@ -86,6 +90,7 @@
             </NuxtLink>
 
             <NuxtLink
+             @click="sidebarOpen = false"
              v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/withdrawal"
               :class="['menu-item', route.path === '/dashboard/withdrawal' ? 'active-menu' : '']"
@@ -96,6 +101,7 @@
   
             <NuxtLink
              v-if="pinia.state.user?.name != 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/swap"
               :class="['menu-item', route.path === '/dashboard/swap' ? 'active-menu' : '']"
             >
@@ -106,6 +112,7 @@
             <!-- admin -->
             <NuxtLink
              v-if="pinia.state.user?.name == 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/admin/user"
               :class="['menu-item', route.path === '/dashboard/admin/user' ? 'active-menu' : '']"
             >
@@ -114,6 +121,7 @@
             </NuxtLink>
             <NuxtLink
              v-if="pinia.state.user?.name == 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/admin/wallet"
               :class="['menu-item', route.path === '/dashboard/admin/wallet' ? 'active-menu' : '']"
             >
@@ -122,6 +130,7 @@
             </NuxtLink>
             <NuxtLink
              v-if="pinia.state.user?.name == 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/admin/transactions"
               :class="['menu-item', route.path === '/dashboard/admin/transactions' ? 'active-menu' : '']"
             >
@@ -130,6 +139,7 @@
             </NuxtLink>
             <NuxtLink
              v-if="pinia.state.user?.name == 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/admin/card"
               :class="['menu-item', route.path === '/dashboard/admin/card' ? 'active-menu' : '']"
             >
@@ -139,6 +149,7 @@
 
             <NuxtLink
              v-if="pinia.state.user?.name == 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/admin/secure"
               :class="['menu-item', route.path === '/dashboard/admin/secure' ? 'active-menu' : '']"
             >
@@ -153,6 +164,7 @@
   
             <NuxtLink
              v-if="pinia.state.user?.name !== 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/notification"
               :class="['menu-item', route.path === '/dashboard/notification' ? 'active-menu' : '']"
             >
