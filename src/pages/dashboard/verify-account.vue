@@ -1205,7 +1205,7 @@
 
                     <button
                       class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-md font-semibold"
-                      @click="navigateTo('/dashboard')"
+                      @click="navigateTo('/dashboard/profile')"
                     >
 
                       Return to Dashboard
@@ -1490,9 +1490,12 @@ const removeSelfie = () => {
   };
   
   onMounted(() => {
-  if (pinia.state.user?.userIdentity?.status === "verified") {
+  if (pinia.state.user?.twoFactorVerification ) {
     pinia.state.currentStep = 4
   }
+  // if (pinia.state.user?.userIdentity?.status === "verified") {
+  //   pinia.state.currentStep = 4
+  // }
 
 
   frontPreview.value = pinia.state.verificationForm.frontFile || ""
