@@ -108,7 +108,6 @@
               </p>
             </div>
   
-  
             <!-- Card Limit -->
             <div>
               <label class="font-semibold text-gray-700">
@@ -127,7 +126,6 @@
               </p>
             </div>
   
-  
             <!-- Address -->
             <div>
               <label class="font-semibold text-gray-700">
@@ -145,7 +143,6 @@
                 Enter address where card will be shipped
               </p>
             </div>
-  
   
             <!-- PIN -->
             <div>
@@ -167,7 +164,6 @@
               </p>
             </div>
   
-  
             <!-- Submit -->
             <button
             type="submit"
@@ -178,7 +174,7 @@
 
             <span v-if="!isSubmitting">Submit Card</span>
             <Spinner v-else/>
-          </button>
+            </button>
   
           </form>
   
@@ -222,8 +218,8 @@
   ========================= */
   
   const formCard = reactive({
-    firstname: "Stanley",
-    lastname: "Harrison",
+    firstname: pinia.state.user?.name,
+    lastname: "",
     number: "1234 1234 1234 1234",
     expiry: "12/29",
     cvv: "123"
