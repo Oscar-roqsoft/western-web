@@ -957,7 +957,7 @@
                 >
 
                     <button
-                    @click="navigateTo('/dashboard/history')"
+                    @click="navigateTo('/dashboard/transactions')"
                     class="flex-1 py-3 rounded-xl border hover:bg-gray-100 font-semibold"
                     >
                     View History
