@@ -20,12 +20,12 @@
         <div class="flex items-center gap-3 mb-6">
   
           <div class="w-12 h-12 rounded-full bg-indigo-600 text-white flex items-center justify-center text-lg">
-            {{ user.name?.charAt(0) }}
+            {{ user?.name?.charAt(0) }}
           </div>
   
           <div>
-            <p class="font-semibold">{{ user.name }}</p>
-            <p class="text-sm text-gray-500">{{ user.email }}</p>
+            <p class="font-semibold">{{ user?.name }}</p>
+            <p class="text-sm text-gray-500">{{ user?.email }}</p>
           </div>
   
         </div>
@@ -40,7 +40,7 @@
                 : 'bg-red-100 text-red-600'
             ]"
           >
-            {{ user.status }}
+            {{ user?.status }}
           </span>
         </div>
   
@@ -48,7 +48,7 @@
         <div class="bg-gray-50 rounded-lg p-4 mb-6">
           <p class="text-gray-500 text-sm">Total Balance</p>
           <h2 class="text-xl font-bold">
-            ${{ user.totalBalance.toFixed(4) || 0 }}
+            ${{ user?.totalBalance.toFixed(4) || 0 }}
           </h2>
         </div>
   
@@ -64,9 +64,9 @@
               :key="wallet.coin"
               class="flex justify-between bg-gray-50 p-3 rounded-lg"
             >
-              <span>{{ wallet.coin }}</span>
+              <span>{{ wallet?.coin }}</span>
               <span class="font-semibold">
-                {{ wallet.balance }}
+                {{ wallet?.balance }}
               </span>
             </div>
   
@@ -88,7 +88,7 @@
             class="w-full border py-2 rounded-lg"
             @click="$emit('toggleStatus', user)"
           >
-            {{ user.status === 'active' ? 'Block User' : 'Unblock User' }}
+            {{ user?.status === 'active' ? 'Block User' : 'Unblock User' }}
           </button>
   
         </div>

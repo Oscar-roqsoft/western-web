@@ -105,7 +105,7 @@
     try {
       const data = await updateAdminWallet({userId: store.state.user?.id, usdtTrc20: walletAddress.value })
       if(data.success){
-          store.setadminWalletAddress(data.data.wallets)
+          store.setadminWalletAddress(data.data?.wallets)
           notify.success(data.message)
       }else{
         notify.error(data.message)

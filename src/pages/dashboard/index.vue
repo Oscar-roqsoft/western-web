@@ -194,13 +194,13 @@
       <div class="card-header">
         <h2>Recent Transaction(s)</h2>
         <button class="more-btn">
-            <ArrowUpRight class="w-4 h-4 text-gray-700"/>
+            <ArrowUpRight class="w-4 h-4 text-gray-700" @click="navigateTo('/dashboard/transactions')"/>
 
         </button>
       </div>
 
       <div class="card-body">
-        <history-list />
+        <history-list :slice="4" />
       </div>
     </div>
   </div>

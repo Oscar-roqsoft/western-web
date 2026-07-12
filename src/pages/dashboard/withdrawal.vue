@@ -2,7 +2,7 @@
     <div class="max-w-xl">
 
         <ListToken
-        v-if="!reveal"
+        v-if="!pinia.state.revealWithdrawal"
         title="Select Withdrawal Token"
         description="Choose the cryptocurrency you want to withdraw."
         @close="handleClose"
@@ -121,7 +121,7 @@
                     </p>
             
                     <h3 class="text-3xl font-bold mt-2">
-                      {{ userBalance.toFixed(8) }}
+                      {{ userBalance.toFixed(5) }}
                       {{ selectedCoin.symbol }}
                     </h3>
             
@@ -204,7 +204,6 @@
                         <ul
                           class="mt-2 text-sm text-gray-600 space-y-2"
                         >
-            
                           <li>
                             • Double-check the wallet address.
                           </li>
@@ -737,12 +736,12 @@
                         <div class="flex items-center gap-2">
 
                         <img
-                            :src="selectedCoin?.icon"
+                            :src="withdrawal?.coin.icon"
                             class="w-6 h-6 rounded-full"
                         >
 
                         <span class="font-semibold">
-                            {{ selectedCoin?.symbol }}
+                          {{ withdrawal.coin?.symbol }}
                         </span>
 
                         </div>
@@ -756,8 +755,8 @@
                         </span>
 
                         <span class="font-semibold">
-                        {{selectedCoin.amount }}
-                        {{ selectedCoin?.symbol }}
+                        {{withdrawal?.amount }}
+                        {{ withdrawal.coin?.symbol }}
                         </span>
 
                     </div>
@@ -769,7 +768,7 @@
                         </span>
 
                         <span class="font-semibold">
-                        {{ selectedCoin.network }}
+                        {{ withdrawal?.network }}
                         </span>
 
                     </div>
@@ -795,8 +794,7 @@
                         </span>
 
                         <span class="font-semibold text-red-600">
-                        {{ selectedCoin.fee }}
-                        {{ selectedCoin.symbol }}
+                          {{ processingFee.toFixed(2) }} USD
                         </span>
 
                     </div>
@@ -808,8 +806,8 @@
                         </span>
 
                         <span class="font-bold text-green-600">
-                        {{ selectedCoin.netAmount }}
-                        {{ selectedCoin.symbol }}
+                          {{ netAmount.toFixed(4) }}
+                          {{ withdrawal.coin?.symbol }}
                         </span>
 
                     </div>
@@ -821,7 +819,7 @@
                         </span>
 
                         <span class="font-semibold">
-                        {{ selectedCoin?.reference }}
+                        {{ reference }}
                         </span>
 
                     </div>
@@ -833,7 +831,7 @@
                         </span>
 
                         <span class="font-medium">
-                        {{ selectedCoin?.createdAt }}
+                        {{ createdAt }}
                         </span>
 
                     </div>
@@ -966,7 +964,7 @@
                     </button>
 
                     <button
-                    @click="navigateTo('/dashboard')"
+                    @click="navigateTo('/dashboard');pinia.state.revealWithdrawal = false"
                     class="flex-1 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-semibold"
                     >
                     Return Dashboard
@@ -991,9 +989,11 @@ import { NSelect,useDialog,NInput} from "naive-ui";
 import { useStore } from "@/stores";
 import { Lock } from "lucide-vue-next";
 import { createWithdrawal } from "@/composables/requests/withdrawal";
+import { fetchCryptoPrices,fetchCryptoBal,fetchUserTrans } from '~/composables/actions/index'
+
 const notify = useNotify()
 const pinia = useStore();
-const reveal =  ref(false)
+// const pinia.state.revealWithdrawal =  ref(pinia.state.revealWithdrawal)
 
 // const notify = useMessag
 const withdrawal = computed(() => pinia.state.withdrawal);
@@ -1057,7 +1057,25 @@ const continueStep = ()=>{
 
 };
 
+const processingFee = computed(() => 0.2)
 
+const netAmount = computed(() => {
+  const usdValue = Number(
+    String(pinia.state.withdrawal.usdValue)
+      .replace(/\$/g, "")
+      .replace(/,/g, "")
+  )
+
+  return Number(pinia.state.withdrawal.amount || 0) - (processingFee.value / usdValue)
+})
+
+const reference = computed(() => {
+  return `WD-${Date.now()}`
+})
+
+const createdAt = computed(() => {
+  return new Date().toLocaleString()
+})
 // const dialog = useDialog();
 
 const pin = ref("");
@@ -1125,6 +1143,7 @@ const confirmWithdrawal = async () => {
             amount: withdrawal.value.amount,
 
             coin: withdrawal.value.coin.symbol,
+            usdValue:withdrawal.value.usdValue,
 
             pin: pin.value
 
@@ -1150,6 +1169,8 @@ const confirmWithdrawal = async () => {
 
             };
 
+            await fetchUserTrans()
+
         } else {
 
             notify.error(res.message);
@@ -1161,7 +1182,7 @@ const confirmWithdrawal = async () => {
         notify.error(err.message || "Withdrawal failed.");
 
     } finally {
-
+        await fetchCryptoBal()
         loading.value = false;
 
     }
@@ -1261,7 +1282,7 @@ const form = ref({
 });
 
 const handleClose = () => {
-      reveal.value = true
+      pinia.state.revealWithdrawal = true
       pinia.state.withdrawal.step = 1;
       form.value.network = selectedBalance.value?.network
 }

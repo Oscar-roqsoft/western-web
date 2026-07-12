@@ -17,30 +17,30 @@
           </tr>
         </thead>
 
-        <tbody >
+        <tbody v-if="paginatedTransactions.length">
           <tr
             v-for="tx in paginatedTransactions"
             :key="tx._id"
             class="border-b hover:bg-gray-50 cursor-pointer"
             @click="openModal(tx)"
           >
-            <td class="px-4 py-2 font-mono text-sm">{{ tx._id }}</td>
-            <td class="px-4 py-2">{{ tx.userId.name }} ({{ tx.userId.email }})</td>
-            <td class="px-4 py-2">{{ tx.coin }} ({{ tx.network }})</td>
-            <td class="px-4 py-2">{{ tx.amount }}</td>
+            <td class="px-4 py-2 font-mono text-sm">{{ tx?._id }}</td>
+            <td class="px-4 py-2">{{ tx.userId?.name }} ({{ tx?.userId?.email }})</td>
+            <td class="px-4 py-2">{{ tx?.coin }} ({{ tx?.network }})</td>
+            <td class="px-4 py-2">{{ tx?.amount }}</td>
             <td class="px-4 py-2">
-              <span :class="statusClass(tx.status)">{{ tx.status }}</span>
+              <span :class="statusClass(tx?.status)">{{ tx?.status }}</span>
             </td>
-            <td class="px-4 py-2">{{ formatDate(tx.createdAt) }}</td>
+            <td class="px-4 py-2">{{ formatDate(tx?.createdAt) }}</td>
             <td class="px-4 py-2 flex gap-2">
               <button
                 v-if="tx.status === 'pending'"
-                @click="openModal(tx._id)"
+                @click="openModal(tx?._id)"
                 class="bg-green-500 text-white px-3 py-1 rounded-lg"
               >Approve</button>
               <button
                 v-if="tx.status === 'pending'"
-                @click ="openModal(tx._id)"
+                @click ="openModal(tx?._id)"
                 class="bg-red-500 text-white px-3 py-1 rounded-lg"
               >Reject</button>
             </td>
@@ -87,20 +87,20 @@
         <h2 class="text-xl font-bold mb-4">Transaction Details</h2>
 
         <div class="space-y-2 text-sm">
-          <p><span class="font-semibold">TxID:</span> {{ selectedTransaction._id }}</p>
-          <p><span class="font-semibold">User:</span> {{ selectedTransaction.userId?.name }} ({{ selectedTransaction.userId?.email }})</p>
-          <p><span class="font-semibold">Coin:</span> {{ selectedTransaction.coin }} ({{ selectedTransaction.network }})</p>
-          <p><span class="font-semibold">Amount:</span> {{ selectedTransaction.amount }}</p>
-          <p><span class="font-semibold">Status:</span> <span :class="statusClass(selectedTransaction.status)">{{ selectedTransaction.status }}</span></p>
-          <p><span class="font-semibold">Date:</span> {{ formatDate(selectedTransaction.createdAt) }}</p>
-          <p><span class="font-semibold">Note:</span> {{ selectedTransaction.note || "N/A" }}</p>
+          <p><span class="font-semibold">TxID:</span> {{ selectedTransaction?._id }}</p>
+          <p><span class="font-semibold">User:</span> {{ selectedTransaction?.userId?.name }} ({{ selectedTransaction?.userId?.email }})</p>
+          <p><span class="font-semibold">Coin:</span> {{ selectedTransaction?.coin }} ({{ selectedTransaction?.network }})</p>
+          <p><span class="font-semibold">Amount:</span> {{ selectedTransaction?.amount }}</p>
+          <p><span class="font-semibold">Status:</span> <span :class="statusClass(selectedTransaction?.status)">{{ selectedTransaction?.status }}</span></p>
+          <p><span class="font-semibold">Date:</span> {{ formatDate(selectedTransaction?.createdAt) }}</p>
+          <p><span class="font-semibold">Note:</span> {{ selectedTransaction?.note || "N/A" }}</p>
         </div>
 
         <!-- Approve / Reject Buttons -->
         <div class="flex gap-3 mt-6">
           <button
-            v-if="selectedTransaction.status === 'pending'"
-            @click="approve(selectedTransaction._id);"
+            v-if="selectedTransaction?.status === 'pending'"
+            @click="approve(selectedTransaction?._id);"
             class="flex-1 bg-green-500 text-white py-2 rounded-lg flex items-center justify-center gap-2"
           >
           <span>
@@ -111,8 +111,8 @@
         </button>
 
           <button
-            v-if="selectedTransaction.status === 'pending'"
-            @click="reject(selectedTransaction._id);"
+            v-if="selectedTransaction?.status === 'pending'"
+            @click="reject(selectedTransaction?._id);"
             class="flex-1 bg-red-500 text-white py-2 rounded-lg flex items-center justify-center gap-2"
           >
           <span>
@@ -154,7 +154,7 @@ const fetchDeposits = async () => {
   try {
     const data = await getAllDeposits()
     if(data.success){
-      pinia.setallTransaction(data.data.deposits)
+      pinia.setallTransaction(data.data?.deposits)
     }
   } catch (err) {
     console.error(err);

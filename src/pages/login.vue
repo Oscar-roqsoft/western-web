@@ -196,6 +196,7 @@
                   pinia.setUser(data.data)
                   navigateTo("/dashboard")
                   pinia.state.isAuthenticated = true
+                  localStorage.setItem("loginTime", Date.now().toString())
 
                 }else{
                   notify.success(

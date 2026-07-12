@@ -55,37 +55,37 @@
               <!-- USER -->
               <td class="td flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center">
-                  {{ user.name?.charAt(0) }}
+                  {{ user?.name?.charAt(0) }}
                 </div>
   
                 <div>
-                  <p class="font-semibold">{{ user.name }}</p>
-                  <p class="text-gray-400 text-xs">{{ user.email }}</p>
+                  <p class="font-semibold">{{ user?.name }}</p>
+                  <p class="text-gray-400 text-xs">{{ user?.email }}</p>
                 </div>
               </td>
   
               
               <!-- WALLETS -->
               <td class="td">
-                  {{ user.country }}
+                  {{ user?.country }}
                 </td>
                 
                 <!-- BALANCE -->
                 <td class="td font-semibold">
-                  {{ user.phone}}
+                  {{ user?.phone}}
                 </td>
               <!-- STATUS -->
               <td class="td w-[100px_!important]">
                 <span
                   :class="[
                     'px-2 py-1 rounded text-xs font-semibold w-[200px]',
-                    user.twoFactorVerification
+                    user?.twoFactorVerification
                       ? 'bg-green-100 text-green-600'
                       : 'bg-red-100 text-red-600'
                   ]"
                 >
 
-                  {{ user.twoFactorVerification ? 'verified' : 'not verified' }}
+                  {{ user?.twoFactorVerification ? 'verified' : 'not verified' }}
                 </span>
 
               </td>
@@ -96,7 +96,7 @@
                 <div class="flex  gap-2">
   
                   <!-- View -->
-                  <button class="action-btn" @click="navigateTo(`/dashboard/admin/user/${user._id}`)">
+                  <button class="action-btn" @click="navigateTo(`/dashboard/admin/user/${user?._id}`)">
                     <Eye class="icon"/>
                   </button>
   
@@ -140,7 +140,7 @@
             v-if="showFundModal"
             :user="fundUser"
             @close="showFundModal=false"
-            @success="fetchUsers"
+            @success="fetchAllUsers()"
             />
   
     </div>
@@ -177,7 +177,8 @@ const statusFilter = ref("")
 ========================= */
 
 const users = computed(() => {
-  return Object.values(store.state.adminUsers) || {}
+  if (!store.state.adminUsers) return []
+  return Object.values(store.state.adminUsers)
 })
 
 
@@ -213,11 +214,13 @@ const filteredUsers = computed(() => {
 })
 
 
-   onMounted(async()=>{
-
-      await fetchAllUsers()
-
-   })
+onMounted(async () => {
+  try {
+    await fetchAllUsers()
+  } catch (err) {
+    console.error(err)
+  }
+})
 </script>
 
 

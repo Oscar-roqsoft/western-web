@@ -88,7 +88,7 @@
             <NuxtLink
              v-if="pinia.state.user?.name != 'admin'"
               to="/dashboard/withdrawal"
-              :class="['menu-item', route.path === '/dashboard/listtokens' ? 'active-menu' : '']"
+              :class="['menu-item', route.path === '/dashboard/withdrawal' ? 'active-menu' : '']"
             >
               <Wallet class="menu-icon"/>
                 Withdraw

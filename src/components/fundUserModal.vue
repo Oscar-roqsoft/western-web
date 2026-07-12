@@ -12,7 +12,7 @@
   
         <!-- USER INFO -->
         <div class="mb-4 text-sm text-gray-500">
-          Funding: <span class="font-semibold text-black">{{ user.name }}</span>
+          Funding: <span class="font-semibold text-black">{{ user?.name }}</span>
         </div>
   
         <!-- FORM -->
@@ -130,14 +130,20 @@
   const activeBtn = "flex-1 bg-indigo-600 text-white rounded-lg py-2"
 
 
-  watch(coin, (newv)=>{
-    if(newv){
-        const walletNet = Object.values(pinia.state.cryptoPrices).find(
-            w => w.symbol === newv
-        )
-        network.value = walletNet.network
-    }
-  })
+  watch(coin, (newValue) => {
+  if (!newValue) return
+
+  const walletNet = Object.values(
+    pinia.state.cryptoBalance?.balances || {}
+  ).find(w => w.coin === newValue)
+
+  if (!walletNet) {
+    network.value = ""
+    return
+  }
+
+  network.value = walletNet.network
+})
   
   const submit = async () => {
   

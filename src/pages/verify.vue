@@ -170,6 +170,7 @@
                 notify.success(data.message)
                 pinia.setUser(data.data)
                 navigateTo("/dashboard")
+                localStorage.setItem("loginTime", Date.now().toString())
             }else{
                 notify.success(data.message)
             }

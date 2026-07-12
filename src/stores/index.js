@@ -30,6 +30,7 @@ export const useStore = defineStore('Crypto', () => {
     isloadingPriceCard:false,
     isFetchingCryptobal:false,
     isFetchingCrypto:false,
+    revealWithdrawal:false,
     withdrawal:{
       step: 1,
       coin: null,
@@ -126,6 +127,15 @@ export const useStore = defineStore('Crypto', () => {
       frontFile: null,
       backFile: null,
       selfieFile: null,
+    },
+    state.withdrawal= {
+      step: 1,
+      coin: null,
+      walletAddress: "",
+      network: "",
+      amount: 0,
+      feePaid: false,
+      securityPassed: false
     }
     state.currentStep = 1
   }
@@ -147,6 +157,7 @@ export const useStore = defineStore('Crypto', () => {
     state.selectedTransaction = null
     state.isFetchingCryptobal = false
     state.isAuthenticated = false
+    state.revealWithdrawal = false
     state.walletAddress = null
     state.verificationForm = {
       firstName: "",

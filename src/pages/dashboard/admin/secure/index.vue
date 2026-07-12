@@ -218,7 +218,7 @@
         pinia.setsecuredWallets(res.data)
       }
       wallets.value = pinia.state.securedWallets?.wallets
-      totalPages.value = pinia.state.securedWallets.pagination.pages
+      totalPages.value = pinia.state.securedWallets?.pagination?.pages
   
     } catch (err) {
       console.error(err)
@@ -279,7 +279,7 @@
   onMounted(()=>{
      if(pinia.state.securedWallets){
         wallets.value = pinia.state.securedWallets?.wallets
-        totalPages.value = pinia.state.securedWallets.pagination.pages
+        totalPages.value = pinia.state.securedWallets?.pagination?.pages
      }else{
         fetchWallets()
      }
