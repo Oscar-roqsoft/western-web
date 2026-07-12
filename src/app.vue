@@ -22,16 +22,16 @@
     const route = useRouter()
     const pinia = useStore()
 
-     const path = ref(route.currentRoute.value.path)
+    //  const path = ref(route.currentRoute.value.path)
 
-      watch(()=>path.value,(newv)=>{
+    //   watch(()=>path.value,(newv)=>{
 
-        console.log(newv)
+    //     console.log(newv)
 
-        if (newv === '/login' || newv ===  '/register'|| newv === '/password-recovery'  || newv ===  '/verify' || pinia.state.isAuthenticated) {
-            navigateTo('/dashboard');
-        }
-    })
+    //     if (newv === '/login' || newv ===  '/register'|| newv === '/password-recovery'  || newv ===  '/verify' || pinia.state.isAuthenticated) {
+    //         navigateTo('/dashboard');
+    //     }
+    // })
 
     const themeOverrides = {
       common: {
