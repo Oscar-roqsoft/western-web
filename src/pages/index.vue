@@ -668,7 +668,6 @@
     definePageMeta(
         {
         layout: 'custom',
-        middleware: ["auth"],
         }
     );
     

@@ -78,6 +78,15 @@
               <ShieldAlertIcon class="menu-icon"/>
               Secure Crypto
             </NuxtLink>
+            <NuxtLink
+             @click="sidebarOpen = false"
+             v-if="pinia.state.user?.name != 'admin'"
+              to="/dashboard/grants"
+              :class="['menu-item', route.path === '/dashboard/grants' ? 'active-menu' : '']"
+            >
+              <Gift class="menu-icon"/>
+              Grant Application
+            </NuxtLink>
   
             <NuxtLink
              v-if="pinia.state.user?.name != 'admin'"
@@ -85,7 +94,7 @@
               to="/dashboard/listtokens"
               :class="['menu-item', route.path === '/dashboard/listtokens' ? 'active-menu' : '']"
             >
-              <Wallet class="menu-icon"/>
+              <ArrowDownToLine class="menu-icon"/>
               Deposit
             </NuxtLink>
 
@@ -320,7 +329,10 @@
     MenuIcon,
     LogOutIcon,
     DollarSign,
-    HelpCircle
+    HelpCircle,
+    ArrowDownToLine,
+    Gift
+
   } from 'lucide-vue-next'
   
   const sidebarOpen = ref(false)
