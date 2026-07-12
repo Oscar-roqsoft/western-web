@@ -85,7 +85,7 @@
               :class="['menu-item', route.path === '/dashboard/grants' ? 'active-menu' : '']"
             >
               <Gift class="menu-icon"/>
-              Grant Application
+              Claim Grant
             </NuxtLink>
   
             <NuxtLink

@@ -142,14 +142,14 @@
   
             <div class="p-6">
   
-              <div class="flex justify-between">
+              <div class="flex justify-between items-center">
   
                 <h3 class="font-bold text-xl">
                   {{ grant.title }}
                 </h3>
   
                 <span
-                  class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full"
+                  class="bg-green-100 text-green-700 text-xs text-center px-3 py-1 flex rounded-full"
                 >
                   Open
                 </span>
@@ -160,11 +160,11 @@
                 {{ grant.description }}
               </p>
   
-              <div class="grid grid-cols-2 gap-4 mt-5">
+              <div class="grid grid-cols-3 gap-4 mt-5">
   
-                <div>
+                <div class="col-span-2">
   
-                  <p class="text-gray-400 text-xs">
+                  <p class="text-gray-400  text-xs">
                     Maximum
                   </p>
   
@@ -173,7 +173,7 @@
                   </h4>
   
                 </div>
-  
+<!--   
                 <div>
   
                   <p class="text-gray-400 text-xs">
@@ -184,7 +184,7 @@
                     31 Dec 2026
                   </h4>
   
-                </div>
+                </div> -->
   
               </div>
   
@@ -207,7 +207,7 @@
   
       <div
         v-if="selectedGrant"
-        class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-5"
+        class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-2"
       >
   
         <div
@@ -275,15 +275,6 @@
               class="border rounded-xl p-3"
             />
   
-            <input
-              placeholder="Website / GitHub"
-              class="border rounded-xl p-3"
-            />
-  
-            <input
-              type="file"
-              class="md:col-span-2"
-            />
   
           </div>
   
@@ -317,59 +308,113 @@
   const selectedGrant = ref(null)
   
   const grants = [
-    {
-      id: 1,
-      title: "Startup Grant",
-      amount: "$10,000",
-      icon: "🚀",
-      color: "bg-gradient-to-r from-indigo-600 to-violet-600",
-      description:
-        "Funding for early-stage blockchain startups building innovative products."
-    },
-    {
-      id: 2,
-      title: "Developer Grant",
-      amount: "$5,000",
-      icon: "💻",
-      color: "bg-gradient-to-r from-blue-500 to-cyan-500",
-      description:
-        "Support for developers creating open-source blockchain tools."
-    },
-    {
-      id: 3,
-      title: "Research Grant",
-      amount: "$8,000",
-      icon: "🔬",
-      color: "bg-gradient-to-r from-green-500 to-emerald-500",
-      description:
-        "Academic and technical blockchain research initiatives."
-    },
-    {
-      id: 4,
-      title: "Community Grant",
-      amount: "$2,500",
-      icon: "🌍",
-      color: "bg-gradient-to-r from-orange-500 to-red-500",
-      description:
-        "Grow local blockchain communities through events and education."
-    },
-    {
-      id: 5,
-      title: "Creator Grant",
-      amount: "$2,000",
-      icon: "🎥",
-      color: "bg-gradient-to-r from-pink-500 to-rose-500",
-      description:
-        "Create educational videos, tutorials and blockchain content."
-    },
-    {
-      id: 6,
-      title: "Student Grant",
-      amount: "$1,500",
-      icon: "🎓",
-      color: "bg-gradient-to-r from-violet-500 to-fuchsia-500",
-      description:
-        "Support student innovation in blockchain technology."
-    }
-  ]
+  {
+    id: 1,
+    title: "Healthcare Assistance Grant",
+    amount: "$20,000 to $100,000",
+    icon: "🏥",
+    color: "bg-gradient-to-r from-red-500 to-pink-500",
+    description:
+      "Financial assistance to help cover eligible medical treatments, hospital bills and healthcare expenses."
+  },
+  {
+    id: 2,
+    title: "Health Insurance Support",
+    amount: "$10,000 to $45,000",
+    icon: "🛡️",
+    color: "bg-gradient-to-r from-blue-500 to-cyan-500",
+    description:
+      "Support towards eligible health insurance premiums and medical protection plans."
+  },
+  {
+    id: 3,
+    title: "Employment Assistance Grant",
+    amount: "$14,000 to $76,000",
+    icon: "💼",
+    color: "bg-gradient-to-r from-indigo-500 to-violet-500",
+    description:
+      "Support for job seekers covering training, certifications, work equipment and employment readiness."
+  },
+  {
+    id: 4,
+    title: "Education & Scholarship Grant",
+    amount: "$5,000 to $15,000",
+    icon: "🎓",
+    color: "bg-gradient-to-r from-emerald-500 to-green-500",
+    description:
+      "Funding assistance for tuition fees, educational materials and professional certification programs."
+  },
+  {
+    id: 5,
+    title: "Small Business Grant",
+    amount: "$20000 to $75,000",
+    icon: "🏪",
+    color: "bg-gradient-to-r from-orange-500 to-red-500",
+    description:
+      "Financial support for entrepreneurs starting or expanding small businesses."
+  },
+  {
+    id: 6,
+    title: "Women Empowerment Grant",
+    amount: "$16,000 to $100,500",
+    icon: "👩",
+    color: "bg-gradient-to-r from-pink-500 to-rose-500",
+    description:
+      "Funding opportunities that support women in education, entrepreneurship and career development."
+  },
+  {
+    id: 7,
+    title: "Youth Development Grant",
+    amount: "$6,000 to $30,000",
+    icon: "🌟",
+    color: "bg-gradient-to-r from-yellow-500 to-orange-500",
+    description:
+      "Support for youth innovation, leadership programs and skills development initiatives."
+  },
+  {
+    id: 8,
+    title: "Housing Assistance Grant",
+    amount: "$10,000 to $22,000",
+    icon: "🏠",
+    color: "bg-gradient-to-r from-teal-500 to-cyan-500",
+    description:
+      "Financial assistance for eligible housing, rent support and home improvement needs."
+  },
+  {
+    id: 9,
+    title: "Disability Support Grant",
+    amount: "$10,000 to $29,000",
+    icon: "♿",
+    color: "bg-gradient-to-r from-purple-500 to-indigo-500",
+    description:
+      "Assistance for eligible individuals requiring accessibility, healthcare and mobility support."
+  },
+  {
+    id: 10,
+    title: "Agriculture Grant",
+    amount: "$20,000 to $200,000",
+    icon: "🌾",
+    color: "bg-gradient-to-r from-green-500 to-lime-500",
+    description:
+      "Funding support for farming, livestock, irrigation and agricultural development projects."
+  },
+  {
+    id: 11,
+    title: "Disaster Relief Grant",
+    amount: "$5,000 to $25,000",
+    icon: "🆘",
+    color: "bg-gradient-to-r from-red-600 to-orange-500",
+    description:
+      "Emergency financial assistance for individuals and families affected by natural disasters or crises."
+  },
+  {
+    id: 12,
+    title: "Community Development Grant",
+    amount: "$10,000 to $25,000",
+    icon: "🌍",
+    color: "bg-gradient-to-r from-sky-500 to-blue-600",
+    description:
+      "Funding for nonprofit organizations and community projects that improve local infrastructure and services."
+  }
+];
   </script>
