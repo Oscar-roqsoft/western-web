@@ -329,7 +329,7 @@
 
                 <!-- Empty -->
 
-                <div v-if="!form.frontFile">
+                <div v-if="!frontPreview">
 
                   <div class="text-5xl">
                     📄
@@ -354,8 +354,8 @@
                     <!-- IMAGE -->
 
                     <img
-                      v-if="!form.frontFile.toLowerCase().endsWith('.pdf')"
-                      :src="form.frontFile"
+                      v-if="!frontPreview.endsWith('.pdf')"
+                      :src="frontPreview"
                       class="w-48 h-48 object-cover rounded-xl border"
                     >
 
@@ -402,7 +402,7 @@
 
                 <!-- Empty -->
 
-                <template v-if="!form.backFile">
+                <template v-if="!backPreview">
 
                   <div class="text-5xl">
                     🪪
@@ -427,8 +427,8 @@
                     <!-- IMAGE -->
 
                     <img
-                      v-if="!form.backFile.toLowerCase().endsWith('.pdf')"
-                      :src="form.backFile"
+                      v-if="!backPreview.toLowerCase().endsWith('.pdf')"
+                      :src="backPreview"
                       class="w-48 h-48 object-cover rounded-xl border"
                     >
 
@@ -1250,7 +1250,7 @@
   const backUploading = ref(false);
   const selfieUploading = ref(false);
   
-  const form = computed(() => pinia.state.user?.userIdentity || pinia.state.verificationForm);
+  const form = computed(() =>  pinia.state.verificationForm);
   
   const frontPreview = ref("");
   const backPreview = ref("");
@@ -1314,138 +1314,97 @@ const isRejected = computed(() => verificationStatus.value === "rejected")
   
   const handleUpload = async (
   event,
-  fileRef,
   previewRef,
-  fileName
+  field
 ) => {
+  let file = event.target.files?.[0]
 
-  if (!fileName) {
-    console.error("fileRefName is undefined");
-    return;
-  }
-
-
-  let file = event.target.files?.[0];
-
-  if (!file) return;
+  if (!file) return
 
   const allowed = [
     "image/jpeg",
     "image/png",
     "image/jpg",
-    "application/pdf",
-  ];
+    "application/pdf"
+  ]
 
   if (!allowed.includes(file.type)) {
-    notify.error("Only JPG, PNG and PDF allowed.");
-    return;
+    notify.error("Only JPG, PNG and PDF files are allowed.")
+    return
   }
 
   if (file.size > 10 * 1024 * 1024) {
-    notify.error("Maximum file size is 10MB.");
-    return;
+    notify.error("Maximum file size is 10MB.")
+    return
   }
 
   try {
-
-    // Compress only images
+    // Create local preview immediately
     if (file.type.startsWith("image/")) {
-      file = await compressImage(file);
-    }
-
-    // Preview
-    if (file.type.startsWith("image/")) {
-      previewRef.value = URL.createObjectURL(file);
+      previewRef.value = URL.createObjectURL(file)
     } else {
-      previewRef.value = "";
+      previewRef.value = ""
     }
 
-    notify.info("Uploading...");
+    // Compress images only
+    if (file.type.startsWith("image/")) {
+      file = await compressImage(file)
+    }
 
-    const response = await uploadImg(file);
+    notify.info("Uploading...")
+
+    const response = await uploadImg(file)
 
     if (!response.success) {
-      throw new Error(response.message);
+      throw new Error(response.message)
     }
 
-    pinia.state.verificationForm[fileName] =
-      response.imageUrl;
+    // Save uploaded URL
+    pinia.state.verificationForm[field] = response.imageUrl
 
-    notify.success("Upload successful");
+    // Replace preview with uploaded URL
+    if (file.type.startsWith("image/")) {
+      previewRef.value = response.imageUrl
+    }
 
+    notify.success("Upload successful")
   } catch (err) {
-
-    console.error(err);
-
-    notify.error(err.message || "Upload failed");
-
+    console.error(err)
+    notify.error(err.message || "Upload failed")
   }
+}
 
-};
-  
 const uploadFront = (e) => {
-  handleUpload(e, form.value.frontFile, frontPreview, "frontFile");
-};
+  handleUpload(e, frontPreview, "frontFile")
+}
 
 const uploadBack = (e) => {
-  handleUpload(e, form.value.backFile, backPreview, "backFile");
-};
+  handleUpload(e, backPreview, "backFile")
+}
 
 const uploadSelfie = (e) => {
-  handleUpload(e, form.value.selfieFile, selfiePreview, "selfieFile");
-};
-  
-  /*
-  |--------------------------------------------------------------------------
-  | Preview
-  |--------------------------------------------------------------------------
-  */
-  
-  watch(
-    () => form.value.frontFile,
-    (value) => {
-      frontPreview.value = value || "";
-    },
-    { immediate: true }
-  );
-  
-  watch(
-    () => form.value.backFile,
-    (value) => {
-      backPreview.value = value || "";
-    },
-    { immediate: true }
-  );
-  
-  watch(
-    () => form.value.selfieFile,
-    (value) => {
-      selfiePreview.value = value || "";
-    },
-    { immediate: true }
-  );
-  
+  handleUpload(e, selfiePreview, "selfieFile")
+}
+ 
   /*
   |--------------------------------------------------------------------------
   | Remove
   |--------------------------------------------------------------------------
   */
-  
   const removeFront = () => {
-    form.value.frontFile = "";
-    frontPreview.value = "";
-  };
-  
-  const removeBack = () => {
-    form.value.backFile = "";
-    backPreview.value = "";
-  };
-  
-  const removeSelfie = () => {
-    form.value.selfieFile = "";
-    selfiePreview.value = "";
-  };
-  
+  frontPreview.value = ""
+  pinia.state.verificationForm.frontFile = ""
+}
+
+const removeBack = () => {
+  backPreview.value = ""
+  pinia.state.verificationForm.backFile = ""
+}
+
+const removeSelfie = () => {
+  selfiePreview.value = ""
+  pinia.state.verificationForm.selfieFile = ""
+}
   /*
   |--------------------------------------------------------------------------
   | Navigation
@@ -1531,21 +1490,15 @@ const uploadSelfie = (e) => {
   };
   
   onMounted(() => {
+  if (pinia.state.user?.userIdentity?.status === "verified") {
+    pinia.state.currentStep = 4
+  }
 
-    if(pinia.state.user?.userIdentity?.status === 'verified'){
-      pinia.state.currentStep = 4;
 
-    }
-    frontPreview.value =
-      pinia.state.verificationForm.frontFile || "";
-
-    backPreview.value =
-      pinia.state.verificationForm.backFile || "";
-
-    selfiePreview.value =
-      pinia.state.verificationForm.selfieFile || "";
-
-    });
+  frontPreview.value = pinia.state.verificationForm.frontFile || ""
+  backPreview.value = pinia.state.verificationForm.backFile || ""
+  selfiePreview.value = pinia.state.verificationForm.selfieFile || ""
+})
   </script>
   
   <style scoped>
