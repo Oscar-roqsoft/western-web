@@ -1,6 +1,6 @@
 <template>
   <main class="max-w-3xl  space-y-6">
-
+<!-- {{ pinia.state.selectedCryptoPrice}} -->
     <!-- =========================
          STEP 1 → MODERN FORM
     ========================== -->
@@ -10,7 +10,7 @@
 <div>
   <h1 class="text-2xl font-bold">Deposit Funds</h1>
   <p class="text-gray-500 text-sm">
-    Add funds securely using USDT (TRC20 network)
+    Add funds securely using {{ pinia.state.selectedCryptoPrice.symbol }} ({{ pinia.state.selectedCryptoPrice.network }} network)
   </p>
 </div>
 
@@ -23,7 +23,7 @@
     <ul class="list-disc ml-4 space-y-1">
       <li>Enter amount you want to deposit</li>
       <li>Get your wallet address</li>
-      <li>Send USDT from external wallet</li>
+      <li>Send {{ pinia.state.selectedCryptoPrice.symbol }} from external wallet</li>
       <li>Funds will be credited after approval</li>
     </ul>
   </div>
@@ -37,8 +37,8 @@
     <div class="flex items-center gap-3">
       <!-- <img src="/img/usdt.png" class="w-10 h-10 rounded-full" /> -->
       <div>
-        <p class="font-semibold">Tether (USDT)</p>
-        <p class="text-xs text-gray-500">TRC20 Network</p>
+        <p class="font-semibold">{{ pinia.state.selectedCryptoPrice.name }} ({{ pinia.state.selectedCryptoPrice.symbol }})</p>
+        <p class="text-xs text-gray-500">{{ pinia.state.selectedCryptoPrice.network }} Network</p>
       </div>
     </div>
 
@@ -47,7 +47,7 @@
 
   <!-- AMOUNT -->
   <div>
-    <label class="label">Deposit Amount (USDT)</label>
+    <label class="label">Deposit Amount ({{ pinia.state.selectedCryptoPrice.symbol }})</label>
 
     <input
       v-model="amount"
@@ -56,9 +56,9 @@
       class="input text-lg"
     />
 
-    <p class="text-xs text-gray-400 mt-1">
+    <!-- <p class="text-xs text-gray-400 mt-1">
       Minimum deposit: 10 USDT
-    </p>
+    </p> -->
   </div>
 
   <!-- QUICK -->
@@ -91,7 +91,7 @@
 
 <!-- SECURITY -->
 <div class="bg-gray-50 border rounded-xl p-4 text-xs text-gray-500">
-  🔒 Always confirm you are sending via TRC20 network.
+  🔒 Always confirm you are sending via {{pinia.state.selectedCryptoPrice.network}} network.
 </div>
 
 </div>
@@ -104,7 +104,7 @@
 
       <!-- BACK -->
       
-      <button @click="step = 1"class="bg-blue-500 rounded-full p-2 mb-4">
+      <button @click="step = 1" class="bg-blue-500 rounded-full p-2 mb-4">
               <ArrowLeft class="w-5 h-5 text-white"/>
         </button>
 
@@ -115,15 +115,15 @@
           <div>
             <h2 class="font-bold text-xl">Deposit Address</h2>
             <p class="text-xs text-gray-500">
-              Only send USDT via TRC20
+              Only send {{ pinia.state.selectedCryptoPrice.symbol }} via {{ pinia.state.selectedCryptoPrice.network }}
             </p>
           </div>
         </div>
 
         <!-- TAGS -->
         <div class="flex gap-2 mb-3">
-          <span class="badge-green">USDT</span>
-          <span class="badge-red">TRC20</span>
+          <span class="badge-green capitalize">{{pinia.state.selectedCryptoPrice.symbol}}</span>
+          <span class="badge-red capitalize">{{ pinia.state.selectedCryptoPrice.network }}</span>
         </div>
 
         <!-- ADDRESS -->
@@ -144,7 +144,7 @@
 
         <!-- WARNING -->
         <div class="mt-4 bg-red-100 text-red-700 p-3 rounded-lg text-xs">
-          Send only USDT (TRC20). Wrong network = loss of funds.
+          Send only {{ pinia.state.selectedCryptoPrice.symbol }} ({{ pinia.state.selectedCryptoPrice.network }}). Wrong network = loss of funds.
         </div>
 
       </div>
@@ -210,15 +210,25 @@ const error = ref("")
 const loading = ref(false)
 const pinia = useStore()
 /* Replace with admin wallet API later */
-const walletAddress = ref(pinia.state.adminWalletAddress?.usdtTrc20 || "")
 
+const walletAddress = computed(() => {
+  const wallets = pinia.state.adminWalletAddress || [];
+
+  const selectedCoin = pinia.state.selectedCryptoPrice?.symbol;
+
+  const wallet = wallets.find(
+    w => w.coin === selectedCoin
+  );
+
+  return wallet?.walletAddress || "";
+});
 
 const create_Deposit = async () => {
 
   error.value = ""
 
-  if (!amount.value || amount.value < 10) {
-    error.value = "Minimum deposit is 10 USDT"
+  if (!amount.value || amount.value < 0.0001) {
+    error.value = `Minimum deposit is 10 ${pinia.state.selectedCryptoPrice.symbol}`
     return
   }
 
@@ -227,8 +237,8 @@ const create_Deposit = async () => {
 
     const payload = {
       userId:pinia.state.user.id,
-      coin: "USDT",
-      network: "TRC20",
+      coin: pinia.state.selectedCryptoPrice.symbol,
+      network: pinia.state.selectedCryptoPrice.network,
       amount: Number(amount.value)
     }
 
