@@ -62,6 +62,8 @@ onMounted(()=>{
 
   if (Date.now() - loginTime > maxSession) {
       pinia.logout()
+      navigateTo("/login")
+
   }
   
 })
