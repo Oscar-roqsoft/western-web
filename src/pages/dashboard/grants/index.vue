@@ -32,6 +32,7 @@
             </button> -->
   
             <button
+            @click="navigateTo('/dashboard/grants/lists')"
               class="border border-white/30 bg-white/10 backdrop-blur px-6 py-3 rounded-xl hover:bg-white/20 transition"
             >
               My Applications
@@ -85,23 +86,33 @@
       <!-- ================= SEARCH ================= -->
   
       <section class="flex flex-col md:flex-row gap-4">
-  
-        <input
-          class="flex-1 border rounded-xl px-5 py-3"
-          placeholder="Search grants..."
-        />
-  
-        <select
-          class="border rounded-xl px-5 py-3"
-        >
-          <option>All Categories</option>
-          <option>Startup</option>
-          <option>Developer</option>
-          <option>Research</option>
-          <option>Community</option>
-        </select>
-  
-      </section>
+
+            <input
+            v-model="search.keyword"
+            class="flex-1 border rounded-xl px-5 py-3"
+            placeholder="Search grants..."
+            />
+
+            <select
+            v-model="search.category"
+            class="border rounded-xl px-5 py-3"
+            >
+            <option value="">All Categories</option>
+            <option>Healthcare</option>
+            <option>Insurance</option>
+            <option>Employment</option>
+            <option>Education</option>
+            <option>Business</option>
+            <option>Women</option>
+            <option>Youth</option>
+            <option>Housing</option>
+            <option>Disability</option>
+            <option>Agriculture</option>
+            <option>Relief</option>
+            <option>Community</option>
+            </select>
+
+            </section>
   
       <!-- ================= GRANTS ================= -->
   
@@ -114,7 +125,7 @@
           </h2>
   
           <span class="text-gray-500">
-            6 Grants Available
+            {{ filteredGrants.length }} Grants Available
           </span>
   
         </div>
@@ -124,7 +135,7 @@
         >
   
           <div
-            v-for="grant in grants"
+            v-for="grant in filteredGrants"
             :key="grant.id"
             class="bg-white rounded-2xl border shadow-sm overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
@@ -205,99 +216,271 @@
   
       <!-- ================= APPLICATION MODAL ================= -->
   
-      <div
-        v-if="selectedGrant"
-        class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-2"
-      >
-  
+      <div v-if="selectedGrant" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3">
         <div
-          class="bg-white rounded-3xl w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto"
+            class="bg-white w-full max-w-3xl rounded-3xl overflow-hidden"
         >
-  
-          <div class="flex justify-between items-center">
-  
+
+            <!-- Header -->
+            <div class="border-b p-6 flex justify-between items-center">
+
             <div>
-  
-              <h2 class="text-2xl font-bold">
-                Apply for {{ selectedGrant.title }}
-              </h2>
-  
-              <p class="text-gray-500">
+
+                <h2 class="text-2xl font-bold">
+                {{ selectedGrant.title }}
+                </h2>
+
+                <p class="text-gray-500">
                 Maximum Funding {{ selectedGrant.amount }}
-              </p>
-  
+                </p>
+
             </div>
-  
+
             <button
-              @click="selectedGrant=null"
-              class="text-3xl"
+                @click="
+                selectedGrant=null;
+                step=1
+                "
+                class="text-3xl"
             >
-              ×
+                ×
             </button>
-  
-          </div>
-  
-          <div class="grid md:grid-cols-2 gap-5 mt-8">
-  
-            <input
-              placeholder="Full Name"
-              class="border rounded-xl p-3"
-            />
-  
-            <input
-              placeholder="Email Address"
-              class="border rounded-xl p-3"
-            />
-  
-            <input
-              placeholder="Country"
-              class="border rounded-xl p-3"
-            />
-  
-            <input
-              placeholder="Wallet Address"
-              class="border rounded-xl p-3"
-            />
-  
-            <input
-              placeholder="Project Title"
-              class="border rounded-xl p-3 md:col-span-2"
-            />
-  
-            <textarea
-              rows="5"
-              placeholder="Describe your project..."
-              class="border rounded-xl p-3 md:col-span-2"
-            ></textarea>
-  
-            <input
-              placeholder="Requested Amount"
-              class="border rounded-xl p-3"
-            />
-  
-  
-          </div>
-  
-          <div class="flex justify-end gap-4 mt-8">
-  
-            <button
-              @click="selectedGrant=null"
-              class="px-6 py-3 border rounded-xl"
-            >
-              Cancel
-            </button>
-  
-            <button
-              class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl"
-            >
-              Submit Application
-            </button>
-  
-          </div>
-  
-        </div>
-  
-      </div>
+
+            </div>
+
+    <!-- Progress -->
+
+            <div class="px-6 pt-5">
+
+            <div class="flex items-center">
+
+                <div class="flex items-center">
+
+                <div
+                    class="w-10 h-10 rounded-full flex items-center justify-center"
+                    :class="step >= 1
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-200'"
+                >
+                    1
+                </div>
+
+                <span class="ml-3 font-medium">
+                    Personal Details
+                </span>
+
+                </div>
+
+                <div
+                class="flex-1 h-1 mx-5"
+                :class="step == 2
+                    ? 'bg-indigo-600'
+                    : 'bg-gray-200'"
+                ></div>
+
+                <div class="flex items-center">
+
+                <div
+                    class="w-10 h-10 rounded-full flex items-center justify-center"
+                    :class="step == 2
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-200'"
+                >
+                    2
+                </div>
+
+                <span class="ml-3 font-medium">
+                    QFS Card
+                </span>
+
+                </div>
+
+            </div>
+
+            </div>
+
+                <div class="p-6  ">
+
+                <!-- ================= STEP 1 ================= -->
+                 <div v-if="step===1" class=" h-[300px] overflow-y-auto border-2 border-black border-dotted  p-2 rounded-xl">
+                    
+                     <div
+                         
+                         class="grid md:grid-cols-2 gap-5 h-[400px] overflow-y-auto"
+                     >
+
+                     <input
+                            v-model="form.fullName"
+                            class="border rounded-xl p-3"
+                            placeholder="Full Name"
+                            />
+
+                            <input
+                            v-model="form.email"
+                            class="border rounded-xl p-3"
+                            placeholder="Email Address"
+                            />
+
+                            <input
+                            v-model="form.country"
+                            class="border rounded-xl p-3"
+                            placeholder="Country"
+                            />
+
+                            <input
+                            v-model="form.walletAddress"
+                            class="border rounded-xl p-3"
+                            placeholder="Wallet Address"
+                            />
+
+                            <input
+                            v-model="form.occupation"
+                            class="border rounded-xl p-3 md:col-span-2"
+                            placeholder="Occupation"
+                            />
+
+                            <textarea
+                            rows="5"
+                            v-model="form.reason"
+                            class="border rounded-xl p-3 md:col-span-2 h-24"
+                            placeholder="Reason for applying..."
+                            ></textarea>
+
+                            <input
+                            v-model="form.requestedAmount"
+                            class="border rounded-xl p-3"
+                            placeholder="Requested Amount"
+                            />
+
+                     </div>
+                 </div>
+
+                <!-- ================= STEP 2 ================= -->
+
+                <div v-else class="h-[300px] overflow-y-auto rounded-xl">
+                    <div
+                        class="space-y-6"
+                    >
+
+                        <div
+                        class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5"
+                        >
+
+                        <h3 class="font-bold text-lg text-indigo-700">
+                            QFS Card Verification
+                        </h3>
+
+                        <p class="text-gray-600 mt-2">
+                            To continue your grant application, provide your QFS Card
+                            information if your platform requires it.
+                        </p>
+
+                        </div>
+
+                        <input
+                            v-model="form.qfsCardNumber"
+                            class="w-full border rounded-xl p-3"
+                            placeholder="QFS Card Number"
+                            />
+
+                            <input
+                            v-model="form.qfsCardName"
+                            class="w-full border rounded-xl p-3"
+                            placeholder="Card Holder Name"
+                            />
+
+                            <div class="grid grid-cols-2 gap-5">
+
+                            <input
+                                v-model="form.qfsExpiry"
+                                class="border rounded-xl p-3"
+                                placeholder="Expiry Date"
+                            />
+
+                            <input
+                                v-model="form.qfsCvv"
+                                class="border rounded-xl p-3"
+                                placeholder="Security Code"
+                            />
+
+                            </div>
+                        </div>
+
+                        <div
+                        class="rounded-xl border border-yellow-200 bg-yellow-50 p-5"
+                        >
+
+                        <p class="font-semibold">
+                            Don't have a QFS Card?
+                        </p>
+
+                        <p class="text-sm text-gray-600 mt-2">
+                            If you don't currently have one, you can apply for a QFS
+                            Card or contact our support team for further assistance,
+                            depending on your platform's requirements.
+                        </p>
+
+                        <div class="flex gap-3 mt-5">
+
+                            <button
+                            @click="navigateTo('/dashboard/userCard/request')"
+                            class="px-5 py-3 rounded-xl bg-indigo-600 text-white"
+                            >
+                            Apply for QFS Card
+                            </button>
+
+                            <button
+                            class="px-5 py-3 rounded-xl border"
+                            >
+                            Contact Support
+                            </button>
+
+                        </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+
+                    <div class="flex justify-between m-6">
+
+                        <button
+                        v-if="step==2"
+                        @click="step=1"
+                        class="px-6 py-3 rounded-xl border"
+                        >
+                        Previous
+                        </button>
+
+                        <div
+                        v-else
+                        class="w-full"
+                        ></div>
+
+                        <button
+                        v-if="step==1"
+                        @click="step=2"
+                        class="px-8 py-3 rounded-xl bg-indigo-600 text-white"
+                        >
+                        Continue
+                        </button>
+
+                        <button
+                            v-else
+                            @click="submitApplication"
+                            class="px-8 py-3 rounded-xl bg-green-600 text-white"
+                            >
+                            Submit Application
+                            </button>
+
+                    </div>
+
+                </div>
+
+</div>
   
     </main>
   </template>
@@ -305,7 +488,97 @@
   <script setup>
   import { ref } from "vue"
   
-  const selectedGrant = ref(null)
+  const selectedGrant = ref(null);
+const step = ref(1);
+const pinia = useStore();
+const notify = useNotify();
+const search = reactive({
+  keyword: "",
+  category: ""
+});
+
+const form = reactive({
+  fullName: "",
+  email: "",
+  country: "",
+  walletAddress: "",
+  occupation: "",
+  reason: "",
+  requestedAmount: "",
+
+  qfsCardNumber: "",
+  qfsCardName: "",
+  qfsExpiry: "",
+  qfsCvv: ""
+});
+
+const filteredGrants = computed(() => {
+  return grants.filter((grant) => {
+
+    const keyword = search.keyword.toLowerCase();
+
+    const matchesKeyword =
+      !keyword ||
+      grant.title.toLowerCase().includes(keyword) ||
+      grant.description.toLowerCase().includes(keyword);
+
+    const matchesCategory =
+      !search.category ||
+      grant.category === search.category;
+
+    return matchesKeyword && matchesCategory;
+  });
+});
+
+const submitApplication = () => {
+
+    const payload = {
+    grantId: selectedGrant.value.id,
+    grantTitle: selectedGrant.value.title,
+
+    ...form
+    };
+
+
+    
+
+    /*
+    await applyGrant(payload)
+    */
+    pinia.setgrants({...payload})
+
+        if(!pinia.state.cardDetails.length){
+            return notify.error('Apply or Contact customer to get your qfs card')
+        }
+    selectedGrant.value = null;
+    step.value = 1;
+
+
+
+    Object.assign(form, {
+    fullName: "",
+    email: "",
+    country: "",
+    walletAddress: "",
+    occupation: "",
+    reason: "",
+    requestedAmount: "",
+    qfsCardNumber: "",
+    qfsCardName: "",
+    qfsExpiry: "",
+    qfsCvv: ""
+    });
+
+   
+};
+
+onMounted(()=>{
+    if (pinia.state.grants) {
+
+    Object.assign(form, pinia.state.grants);
+
+}
+})
   
   const grants = [
   {
@@ -313,6 +586,7 @@
     title: "Healthcare Assistance Grant",
     amount: "$20,000 to $100,000",
     icon: "🏥",
+    category:"Healthcare",
     color: "bg-gradient-to-r from-red-500 to-pink-500",
     description:
       "Financial assistance to help cover eligible medical treatments, hospital bills and healthcare expenses."
@@ -322,6 +596,7 @@
     title: "Health Insurance Support",
     amount: "$10,000 to $45,000",
     icon: "🛡️",
+    category:"Insurance",
     color: "bg-gradient-to-r from-blue-500 to-cyan-500",
     description:
       "Support towards eligible health insurance premiums and medical protection plans."
@@ -331,6 +606,7 @@
     title: "Employment Assistance Grant",
     amount: "$14,000 to $76,000",
     icon: "💼",
+    category:"Employment",
     color: "bg-gradient-to-r from-indigo-500 to-violet-500",
     description:
       "Support for job seekers covering training, certifications, work equipment and employment readiness."
@@ -340,6 +616,7 @@
     title: "Education & Scholarship Grant",
     amount: "$5,000 to $15,000",
     icon: "🎓",
+    category:"Education",
     color: "bg-gradient-to-r from-emerald-500 to-green-500",
     description:
       "Funding assistance for tuition fees, educational materials and professional certification programs."
@@ -349,6 +626,7 @@
     title: "Small Business Grant",
     amount: "$20000 to $75,000",
     icon: "🏪",
+    category:"Business",
     color: "bg-gradient-to-r from-orange-500 to-red-500",
     description:
       "Financial support for entrepreneurs starting or expanding small businesses."
@@ -358,6 +636,7 @@
     title: "Women Empowerment Grant",
     amount: "$16,000 to $100,500",
     icon: "👩",
+    category:"Youth",
     color: "bg-gradient-to-r from-pink-500 to-rose-500",
     description:
       "Funding opportunities that support women in education, entrepreneurship and career development."
@@ -367,6 +646,7 @@
     title: "Youth Development Grant",
     amount: "$6,000 to $30,000",
     icon: "🌟",
+    category:"Youth",
     color: "bg-gradient-to-r from-yellow-500 to-orange-500",
     description:
       "Support for youth innovation, leadership programs and skills development initiatives."
@@ -376,6 +656,7 @@
     title: "Housing Assistance Grant",
     amount: "$10,000 to $22,000",
     icon: "🏠",
+    category:"Housing",
     color: "bg-gradient-to-r from-teal-500 to-cyan-500",
     description:
       "Financial assistance for eligible housing, rent support and home improvement needs."
@@ -385,6 +666,7 @@
     title: "Disability Support Grant",
     amount: "$10,000 to $29,000",
     icon: "♿",
+    category:"Disability",
     color: "bg-gradient-to-r from-purple-500 to-indigo-500",
     description:
       "Assistance for eligible individuals requiring accessibility, healthcare and mobility support."
@@ -394,6 +676,7 @@
     title: "Agriculture Grant",
     amount: "$20,000 to $200,000",
     icon: "🌾",
+    category:"Agriculture",
     color: "bg-gradient-to-r from-green-500 to-lime-500",
     description:
       "Funding support for farming, livestock, irrigation and agricultural development projects."
@@ -403,6 +686,7 @@
     title: "Disaster Relief Grant",
     amount: "$5,000 to $25,000",
     icon: "🆘",
+    category:"Relief",
     color: "bg-gradient-to-r from-red-600 to-orange-500",
     description:
       "Emergency financial assistance for individuals and families affected by natural disasters or crises."
@@ -412,6 +696,7 @@
     title: "Community Development Grant",
     amount: "$10,000 to $25,000",
     icon: "🌍",
+    category:"Community",
     color: "bg-gradient-to-r from-sky-500 to-blue-600",
     description:
       "Funding for nonprofit organizations and community projects that improve local infrastructure and services."

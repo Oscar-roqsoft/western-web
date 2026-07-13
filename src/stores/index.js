@@ -11,6 +11,7 @@ export const useStore = defineStore('Crypto', () => {
     isAuthenticated:false,
     email:null,
     currentStep:1,
+    grantsStep:1,
     selectedCryptoPrice: null,
     cryptoPrices:[],
     notification:[],
@@ -31,6 +32,20 @@ export const useStore = defineStore('Crypto', () => {
     isFetchingCryptobal:false,
     isFetchingCrypto:false,
     revealWithdrawal:false,
+    grants:{
+      fullName: "",
+      email: "",
+      country: "",
+      walletAddress: "",
+      occupation: "",
+      reason: "",
+      requestedAmount: "",
+    
+      qfsCardNumber: "",
+      qfsCardName: "",
+      qfsExpiry: "",
+      qfsCvv: ""
+    },
     withdrawal:{
       step: 1,
       coin: null,
@@ -104,6 +119,9 @@ export const useStore = defineStore('Crypto', () => {
   const setsecuredWallets = (payload) => {
     state.securedWallets = payload
   }
+  const setgrants = (payload) => {
+    state.grants = payload
+  }
  
 
   const clearUser =()=>{
@@ -138,6 +156,7 @@ export const useStore = defineStore('Crypto', () => {
       securityPassed: false
     }
     state.currentStep = 1
+    state.grantsStep = 1
   }
   const logout =()=>{
     state.cryptoPrices = []
@@ -159,6 +178,20 @@ export const useStore = defineStore('Crypto', () => {
     state.isAuthenticated = false
     state.revealWithdrawal = false
     state.walletAddress = null
+    state.grants = {
+      fullName: "",
+      email: "",
+      country: "",
+      walletAddress: "",
+      occupation: "",
+      reason: "",
+      requestedAmount: "",
+    
+      qfsCardNumber: "",
+      qfsCardName: "",
+      qfsExpiry: "",
+      qfsCvv: ""
+    }
     state.verificationForm = {
       firstName: "",
       lastName: "",
@@ -194,7 +227,8 @@ export const useStore = defineStore('Crypto', () => {
     setUserTransaction,
     setallCardDetails,
     setnotification,
-    setsecuredWallets
+    setsecuredWallets,
+    setgrants
     
   }
 
