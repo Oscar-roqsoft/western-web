@@ -343,7 +343,7 @@
   
   function logout() {
     pinia.logout()
-    navigateTo("/login")
+    // navigateTo("/login")
 
     console.log('Logout clicked')
     // add your logout logic here

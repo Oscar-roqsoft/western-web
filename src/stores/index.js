@@ -205,6 +205,7 @@ export const useStore = defineStore('Crypto', () => {
       selfieFile: null,
     }
     state.currentStep = 1
+    navigateTo("/login")
 
   }
 

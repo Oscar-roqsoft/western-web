@@ -56,15 +56,16 @@ Button: {
 
 onMounted(()=>{
   // pinia.clearUser()
-  const loginTime = Number(localStorage.getItem("loginTime"))
+  // const loginTime = Number(localStorage.getItem("loginTime"))
 
-  const maxSession = 15 * 60 * 1000 // 30 mins
+  // const maxSession = 15 * 60 * 1000 // 30 mins
 
-  if (Date.now() - loginTime > maxSession) {
-      pinia.logout()
-      navigateTo("/login")
+  // if (Date.now() - loginTime > maxSession) {
+  //     pinia.logout()
+  //     navigateTo("/login")
+  //     localStorage.removeItem("loginTime");
 
-  }
+  // }
   
 })
 
