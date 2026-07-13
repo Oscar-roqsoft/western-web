@@ -75,7 +75,7 @@
         <div
           class="bg-white rounded-2xl p-6 border shadow-sm"
         >
-          <h3 class="text-3xl font-bold text-blue-600">15</h3>
+          <h3 class="text-3xl font-bold text-blue-600"> {{ filteredGrants.length }}</h3>
           <p class="text-gray-500 mt-1">
             Active Grants
           </p>
