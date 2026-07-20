@@ -255,7 +255,7 @@
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-blue-600 flex justify-center items-center text-white overflow-hidden ">
                       <img v-if="pinia.state.user?.avatar" :src="pinia.state.user?.avatar" class="w-full h-full" alt="">
-                    <User class="w-4 h-4"/>
+                       <User v-else class="w-4 h-4"/>
                     </div>
                     <div>
                     <p class="font-semibold text-sm text-gray-800">{{pinia.state.user?.name}}</p>

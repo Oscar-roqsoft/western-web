@@ -55,21 +55,21 @@ Button: {
 
 const path = ref(route.currentRoute.value.path)
 
-onMounted(()=>{
-  console.log(path.value.includes('/login'))
-  pinia.clearUser()
-  const loginTime = Number(localStorage.getItem("loginTime"))
+onMounted(() => {
+  const loginTime = Number(localStorage.getItem("loginTime"));
 
-  const maxSession = 15 * 60 * 1000 // 30 mins
+  if (!loginTime) return;
 
-  if (Date.now() - loginTime > maxSession && path.value.includes('/dashboard') ) {
-      pinia.logout()
-      navigateTo("/login")
-      localStorage.removeItem("loginTime");
+  const maxSession = 15 * 60 * 1000; // 15 minutes
 
+  const isDashboardRoute = path.value.startsWith("/dashboard");
+
+  if (isDashboardRoute && Date.now() - loginTime >= maxSession) {
+    localStorage.removeItem("loginTime");
+    pinia.logout();
+    navigateTo("/login");
   }
-  
-})
+});
 
 
 

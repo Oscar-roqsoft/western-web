@@ -281,7 +281,7 @@
                   >
             
                     <button
-                      @click="reveal = false"
+                      @click="pinia.state.revealWithdrawal  = false"
                       class="px-8 py-3 rounded-xl border border-gray-300 hover:bg-gray-50"
                     >
                       Back
