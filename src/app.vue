@@ -53,19 +53,21 @@ Button: {
     },
 }
 
+const path = ref(route.currentRoute.value.path)
 
 onMounted(()=>{
-  // pinia.clearUser()
-  // const loginTime = Number(localStorage.getItem("loginTime"))
+  console.log(path.value.includes('/login'))
+  pinia.clearUser()
+  const loginTime = Number(localStorage.getItem("loginTime"))
 
-  // const maxSession = 15 * 60 * 1000 // 30 mins
+  const maxSession = 15 * 60 * 1000 // 30 mins
 
-  // if (Date.now() - loginTime > maxSession) {
-  //     pinia.logout()
-  //     navigateTo("/login")
-  //     localStorage.removeItem("loginTime");
+  if (Date.now() - loginTime > maxSession && path.value.includes('/dashboard') ) {
+      pinia.logout()
+      navigateTo("/login")
+      localStorage.removeItem("loginTime");
 
-  // }
+  }
   
 })
 
