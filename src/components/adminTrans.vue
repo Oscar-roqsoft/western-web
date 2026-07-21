@@ -91,7 +91,7 @@
     </th>
     
     
-    <th>
+    <th class="w-[200px]">
     Action
     </th>
     
@@ -192,7 +192,7 @@
     
     
     
-    <td class="p-3">
+    <td class="p-3 flex gap-4 w-[200px]">
     
     <button
     v-if="tx.status==='pending'"
