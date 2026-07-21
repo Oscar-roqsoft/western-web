@@ -6,7 +6,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 // import axios from "axios";
-import { getAllDeposits,approveDeposit,rejectDeposit } from "@/composables/requests/crypto"
+import { getAllDeposits,approveDeposit,rejectDeposit,getUserTransactions } from "@/composables/requests/crypto"
 import { getAllWithdrawals,approveWithdrawal,rejectWithdrawal } from "@/composables/requests/withdrawal"
 const pinia = useStore()
 const notify = useNotify()
@@ -28,7 +28,7 @@ const paginatedTransactions = computed(() =>
 
 const fetchDeposits = async () => {
   try {
-    const data = await getAllDeposits()
+    const data = await getUserTransactions()
     if(data.success){
       pinia.setallTransaction(data.data?.deposits)
     }

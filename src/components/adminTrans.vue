@@ -1,336 +1,713 @@
 <template>
-    <main class=" max-w-7xl mx-auto">
-      <h1 class="text-2xl font-bold mb-6">User Deposits And Withdrawals Transactions</h1>
-  
-      <!-- Table -->
-      <div class="bg-white shadow rounded-lg overflow-x-auto">
-        <table class="w-full text-left" v-if="paginatedTransactions.length">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="px-4 py-2">TxID</th>
-              <th class="px-4 py-2">User</th>
-              <th class="px-4 py-2">Coin</th>
-              <th class="px-4 py-2">Amount</th>
-              <th class="px-4 py-2">Status</th>
-              <th class="px-4 py-2">Date</th>
-              <th class="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-  
-          <tbody v-if="paginatedTransactions.length">
-            <tr
-              v-for="tx in paginatedTransactions"
-              :key="tx._id"
-              class="border-b hover:bg-gray-50 cursor-pointer"
-              @click="openModal(tx)"
-            >
-              <td class="px-4 py-2 font-mono text-sm">{{ tx?._id }}</td>
-              <td class="px-4 py-2">{{ tx.userId?.name }} {{ tx?.userId?.email }}</td>
-              <td class="px-4 py-2">{{ tx?.coin }} ({{ tx?.network }})</td>
-              <td class="px-4 py-2">{{ tx?.amount }}</td>
-              <td class="px-4 py-2">
-                <span :class="statusClass(tx?.status)">{{ tx?.status }}</span>
-              </td>
-              <td class="px-4 py-2">{{ formatDate(tx?.createdAt) }}</td>
-              <td class="px-4 py-2 flex gap-2">
-                <button
-                  v-if="tx.status === 'pending'"
-                  @click="openModal(tx?._id,tx?.type)"
-                  class="bg-green-500 text-white px-3 py-1 rounded-lg"
-                >Approve</button>
-                <button
-                  v-if="tx.status === 'pending'"
-                  @click ="openModal(tx?._id,tx?.type)"
-                  class="bg-red-500 text-white px-3 py-1 rounded-lg"
-                >Reject</button>
-              </td>
-            </tr>
-          </tbody>
-          
-          
-        </table>
-  
-            <!-- EMPTY -->
-            <div v-else class="p-6 text-center text-gray-500">
-            No transactions found
-          </div>
-      </div>
-  
-      <!-- Pagination -->
-      <div class="flex justify-center items-center gap-2 mt-4">
-        <button
-          :disabled="currentPage === 1"
-          @click="currentPage--"
-          class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >Prev</button>
-  
-        <span>Page {{ currentPage }} of {{ totalPages }}</span>
-  
-        <button
-          :disabled="currentPage === totalPages"
-          @click="currentPage++"
-          class="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-        >Next</button>
-      </div>
-  
-      <!-- Modal -->
-      <div
-        v-if="selectedTransaction"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      >
-        <div class="bg-white w-full max-w-lg rounded-xl p-6 shadow-xl relative">
-          <button
-            class="absolute top-4 right-4 text-gray-500 hover:text-black"
-            @click="selectedTransaction = null"
-          >✕</button>
-  
-          <h2 class="text-xl font-bold mb-4">Transaction Details</h2>
-  
-          <div class="space-y-2 text-sm">
-            <p><span class="font-semibold">TxID:</span> {{ selectedTransaction?._id }}</p>
-            <p><span class="font-semibold">User:</span> {{ selectedTransaction?.userId?.name }} ({{ selectedTransaction?.userId?.email }})</p>
-            <p><span class="font-semibold">Coin:</span> {{ selectedTransaction?.coin }} ({{ selectedTransaction?.network }})</p>
-            <p><span class="font-semibold">Amount:</span> {{ selectedTransaction?.amount }}</p>
-            <p>
-            <span class="font-semibold">Wallet:</span>
-            {{ selectedTransaction?.walletAddress || "N/A" }}
-            </p>
-
-            <p>
-            <span class="font-semibold">Reference:</span>
-            {{ selectedTransaction?.reference || "N/A" }}
-</p>
-            <p><span class="font-semibold">Status:</span> <span :class="statusClass(selectedTransaction?.status)">{{ selectedTransaction?.status }}</span></p>
-            <p><span class="font-semibold">Date:</span> {{ formatDate(selectedTransaction?.createdAt) }}</p>
-            <p><span class="font-semibold">Note:</span> {{ selectedTransaction?.note || "N/A" }}</p>
-          </div>
-  
-          <!-- Approve / Reject Buttons -->
-          <div class="flex gap-3 mt-6">
-            <button
-              v-if="selectedTransaction?.status === 'pending'"
-              @click="approve(selectedTransaction?._id);"
-              class="flex-1 bg-green-500 text-white py-2 rounded-lg flex items-center justify-center gap-2"
-            >
-            <span>
-              Approve
-            </span>
-            <Spinner v-if="isApproving"/>
-           
-          </button>
-  
-            <button
-              v-if="selectedTransaction?.status === 'pending'"
-              @click="reject(selectedTransaction?._id);"
-              class="flex-1 bg-red-500 text-white py-2 rounded-lg flex items-center justify-center gap-2"
-            >
-            <span>
-              Reject
-            </span>
-            <Spinner v-if="isRejecting"/>
-          
-          </button>
-          </div>
-        </div>
-      </div>
-  
+    <main class="max-w-7xl mx-auto">
+    
+    <h1 class="text-2xl font-bold mb-6">
+      User Transactions
+    </h1>
+    
+    
+    <!-- FILTER -->
+    
+    <div class="bg-white rounded-xl shadow p-4 mb-5 flex flex-wrap gap-4">
+    
+    <select
+    v-model="filterType"
+    class="border rounded-lg px-4 py-2"
+    >
+    
+    <option value="">
+    All Transactions
+    </option>
+    
+    <option value="deposit">
+    Deposits
+    </option>
+    
+    <option value="withdrawal">
+    Withdrawals
+    </option>
+    
+    <option value="swap">
+    Swaps
+    </option>
+    
+    <option value="send">
+    Send
+    </option>
+    
+    </select>
+    
+    
+    <input
+    v-model="search"
+    placeholder="Search coin/user..."
+    class="border rounded-lg px-4 py-2 flex-1"
+    />
+    
+    
+    </div>
+    
+    
+    
+    
+    <!-- TABLE -->
+    
+    
+    <div class="bg-white rounded-xl shadow overflow-x-auto">
+    
+    
+    <table class="w-full">
+    
+    <thead class="bg-gray-100">
+    
+    <tr>
+    
+    <th class="p-3 text-left">
+    Type
+    </th>
+    
+    <th class="p-3 text-left">
+    User
+    </th>
+    
+    
+    <th class="p-3 text-left">
+    Coin
+    </th>
+    
+    
+    <th class="p-3 text-left">
+    Amount
+    </th>
+    
+    
+    <th class="p-3 text-left">
+    Status
+    </th>
+    
+    
+    <th class="p-3 text-left">
+    Date
+    </th>
+    
+    
+    <th>
+    Action
+    </th>
+    
+    
+    </tr>
+    
+    </thead>
+    
+    
+    
+    <tbody>
+    
+    
+    <tr
+    v-for="tx in paginatedTransactions"
+    :key="tx._id"
+    class="border-b hover:bg-gray-50 cursor-pointer"
+    @click="openModal(tx)"
+    >
+    
+    
+    <td class="p-3">
+    
+    
+    <span
+    class="px-3 py-1 rounded-full text-xs"
+    :class="typeClass(tx.type)"
+    >
+    
+    {{tx.type}}
+    
+    </span>
+    
+    
+    </td>
+    
+    
+    
+    <td class="p-3">
+    
+    {{tx.userId?.name}}
+    
+    <br>
+    
+    <small>
+    {{tx.userId?.email}}
+    </small>
+    
+    
+    </td>
+    
+    
+    
+    
+    <td class="p-3">
+    
+    {{tx.coin}}
+    
+    <br>
+    
+    <small>
+    {{tx.network}}
+    </small>
+    
+    </td>
+    
+    
+    
+    <td class="p-3">
+    
+    {{tx.amount}}
+    
+    </td>
+    
+    
+    
+    
+    <td class="p-3">
+    
+    <span
+    :class="statusClass(tx.status)"
+    >
+    
+    {{tx.status}}
+    
+    </span>
+    
+    </td>
+    
+    
+    
+    
+    <td class="p-3">
+    
+    {{formatDate(tx.createdAt)}}
+    
+    </td>
+    
+    
+    
+    <td class="p-3">
+    
+    <button
+    v-if="tx.status==='pending'"
+    @click.stop="approve(tx)"
+    class="bg-green-500 text-white px-3 py-1 rounded-lg"
+    >
+    
+    Approve
+    
+    </button>
+    
+    
+    <button
+    v-if="tx.status==='pending'"
+    @click.stop="reject(tx)"
+    class="bg-red-500 text-white px-3 py-1 rounded-lg ml-2"
+    >
+    
+    Reject
+    
+    </button>
+    
+    
+    </td>
+    
+    
+    
+    </tr>
+    
+    
+    
+    </tbody>
+    
+    
+    </table>
+    
+    
+    
+    <div
+    v-if="!paginatedTransactions.length"
+    class="p-6 text-center text-gray-500"
+    >
+    
+    No transactions found
+    
+    </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    <!-- PAGINATION -->
+    
+    <div class="flex justify-center gap-4 mt-5">
+    
+    
+    <button
+    @click="currentPage--"
+    :disabled="currentPage===1"
+    class="px-4 py-2 bg-gray-200 rounded"
+    >
+    
+    Prev
+    
+    </button>
+    
+    
+    <span>
+    {{currentPage}} / {{totalPages}}
+    </span>
+    
+    
+    <button
+    @click="currentPage++"
+    :disabled="currentPage===totalPages"
+    class="px-4 py-2 bg-gray-200 rounded"
+    >
+    
+    Next
+    
+    </button>
+    
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    <!-- MODAL -->
+    
+    
+    <div
+    v-if="selectedTransaction"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center p-5"
+    >
+    
+    
+    <div class="bg-white rounded-xl p-6 max-w-lg w-full">
+    
+    
+    <button
+    @click="selectedTransaction=null"
+    class="float-right text-xl"
+    >
+    ×
+    </button>
+    
+    
+    
+    <h2 class="text-xl font-bold mb-5">
+    
+    Transaction Details
+    
+    </h2>
+    
+    
+    
+    <p>
+    Type:
+    <b>
+    {{selectedTransaction.type}}
+    </b>
+    </p>
+    
+    
+    <p>
+    Coin:
+    <b>
+    {{selectedTransaction.coin}}
+    </b>
+    </p>
+    
+    
+    <p>
+    Amount:
+    <b>
+    {{selectedTransaction.amount}}
+    </b>
+    </p>
+    
+    
+    <p>
+    Network:
+    <b>
+    {{selectedTransaction.network}}
+    </b>
+    </p>
+    
+    
+    <p>
+    Status:
+    <b>
+    {{selectedTransaction.status}}
+    </b>
+    </p>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+    
     </main>
-  </template>
-  
+ </template>
   <script setup>
-  import { ref, onMounted, computed } from "vue";
-  // import axios from "axios";
-  import { getAllDeposits,approveDeposit,rejectDeposit } from "@/composables/requests/crypto"
-  import { getAllWithdrawals,approveWithdrawal,rejectWithdrawal } from "@/composables/requests/withdrawal"
 
-  const props = defineProps({
-  type: {
-    type: String,
-    default: "deposit" // deposit | withdrawal
+  import {ref,computed,onMounted} from "vue";
+  
+  import {
+  getUserTransactions,
+  approveDeposit,
+  rejectDeposit
   }
-})
-  const pinia = useStore()
-  const notify = useNotify()
+  from "@/composables/requests/crypto";
   
-  const isApproving = ref(false)
-  const isRejecting = ref(false)
   
-  const transactions = computed(() =>pinia.state.allTransaction || []);
+  import {
+  approveWithdrawal,
+  rejectWithdrawal
+  }
+  from "@/composables/requests/withdrawal";
+  
+  
+  const pinia = useStore();
+  
+  const notify = useNotify();
+  
+  
+  
+  const filterType = ref("");
+  
+  const search = ref("");
+  
+  const currentPage = ref(1);
+  
+  const perPage = 10;
+  
+  
   const selectedTransaction = ref(null);
   
   
-  // Pagination
-  const currentPage = ref(1);
-  const perPage = 10;
-  const totalPages = computed(() => Math.ceil(transactions.value.length / perPage));
-  const paginatedTransactions = computed(() =>
-    Object.values(transactions.value).slice((currentPage.value - 1) * perPage, currentPage.value * perPage)
+  
+  const transactions = computed(()=>{
+  
+  return pinia.state.allTransaction || [];
+  
+  });
+  
+  
+  
+  
+  
+  /*
+  FILTER
+  */
+  
+  
+  const filteredTransactions = computed(()=>{
+  
+  
+  return transactions.value.filter(tx=>{
+  
+  
+  const matchType =
+  !filterType.value ||
+  tx.type === filterType.value;
+  
+  
+  
+  const keyword =
+  search.value.toLowerCase();
+  
+  
+  
+  const matchSearch =
+  !keyword ||
+  
+  tx.coin?.toLowerCase().includes(keyword)
+  
+  ||
+  
+  tx.userId?.name?.toLowerCase().includes(keyword)
+  
+  ||
+  
+  tx.type?.toLowerCase().includes(keyword);
+  
+  
+  
+  return matchType && matchSearch;
+  
+  
+  
+  });
+  
+  
+  });
+  
+  
+  
+  
+  
+  /*
+  PAGINATION
+  */
+  
+  
+  const totalPages = computed(()=>{
+  
+  
+  return Math.ceil(
+  filteredTransactions.value.length / perPage
+  )||1;
+  
+  
+  });
+  
+  
+  
+  
+  const paginatedTransactions = computed(()=>{
+  
+  
+  const start =
+  (currentPage.value-1)*perPage;
+  
+  
+  return filteredTransactions.value.slice(
+  start,
+  start+perPage
   );
   
-  const fetchTransactions = async () => {
-  try {
-
-    const [data1, data2] = await Promise.all([
-      getAllDeposits(),
-      getAllWithdrawals()
-    ]);
-
-    if (data1.success && data2.success) {
-
-      const deposits = data1.data.deposits.map(item => ({
-        ...item,
-        type: "deposit"
-      }));
-
-      const withdrawals = data2.data.withdrawals.map(item => ({
-        ...item,
-        type: "withdrawal"
-      }));
-
-      const all = [...deposits, ...withdrawals]
-        .sort(
-          (a, b) =>
-            new Date(b.createdAt) - new Date(a.createdAt)
-        );
-
-      pinia.setallTransaction(all);
-
-    }
-
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-onMounted(async () => {
-
-if (
-  pinia.state.allTransaction &&
-  pinia.state.allTransaction.length
-){
-
-    await fetchTransactions();
-};
-
-
-});
   
-
-const approve = async (id,type) => {
-
-try {
-
-  isApproving.value = true;
-
-  let data;
-
-  if (type === "deposit") {
-    data = await approveDeposit(id);
-  } else {
-    data = await approveWithdrawal(id);
-  }
-
-  if (data.success) {
-
-    await fetchTransactions();
-
-    notify.success(data.message);
-
-    await sendNotification({
-
-      userId: selectedTransaction.value.userId._id,
-
-      title:
-        props.type === "deposit"
-          ? "Deposit Approved"
-          : "Withdrawal Approved",
-
-      message:
-        props.type === "deposit"
-          ? `Your wallet has been credited with ${selectedTransaction.value.amount} ${selectedTransaction.value.coin}.`
-          : `Your withdrawal of ${selectedTransaction.value.amount} ${selectedTransaction.value.coin} has been approved.`,
-
-      type: props.type
-
-    });
-
-    closeModal();
-
-  } else {
-
-    notify.error(data.message);
-
-  }
-
-} finally {
-
-  isApproving.value = false;
-
-}
-
-};
+  });
   
-const reject = async (id,type) => {
-
-try {
-
-  isRejecting.value = true;
-
-  let data;
-
-  if (type === "deposit") {
-    data = await rejectDeposit(id);
-  } else {
-    data = await rejectWithdrawal(id);
-  }
-
-  if (data.success) {
-
-    await fetchTransactions();
-
-    notify.success(data.message);
-
-    await sendNotification({
-
-      userId: selectedTransaction.value.userId._id,
-
-      title:
-        props.type === "deposit"
-          ? "Deposit Rejected"
-          : "Withdrawal Rejected",
-
-      message:
-        props.type === "deposit"
-          ? "Your deposit request was rejected."
-          : "Your withdrawal request was rejected.",
-
-      type: props.type
-
-    });
-
-    closeModal();
-
-  } else {
-
-    notify.error(data.message);
-
-  }
-
-} finally {
-
-  isRejecting.value = false;
-
-}
-
-};
   
-  const openModal = (tx) => selectedTransaction.value = tx;
-  const closeModal = () => selectedTransaction.value = null;
   
-  const formatDate = (d) => new Date(d).toLocaleString();
-  const statusClass = (status) => {
-    return status === 'pending' ? 'text-yellow-500' :
-           status === 'approved' ? 'text-green-500' :
-           'text-red-500';
+  
+  
+  
+  /*
+  FETCH
+  */
+  
+  
+  const fetchTransactions = async()=>{
+  
+  
+  const res = await getUserTransactions();
+  
+  
+  if(res.success){
+  
+  pinia.setallTransaction(
+  res.data.transactions
+  );
+  
+  
+  }
+  
+  
   };
+  
+  
+  
+  
+  
+  
+  /*
+  APPROVE
+  */
+  
+  
+  const approve = async(tx)=>{
+  
+  
+  let res;
+  
+  
+  if(tx.type==="deposit"){
+  
+  res =
+  await approveDeposit(tx._id);
+  
+  
+  }
+  
+  
+  
+  if(tx.type==="withdrawal"){
+  
+  res =
+  await approveWithdrawal(tx._id);
+  
+  }
+  
+  
+  
+  
+  if(res.success){
+  
+  notify.success(res.message);
+  
+  fetchTransactions();
+  
+  
+  }else{
+  
+  notify.error(res.message);
+  
+  }
+  
+  
+  
+  };
+  
+  
+  
+  
+  
+  
+  
+  /*
+  REJECT
+  */
+  
+  
+  const reject = async(tx)=>{
+  
+  
+  let res;
+  
+  
+  
+  if(tx.type==="deposit"){
+  
+  res =
+  await rejectDeposit(tx._id);
+  
+  
+  }
+  
+  
+  
+  
+  if(tx.type==="withdrawal"){
+  
+  res =
+  await rejectWithdrawal(tx._id);
+  
+  }
+  
+  
+  
+  
+  if(res.success){
+  
+  notify.success(res.message);
+  
+  fetchTransactions();
+  
+  
+  }else{
+  
+  notify.error(res.message);
+  
+  }
+  
+  
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  const openModal=(tx)=>{
+  
+  selectedTransaction.value=tx;
+  
+  };
+  
+  
+  
+  
+  
+  
+  const formatDate=(date)=>{
+  
+  return new Date(date).toLocaleString();
+  
+  };
+  
+  
+  
+  
+  
+  const statusClass=(status)=>{
+  
+  
+  return {
+  
+  "approved":"text-green-600",
+  
+  "pending":"text-yellow-600",
+  
+  "rejected":"text-red-600"
+  
+  }[status] || "";
+  
+  };
+  
+  
+  
+  
+  
+  const typeClass=(type)=>{
+  
+  
+  return {
+  
+  deposit:
+  "bg-green-100 text-green-700",
+  
+  withdrawal:
+  "bg-red-100 text-red-700",
+  
+  swap:
+  "bg-blue-100 text-blue-700",
+  
+  send:
+  "bg-purple-100 text-purple-700"
+  
+  }[type] || "bg-gray-100";
+  
+  };
+  
+  
+  
+  
+  
+  
+  onMounted(()=>{
+  
+  fetchTransactions();
+  
+  });
+  
+  
   </script>
