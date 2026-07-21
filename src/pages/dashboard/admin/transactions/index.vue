@@ -39,7 +39,7 @@ const fetchDeposits = async () => {
 
 onMounted(async() => {
   if (pinia.state.allTransaction && Object.keys(pinia.state.allTransaction).length > 0)return
-   await fetchDeposits()
+  //  await fetchDeposits()
 });
 
 const approve = async (id) => {
