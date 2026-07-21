@@ -578,7 +578,7 @@
 import { ref, computed, onMounted } from "vue";
 
 import {
-  getUserTransactions,
+    getUserAdminTransactions,
   approveDeposit,
   rejectDeposit
 } from "@/composables/requests/crypto";
@@ -773,7 +773,7 @@ const fetchTransactions = async()=>{
 try{
 
 
-const res = await getUserTransactions();
+const res = await getUserAdminTransactions();
 
 
 

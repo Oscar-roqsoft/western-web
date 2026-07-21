@@ -292,6 +292,23 @@ export const getUserTransactions = async () => {
     return await asyncRequest(url, options);
 
 };
+export const getUserAdminTransactions = async () => {
+    
+    const pinia = useStore();
+
+    const url = `${baseURL}/transaction/admin/all`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pinia.state.user?.token}`
+        }
+    };
+    
+    return await asyncRequest(url, options);
+
+};
 
 export const getWalletInfoByAdmin = async (pageNumber) => {
     
