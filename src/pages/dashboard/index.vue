@@ -295,7 +295,10 @@ const coins = computed(() => {
       }
     })
 })
-  onMounted(async()=>{
+
+
+
+onMounted(async()=>{
 
     loadingBalance.value = true
     loadingCoins.value = true

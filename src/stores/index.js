@@ -131,6 +131,7 @@ export const useStore = defineStore('Crypto', () => {
     state.userTransaction = []
     state.selectedTransaction = null
     state.notification = []
+    state.cryptoBalance = null
   }
 
 
