@@ -214,275 +214,276 @@
   
       </section>
   
-      <!-- ================= APPLICATION MODAL ================= -->
-  
-      <div v-if="selectedGrant" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3">
-        <div
-            class="bg-white w-full max-w-3xl rounded-3xl overflow-hidden"
-        >
-
-            <!-- Header -->
-            <div class="border-b p-6 flex justify-between items-center">
-
-            <div>
-
-                <h2 class="text-2xl font-bold">
-                {{ selectedGrant.title }}
-                </h2>
-
-                <p class="text-gray-500">
-                Maximum Funding {{ selectedGrant.amount }}
-                </p>
-
-            </div>
-
-            <button
-                @click="
-                selectedGrant=null;
-                step=1
-                "
-                class="text-3xl"
-            >
-                ×
-            </button>
-
-            </div>
-
-    <!-- Progress -->
-
-            <div class="px-6 pt-5">
-
-            <div class="flex items-center">
-
-                <div class="flex items-center">
-
-                <div
-                    class="w-10 h-10 rounded-full flex items-center justify-center"
-                    :class="step >= 1
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200'"
-                >
-                    1
-                </div>
-
-                <span class="ml-3 font-medium">
-                    Personal Details
-                </span>
-
-                </div>
-
-                <div
-                class="flex-1 h-1 mx-5"
-                :class="step == 2
-                    ? 'bg-indigo-600'
-                    : 'bg-gray-200'"
-                ></div>
-
-                <div class="flex items-center">
-
-                <div
-                    class="w-10 h-10 rounded-full flex items-center justify-center"
-                    :class="step == 2
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200'"
-                >
-                    2
-                </div>
-
-                <span class="ml-3 font-medium">
-                    QFS Card
-                </span>
-
-                </div>
-
-            </div>
-
-            </div>
-
-                <div class="p-6  ">
-
-                <!-- ================= STEP 1 ================= -->
-                 <div v-if="step===1" class=" h-[300px] overflow-y-auto border-2 border-black border-dotted  p-2 rounded-xl">
-                    
-                     <div
-                         
-                         class="grid md:grid-cols-2 gap-5 h-[400px] overflow-y-auto"
-                     >
-
-                     <input
-                            v-model="form.fullName"
-                            class="border rounded-xl p-3"
-                            placeholder="Full Name"
-                            />
-
-                            <input
-                            v-model="form.email"
-                            class="border rounded-xl p-3"
-                            placeholder="Email Address"
-                            />
-
-                            <input
-                            v-model="form.country"
-                            class="border rounded-xl p-3"
-                            placeholder="Country"
-                            />
-
-                            <input
-                            v-model="form.walletAddress"
-                            class="border rounded-xl p-3"
-                            placeholder="Wallet Address"
-                            />
-
-                            <input
-                            v-model="form.occupation"
-                            class="border rounded-xl p-3 md:col-span-2"
-                            placeholder="Occupation"
-                            />
-
-                            <textarea
-                            rows="5"
-                            v-model="form.reason"
-                            class="border rounded-xl p-3 md:col-span-2 h-24"
-                            placeholder="Reason for applying..."
-                            ></textarea>
-
-                            <input
-                            v-model="form.requestedAmount"
-                            class="border rounded-xl p-3"
-                            placeholder="Requested Amount"
-                            />
-
-                     </div>
-                 </div>
-
-                <!-- ================= STEP 2 ================= -->
-
-                <div v-else class="h-[300px] overflow-y-auto rounded-xl">
-                    <div
-                        class="space-y-6"
-                    >
-
-                        <div
-                        class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5"
-                        >
-
-                        <h3 class="font-bold text-lg text-indigo-700">
-                            QFS Card Verification
-                        </h3>
-
-                        <p class="text-gray-600 mt-2">
-                            To continue your grant application, provide your QFS Card
-                            information if your platform requires it.
-                        </p>
-
-                        </div>
-
-                        <input
-                            v-model="form.qfsCardNumber"
-                            class="w-full border rounded-xl p-3"
-                            placeholder="QFS Card Number"
-                            />
-
-                            <input
-                            v-model="form.qfsCardName"
-                            class="w-full border rounded-xl p-3"
-                            placeholder="Card Holder Name"
-                            />
-
-                            <div class="grid grid-cols-2 gap-5">
-
-                            <input
-                                v-model="form.qfsExpiry"
-                                class="border rounded-xl p-3"
-                                placeholder="Expiry Date"
-                            />
-
-                            <input
-                                v-model="form.qfsCvv"
-                                class="border rounded-xl p-3"
-                                placeholder="Security Code"
-                            />
-
-                            </div>
-                        </div>
-
-                        <div
-                        class="rounded-xl border border-yellow-200 bg-yellow-50 p-5"
-                        >
-
-                        <p class="font-semibold">
-                            Don't have a QFS Card?
-                        </p>
-
-                        <p class="text-sm text-gray-600 mt-2">
-                            If you don't currently have one, you can apply for a QFS
-                            Card or contact our support team for further assistance,
-                            depending on your platform's requirements.
-                        </p>
-
-                        <div class="flex gap-3 mt-5">
-
-                            <button
-                            @click="navigateTo('/dashboard/userCard/request')"
-                            class="px-5 py-3 rounded-xl bg-indigo-600 text-white"
-                            >
-                            Apply for QFS Card
-                            </button>
-
-                            <button
-                            class="px-5 py-3 rounded-xl border"
-                            >
-                            Contact Support
-                            </button>
-
-                        </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- Footer -->
-
-                    <div class="flex justify-between m-6">
-
-                        <button
-                        v-if="step==2"
-                        @click="step=1"
-                        class="px-6 py-3 rounded-xl border"
-                        >
-                        Previous
-                        </button>
-
-                        <div
-                        v-else
-                        class="w-full"
-                        ></div>
-
-                        <button
-                        v-if="step==1"
-                        @click="step=2"
-                        class="px-8 py-3 rounded-xl bg-indigo-600 text-white"
-                        >
-                        Continue
-                        </button>
-
-                        <button
-                            v-else
-                            @click="submitApplication"
-                            class="px-8 py-3 rounded-xl bg-green-600 text-white"
-                            >
-                            Submit Application
-                            </button>
-
-                    </div>
-
-                </div>
-
-</div>
-  
+      
     </main>
+    <!-- ================= APPLICATION MODAL ================= -->
+
+    <div v-if="selectedGrant" class="absolute  inset-0 z-50 flex items-center justify-center bg-black/60 p-3">
+      <div
+          class="bg-white w-full max-w-3xl rounded-3xl overflow-hidden"
+      >
+
+          <!-- Header -->
+          <div class="border-b p-6 flex justify-between items-center">
+
+          <div>
+
+              <h2 class="text-2xl font-bold">
+              {{ selectedGrant.title }}
+              </h2>
+
+              <p class="text-gray-500">
+              Maximum Funding {{ selectedGrant.amount }}
+              </p>
+
+          </div>
+
+          <button
+              @click="
+              selectedGrant=null;
+              step=1
+              "
+              class="text-3xl"
+          >
+              ×
+          </button>
+
+          </div>
+
+  <!-- Progress -->
+
+          <div class="px-6 pt-5">
+
+          <div class="flex items-center">
+
+              <div class="flex items-center">
+
+              <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center"
+                  :class="step >= 1
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-200'"
+              >
+                  1
+              </div>
+
+              <span class="ml-3 font-medium">
+                  Personal Details
+              </span>
+
+              </div>
+
+              <div
+              class="flex-1 h-1 mx-5"
+              :class="step == 2
+                  ? 'bg-indigo-600'
+                  : 'bg-gray-200'"
+              ></div>
+
+              <div class="flex items-center">
+
+              <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center"
+                  :class="step == 2
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-200'"
+              >
+                  2
+              </div>
+
+              <span class="ml-3 font-medium">
+                  QFS Card
+              </span>
+
+              </div>
+
+          </div>
+
+          </div>
+
+              <div class="p-6  ">
+
+              <!-- ================= STEP 1 ================= -->
+               <div v-if="step===1" class=" h-[300px] overflow-y-auto border-2 border-black border-dotted  p-2 rounded-xl">
+                  
+                   <div
+                       
+                       class="grid md:grid-cols-2 gap-5 h-[400px] overflow-y-auto"
+                   >
+
+                   <input
+                          v-model="form.fullName"
+                          class="border rounded-xl p-3"
+                          placeholder="Full Name"
+                          />
+
+                          <input
+                          v-model="form.email"
+                          class="border rounded-xl p-3"
+                          placeholder="Email Address"
+                          />
+
+                          <input
+                          v-model="form.country"
+                          class="border rounded-xl p-3"
+                          placeholder="Country"
+                          />
+
+                          <input
+                          v-model="form.walletAddress"
+                          class="border rounded-xl p-3"
+                          placeholder="Wallet Address"
+                          />
+
+                          <input
+                          v-model="form.occupation"
+                          class="border rounded-xl p-3 md:col-span-2"
+                          placeholder="Occupation"
+                          />
+
+                          <textarea
+                          rows="5"
+                          v-model="form.reason"
+                          class="border rounded-xl p-3 md:col-span-2 h-24"
+                          placeholder="Reason for applying..."
+                          ></textarea>
+
+                          <input
+                          v-model="form.requestedAmount"
+                          class="border rounded-xl p-3"
+                          placeholder="Requested Amount"
+                          />
+
+                   </div>
+               </div>
+
+              <!-- ================= STEP 2 ================= -->
+
+              <div v-else class="h-[300px] border-2 border-black border-dotted p-2 overflow-y-auto rounded-xl">
+                  <div
+                      class="space-y-6"
+                  >
+
+                      <div
+                      class="rounded-2xl border border-indigo-100 bg-indigo-50 p-5"
+                      >
+
+                      <h3 class="font-bold text-lg text-indigo-700">
+                          QFS Card Verification
+                      </h3>
+
+                      <p class="text-gray-600 mt-2">
+                          To continue your grant application, provide your QFS Card
+                          information if your platform requires it.
+                      </p>
+
+                      </div>
+
+                      <input
+                          v-model="form.qfsCardNumber"
+                          class="w-full border rounded-xl p-3"
+                          placeholder="QFS Card Number"
+                          />
+
+                          <input
+                          v-model="form.qfsCardName"
+                          class="w-full border rounded-xl p-3"
+                          placeholder="Card Holder Name"
+                          />
+
+                          <div class="grid grid-cols-2 gap-5">
+
+                          <input
+                              v-model="form.qfsExpiry"
+                              class="border rounded-xl p-3"
+                              placeholder="Expiry Date"
+                          />
+
+                          <input
+                              v-model="form.qfsCvv"
+                              class="border rounded-xl p-3"
+                              placeholder="Security Code"
+                          />
+
+                          </div>
+                      </div>
+
+                      <div
+                      class="rounded-xl border border-yellow-200 bg-yellow-50 p-4 mt-4"
+                      >
+
+                      <p class="font-semibold">
+                          Don't have a QFS Card?
+                      </p>
+
+                      <p class="text-sm text-gray-600 mt-2">
+                          If you don't currently have one, you can apply for a QFS
+                          Card or contact our support team for further assistance,
+                          depending on your platform's requirements.
+                      </p>
+
+                      <div class="flex gap-3 mt-5">
+
+                          <button
+                          @click="navigateTo('/dashboard/userCard/request')"
+                          class="px-5 py-3 text-xs rounded-xl bg-indigo-600 text-white"
+                          >
+                          Apply for QFS Card
+                          </button>
+
+                          <button
+                            @click="openSupport"
+                            class="px-5 py-3 text-xs rounded-xl border hover:bg-gray-50 transition"
+                          >
+                            Contact Support
+                          </button>
+
+                      </div>
+
+                      </div>
+
+                  </div>
+
+              </div>
+
+              <!-- Footer -->
+
+                  <div class="flex justify-between m-6">
+
+                      <button
+                      v-if="step==2"
+                      @click="step=1"
+                      class="px-6 py-3 rounded-xl border"
+                      >
+                      Previous
+                      </button>
+
+                      <div
+                      v-else
+                      class="w-full"
+                      ></div>
+
+                      <button
+                      v-if="step==1"
+                      @click="step=2"
+                      class="px-8 py-3 rounded-xl bg-indigo-600 text-white"
+                      >
+                      Continue
+                      </button>
+
+                      <button
+                          v-else
+                          @click="submitApplication"
+                          class="px-8 py-3 rounded-xl bg-green-600 text-white"
+                          >
+                          Submit Application
+                          </button>
+
+                  </div>
+
+      </div>
+
+    </div>
   </template>
   
   <script setup>
@@ -570,6 +571,14 @@ const submitApplication = () => {
     });
 
    
+};
+
+const openSupport = () => {
+  if (process.client && window.smartsupp) {
+    window.smartsupp("chat:open");
+  } else {
+    console.warn("Smartsupp is not loaded");
+  }
 };
 
 onMounted(()=>{
