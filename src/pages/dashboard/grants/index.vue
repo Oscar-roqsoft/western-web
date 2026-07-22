@@ -218,7 +218,7 @@
     </main>
     <!-- ================= APPLICATION MODAL ================= -->
 
-    <div v-if="selectedGrant" class="absolute  inset-0 z-50 flex items-center justify-center bg-black/60 p-3">
+    <div v-if="selectedGrant" class="fixed  inset-0 z-50 flex items-center justify-center bg-black/60 p-3">
       <div
           class="bg-white w-full max-w-3xl rounded-3xl overflow-hidden"
       >
