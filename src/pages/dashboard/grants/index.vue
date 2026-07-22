@@ -575,7 +575,15 @@ const submitApplication = () => {
 
 const openSupport = () => {
   if (process.client && window.smartsupp) {
+    if (window.smartsupp) {
+    window.smartsupp("name", pinia.state.user?.name || "");
+    window.smartsupp("email", pinia.state.user?.email || "");
     window.smartsupp("chat:open");
+  }
+
+  notify.info(
+    "Please tell our support team: 'I need assistance applying for a QFS Card.'"
+  );
   } else {
     console.warn("Smartsupp is not loaded");
   }
