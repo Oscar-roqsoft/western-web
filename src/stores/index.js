@@ -125,39 +125,16 @@ export const useStore = defineStore('Crypto', () => {
  
 
   const clearUser =()=>{
-    state.cryptoPrices = []
     state.selectedCryptoPrice = null
-    state.user = null
     state.adminUsers = []
-    state.isFetchingCrypto = false
-    state.user = null
+    state.allTransaction = []
+    state.userTransaction = []
     state.selectedTransaction = null
-    state.isFetchingCryptobal = false
-    state.isAuthenticated = false
-    state.verificationForm = {
-      firstName: "",
-      lastName: "",
-      dob: "",
-      nationality: "",
-      address: "",
-      documentType: "",
-      documentNumber: "",
-      frontFile: null,
-      backFile: null,
-      selfieFile: null,
-    },
-    state.withdrawal= {
-      step: 1,
-      coin: null,
-      walletAddress: "",
-      network: "",
-      amount: 0,
-      feePaid: false,
-      securityPassed: false
-    }
-    state.currentStep = 1
-    state.grantsStep = 1
+    state.notification = []
   }
+
+
+
   const logout =()=>{
     state.cryptoPrices = []
     state.notification = []

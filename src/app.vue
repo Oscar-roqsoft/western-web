@@ -56,6 +56,7 @@ Button: {
 const path = ref(route.currentRoute.value.path)
 
 onMounted(() => {
+  pinia.clearUser()
   const loginTime = Number(localStorage.getItem("loginTime"));
 
   if (!loginTime) return;
@@ -69,6 +70,8 @@ onMounted(() => {
     pinia.logout();
     navigateTo("/login");
   }
+
+ 
 });
 
 

@@ -851,77 +851,77 @@ confirmModal.value = true;
 const executeAction = async()=>{
 
 
-if(!confirmTransaction.value)
-return;
+    if(!confirmTransaction.value)
+    return;
 
 
 
-actionLoading.value = true;
+    actionLoading.value = true;
 
 
 
-const tx =
-confirmTransaction.value;
+    const tx =
+    confirmTransaction.value;
 
 
 
-try{
+        try{
 
 
-let response;
-
-
-
-// DEPOSIT
-
-if(tx.type==="deposit"){
-
-
-if(actionType.value==="approve"){
-
-
-response =
-await approveDeposit(tx._id);
-
-
-}else{
-
-
-response =
-await rejectDeposit(tx._id);
-
-
-}
-
-
-}
+        let response;
 
 
 
+        // DEPOSIT
 
-// WITHDRAWAL
-
-
-if(tx.type==="withdrawal"){
+        if(tx.type==="deposit"){
 
 
-if(actionType.value==="approve"){
+        if(actionType.value==="approve"){
 
 
-response =
-await approveWithdrawal(tx._id);
+        response =
+        await approveDeposit(tx._id);
 
 
+        }else{
 
-}else{
+
+        response =
+        await rejectDeposit(tx._id);
 
 
-response =
-await rejectWithdrawal(tx._id);
-
+        }
 
 
 }
+
+
+
+
+    // WITHDRAWAL
+
+
+    if(tx.type==="withdrawal"){
+
+
+    if(actionType.value==="approve"){
+
+
+    response =
+    await approveWithdrawal(tx._id);
+
+
+
+    }else{
+
+
+    response =
+    await rejectWithdrawal(tx._id);
+
+
+
+    }
 
 
 }
