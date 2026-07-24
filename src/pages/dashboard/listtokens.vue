@@ -72,7 +72,7 @@
             
             <button @click="openModal('receive')" class="action-btn">
             <Download class="w-5 h-5"/>
-            Receive
+            deposit
             </button>
             
             <button @click="openModal('swap')" class="action-btn">
@@ -115,7 +115,8 @@
     <script setup>
     import { ref, computed } from "vue"
     import { fetchWalletAddress } from "@/composables/actions/index"
-    
+    import { fetchAdminWallet } from "@/composables/actions/index"
+
     import {
       ArrowLeft,
       Send,
@@ -204,7 +205,11 @@
         
         watchEffect(async()=>{
             if(reveal.value == true){
-                await fetchWalletAddress(store.state.selectedCryptoPrice?.symbol)
+                
+              await fetchAdminWallet()
+              await fetchWalletAddress(store.state.selectedCryptoPrice?.symbol)
+              // if (store.state.adminWalletAddress && Object.keys(store.state.adminWalletAddress).length > 0){
+              // }
             }
         })
 

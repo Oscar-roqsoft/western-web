@@ -148,7 +148,7 @@ export const fetchCryptoBal = async () => {
 
 export const fetchWalletAddress = async (coin) => {
     const pinia = useStore();
-    const notify = useNotify();
+    // const notify = useNotify();
 
     // If already have data, no need to fetch again
     // if (pinia.state.cryptoBalance && Object.keys(pinia.state.cryptoBalance).length > 0) return;

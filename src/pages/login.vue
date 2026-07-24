@@ -188,7 +188,7 @@
 
             if(data.success){
                 pinia.state.email = email.value
-                if(data.data){
+                if(data.data?.isVerified){
 
                   notify.success(
                     data.message

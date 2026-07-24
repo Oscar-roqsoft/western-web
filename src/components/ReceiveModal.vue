@@ -96,33 +96,47 @@
 
     import { ref, computed, onMounted } from "vue"
     import QRCode from "qrcode"
+       import { fetchAdminWallet } from "@/composables/actions/index"
     // import BaseModal from "./BaseModal.vue"
     import { X, Copy } from "lucide-vue-next"
     
     const qrCanvas = ref(null)
     const copied = ref(false)
     const pinia = useStore()
+
+    const walletAddress = computed(() => {
+        const wallets = pinia.state.adminWalletAddress || [];
+
+        const selectedCoin = pinia.state.selectedCryptoPrice?.symbol;
+
+        const wallet = wallets.find(
+            w => w.coin === selectedCoin
+        );
+
+        return wallet || "";
+    });
     
     const coin = ref({
-    name: pinia.state.selectedCryptoPrice?.name,
-    symbol: pinia.state.selectedCryptoPrice?.symbol,
-    network: pinia.state.selectedCryptoPrice?.network,
+    name: walletAddress.value?.name,
+    symbol: walletAddress.value?.symbol,
+    network: walletAddress.value?.network,
     icon: pinia.state.selectedCryptoPrice?.icon,
-    address: pinia.state.walletAddress?.address
+    address: walletAddress.value.walletAddress
     })
     
     
     const shortAddress = computed(() => {
-    const addr = coin.value.address
+    const addr = walletAddress.value.walletAddress
     return addr.slice(0,10) + "..." + addr.slice(-8)
     })
     
     
-    onMounted(() => {
+    onMounted(async() => {
+      
     
     QRCode.toCanvas(
     qrCanvas.value,
-    coin.value.address,
+    walletAddress.value.walletAddress,
     {
     width:160,
     margin:1
@@ -130,11 +144,13 @@
     )
     
     })
+
+  
     
     
     const copyAddress = async () => {
     
-    await navigator.clipboard.writeText(coin.value.address)
+    await navigator.clipboard.writeText(walletAddress.value.walletAddress)
     
     copied.value = true
     
