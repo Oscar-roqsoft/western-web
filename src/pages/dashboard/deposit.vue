@@ -328,7 +328,7 @@ const continueStep = async () => {
   error.value = ""
 
   if (!amountUSD.value || amountUSD.value < 10) {
-    error.value = `Minimum deposit is $10 ${pinia.state.selectedCryptoPrice?.symbol}`
+    error.value = `Minimum deposit is $10 worth of ${pinia.state.selectedCryptoPrice?.symbol}`
     return
   }
 
@@ -354,7 +354,7 @@ const create_Deposit = async () => {
   error.value = ""
 
   if (!amountUSD.value || amountUSD.value < 10) {
-    error.value = `Minimum deposit is $10 ${pinia.state.selectedCryptoPrice?.symbol}`
+    error.value = `Minimum deposit is $10 worth of ${pinia.state.selectedCryptoPrice?.symbol}`
     return
   }
 
