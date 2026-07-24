@@ -119,7 +119,7 @@ console.log(coins.value)
   // When a coin is selected
 const selectCoin = (coin) => {
   pinia.setSelectedCryptoPrice(coin)
-  console.log('Selected coin:', pinia.state.selectedCryptoPrice)
+  // console.log('Selected coin:', pinia.state.selectedCryptoPrice)
 }
 
 

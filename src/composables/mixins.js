@@ -61,6 +61,56 @@ export const addCommasToInteger =(number)=>{
   return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
 }
 
+export const coinDecimalPlaces = (symbol) => {
+
+  if (symbol === "BTC") {
+    return 6
+  }
+
+  return 3
+}
+
+export const formatCoinAmount = (
+  amount = 0,
+  symbol = ""
+) => {
+
+  const value = Number(amount);
+
+
+  if(symbol === "BTC") {
+
+    if(value < 1){
+      return value.toPrecision(3);
+    }
+
+    return value.toLocaleString("en-US", {
+      maximumFractionDigits: 6
+    });
+
+  }
+
+
+  return value.toPrecision(6)
+      .replace(/\.?0+$/, "");
+
+};
+
+export const formatUSD = (amount = 0) => {
+
+  return Number(amount).toLocaleString(
+    "en-US",
+    {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }
+  )
+
+}
+
+
 
 
 

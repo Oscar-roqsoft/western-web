@@ -125,22 +125,78 @@
             <div class="absolute top-0 right-0 w-24 h-24 rounded-full opacity-50 -mt-8 -mr-8" :class="coin.bgClass"></div>
 
             <div class="relative">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 overflow-hidden shadow-sm group-hover:animate-float">
-                    <img :src="coin.img" :alt="coin.name" class="w-full h-full object-contain">
+              <div class="flex items-center justify-between mb-2">
+
+              <div class="flex items-center gap-2">
+
+                <div 
+                  class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-100 overflow-hidden shadow-sm"
+                >
+                  <img 
+                    :src="coin.img" 
+                    :alt="coin.name"
+                    class="w-full h-full object-contain"
+                  >
                 </div>
+
+
                 <span class="text-gray-700 font-medium">
-                  {{ coin.mainName === 'Bitcoin' ? 'BTC' : coin.name  }}</span>
-                </div>
-                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{{ coin.symbol }}</span>
-            </div>
+                  {{ coin.symbol }}
+                </span>
 
-            <h4 class="text-lg font-bold">{{ coin.amount.toFixed(4) }} {{coin.mainName === 'Bitcoin'? ' BTC' : coin.symbol }}</h4>
+              </div>
 
+
+
+              <!-- VIEW BUTTON -->
+
+              <button
+                @click.stop="openCoinModal(coin)"
+                class="
+                  w-8 h-8
+                  rounded-full
+                  flex
+                  items-center
+                  justify-center
+                  bg-gray-100
+                  hover:bg-blue-100
+                  hover:text-blue-600
+                  transition
+                "
+              >
+
+                <Eye class="w-4 h-4"/>
+
+              </button>
+
+
+              </div>
+
+          <h4 class="text-sm font-bold gap-x-2">
+            <span class="text-lg ">
+              {{ formatCoinAmount(coin.amount,coin.symbol)}} 
+            </span>
+             {{coin.symbol }}
+            </h4>
+            
+            
             <div class="flex items-center justify-between mt-2">
-                <span class="text-gray-500 text-sm">${{ coin.usdValue.toFixed(2) }}</span>
-                <span class="text-gray-500 text-sm flex items-center">{{ coin.change.toFixed(2) }}%</span>
+            
+            <span class="text-gray-500 text-sm">
+            ≈ ${{ coin.valueUSD.toLocaleString(undefined,{
+             minimumFractionDigits:2,
+             maximumFractionDigits:2
+            }) }}
+            </span>
+            
+            
+            <span
+            class="text-gray-500 text-sm flex items-center"
+            >
+            {{ coin.change.toFixed(2) }}%
+            </span>
+            
+            
             </div>
             </div>
 
@@ -205,20 +261,189 @@
     </div>
   </div>
 
+
+
+  <!-- COIN DETAILS MODAL -->
+
+  <div
+    v-if="selectedCoin"
+    class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+
+
+        <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl relative animate-fade">
+
+
+        <button
+        @click="closeCoinModal"
+        class="absoluteright-4top-4 text-gray-400 hover:text-black">
+
+        <X class="w-5 h-5"/>
+
+        </button>
+
+
+
+        <div class="flex items-center gap-3 mb-6">
+
+
+        <img
+        :src="selectedCoin.img"
+        class="w-14 h-14 rounded-full"/>
+
+
+        <div>
+
+        <h2 class="text-xl font-bold">
+        {{selectedCoin.symbol}}
+        </h2>
+
+
+        <!-- <p class="text-sm text-gray-500">
+        {{selectedCoin.network}}
+        </p> -->
+
+        </div>
+
+
+        </div>
+
+
+
+
+        <div class="space-y-4">
+
+
+        <div class="bg-gray-50 rounded-xl p-4">
+
+        <p class="text-xs text-gray-500">
+           Balance
+        </p>
+
+        <h3 class="text-2xl font-bold">
+        {{selectedCoin.amount}}
+          <span class="text-sm">{{selectedCoin.symbol}}</span>
+        </h3>
+
+        </div>
+
+
+
+
+        <div class="bg-blue-50 rounded-xl p-4">
+
+        <p class="text-xs text-gray-500">
+        USD Value
+        </p>
+
+        <h3 class="text-2xl font-bold text-blue-600">
+
+        {{selectedCoin.valueUSD}}
+
+        </h3>
+
+        </div>
+
+
+
+<!-- 
+        <div class="flex justify-between text-sm">
+
+        <span>
+        Network
+        </span>
+
+        <strong>
+        {{selectedCoin.network}}
+        </strong>
+
+        </div> -->
+
+
+
+        <div class="flex justify-between text-sm">
+
+        <span>
+        Market Price
+        </span>
+
+        <strong>
+        ${{selectedCoin.usdPrice}}
+        </strong>
+
+        </div>
+
+
+
+        <div class="flex justify-between text-sm">
+
+        <span>
+        24h Change
+        </span>
+
+        <strong :class=" selectedCoin.change >= 0 ?'text-green-600' :'text-red-600'">
+
+        {{selectedCoin.change}}%
+
+        </strong>
+
+        </div>
+
+
+
+        </div>
+
+
+
+        <button
+        @click="buyCoin"
+        class="
+        mt-6
+        w-full
+        bg-gradient-to-r
+        from-blue-600
+        to-blue-500
+        hover:from-blue-700
+        hover:to-blue-600
+        text-white
+        py-3
+        rounded-xl
+        font-semibold
+        flex
+        items-center
+        justify-center
+        gap-2
+        transition
+        shadow-lg
+        "
+        >
+        
+        <ShoppingCart class="w-5 h-5"/>
+        
+        Buy {{ selectedCoin.symbol }}
+        
+        </button>
+        </div>
+
+        <!-- BUY BUTTON -->
+
+
+  </div>
+
   </template>
   
   <script setup>
   import { ref } from 'vue'
-  import { X ,Plus,Wallet,Eye,EyeOff,ArrowDownCircle,ArrowUpRight,CheckCircle} from 'lucide-vue-next'
+  import { X ,ShoppingCart,Plus,Wallet,Eye,EyeOff,ArrowDownCircle,ArrowUpRight,CheckCircle} from 'lucide-vue-next'
   import { fetchCryptoPrices,fetchCryptoBal,fetchUserTrans } from '~/composables/actions/index'
   
   const showBanner = ref(true)
   const pinia = useStore()
-
+  const router = useRoute()
   const loadingBalance = ref(false)
   const loadingCoins = ref(false)
     // Dynamic user data
   const userName = ref(pinia.state.user?.name)
+
 
   // Dynamic date
   const currentDate = computed(() => {
@@ -230,6 +455,34 @@
 const balanceVisible = ref(true)
 const balance = computed(()=>pinia.state.cryptoBalance?.totalBalanceUSD || 0)
 const lastUpdate = ref('Thursday, March 03, 2026')
+const selectedCoin = ref(null)
+
+
+const openCoinModal = (coin) => {
+  selectedCoin.value = coin
+  console.log(coin,'coin')
+}
+
+
+const closeCoinModal = () => {
+  selectedCoin.value = null
+}
+
+const buyCoin = async() => {
+
+if (!selectedCoin.value) return
+
+
+await navigateTo({
+  path: "/dashboard/listtokens",
+  query: {
+    coin: selectedCoin.value.symbol
+  }
+})
+
+closeCoinModal()
+
+}
 
 // Toggle balance visibility
 const toggleBalance = () => {
@@ -268,32 +521,86 @@ const getCoinImage = (coin) => {
 
 // Coins data
 const coins = computed(() => {
-  const balances = pinia.state.cryptoBalance?.balances || []
-  const pricesObj = pinia.state.cryptoPrices || {}
 
-  const prices = Object.values(pricesObj)
+const balances = pinia.state.cryptoBalance?.balances || []
 
-  const allowedCoins = ["USDT", "BTC", "XLM", "XRP"]
+const pricesObj = pinia.state.cryptoPrices || {}
 
-  return balances
-    .filter((coin) => allowedCoins.includes(coin.coin))
-    .map((coin) => {
-      const priceData = prices.find(
-        (p) => p.symbol === coin.coin
-      )
+const prices = Array.isArray(pricesObj)
+  ? pricesObj
+  : Object.values(pricesObj)
 
-      return {
-        mainName: priceData?.name,
-        name: coin.coin,
-        symbol: coin.coin,
-        amount: coin.balance,
-        usdValue: coin.usdPrice,
-        valueUSD: coin.valueUSD,
-        img: priceData?.image,
-        change: priceData?.change24h || 0,
-        bgClass: getCoinBg(coin.coin),
-      }
-    })
+
+const allowedCoins = [
+  "USDT",
+  "BTC",
+  "XLM",
+  "XRP"
+]
+
+
+return balances
+
+  .filter(coin =>
+    allowedCoins.includes(coin.coin)
+  )
+
+  .map(coin => {
+
+
+    const priceData = prices.find(
+      p => p.symbol === coin.coin
+    )
+
+
+    return {
+
+      mainName:
+        priceData?.name || coin.coin,
+
+
+      name:
+        coin.coin,
+
+
+      symbol:
+        coin.coin,
+
+
+      // user's crypto amount
+      amount:
+        Number(coin.balance || 0),
+
+
+      // current coin market price
+      usdPrice:
+        Number(priceData?.price || coin.usdPrice || 0),
+
+
+      // user's total USD value
+      valueUSD:
+        Number(
+          coin.valueUSD ||
+          (coin.balance * (priceData?.price || 0))
+        ),
+
+
+      img:
+        priceData?.image ||
+        getCoinImage(coin.coin),
+
+
+      change:
+        Number(priceData?.change24h || 0),
+
+
+      bgClass:
+        getCoinBg(coin.coin)
+
+    }
+
+  })
+
 })
 
 

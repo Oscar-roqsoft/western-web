@@ -132,7 +132,8 @@
     // import listToken from "@/components/listToken.vue"
     
     const store = useStore()
-    
+    const route = useRoute()
+
     const reveal = ref(false)
     const activeModal = ref(null)
     const percentages = [25,50,75,100]
@@ -207,6 +208,58 @@
             }
         })
 
+        onMounted(() => {
+
+          const coinSymbol = route.query.coin
+
+
+          if (coinSymbol) {
+
+            selectedCoin.value = coinSymbol
+            reveal.value = true
+
+
+            const prices = store.state.cryptoPrices
+
+
+            const arr = Array.isArray(prices)
+              ? prices
+              : Object.values(prices || {})
+
+
+            const formattedCoins = arr.map(item => ({
+              name: item.name,
+              symbol: item.symbol,
+              network:
+                item.network ||
+                (item.symbol === "USDT"
+                  ? "TRC20"
+                  : item.name),
+
+              icon:
+                item.image ||
+                '/img/bitcoin.png',
+
+              price:
+                item.price
+            }))
+
+
+            // find selected coin
+            const selected = formattedCoins.find(
+              item => item.symbol === coinSymbol
+            )
+
+
+            if(selected){
+
+              store.setSelectedCryptoPrice(selected)
+
+            }
+
+          }
+
+          })
 
     </script>
     

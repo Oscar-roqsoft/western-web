@@ -43,18 +43,57 @@
     </div>
 
     <span class="badge-green">Recommended</span>
-  </div>
+       </div>
 
-  <!-- AMOUNT -->
-  <div>
-    <label class="label">Deposit Amount ({{ pinia.state.selectedCryptoPrice.symbol }})</label>
+        <!-- AMOUNT -->
+        <div>
+          <label class="label">
+      Deposit Amount (USD)
+      </label>
 
-    <input
-      v-model="amount"
+      <div class="relative">
+
+      
+      
+
+      <input
+      v-model="amountUSD"
       type="number"
-      placeholder="e.g 100"
-      class="input text-lg"
-    />
+      placeholder="e.g $100"
+      class="input text-lg pl-8"
+      />
+
+      </div>
+
+
+      <div
+      v-if="cryptoAmount"
+      class="mt-3 bg-green-50 border border-green-200 rounded-xl p-4"
+      >
+
+      <p class="text-sm text-gray-500">
+      You will receive
+      </p>
+
+
+      <h3 class="text-xl font-bold text-green-700">
+
+      {{ cryptoAmount }}
+
+      {{ pinia.state.selectedCryptoPrice.symbol }}
+
+      </h3>
+
+
+      <p class="text-xs text-gray-500 mt-1">
+
+      1 {{ pinia.state.selectedCryptoPrice.symbol }}
+      =
+      ${{ addCommasToInteger(cryptoPrice) }}
+
+      </p>
+
+      </div>
 
     <!-- <p class="text-xs text-gray-400 mt-1">
       Minimum deposit: 10 USDT
@@ -66,7 +105,7 @@
     <button
       v-for="amt in [50,100,500,1000]"
       :key="amt"
-      @click="amount = amt"
+      @click="amountUSD = amt"
       class="quick-btn"
     >
       {{ amt }}
@@ -206,6 +245,7 @@ const notify = useNotify()
 const step = ref(1)
 
 const amount = ref("")
+const amountUSD = ref("")
 const error = ref("")
 const loading = ref(false)
 const pinia = useStore()
@@ -223,12 +263,34 @@ const walletAddress = computed(() => {
   return wallet?.walletAddress || "";
 });
 
+
+const cryptoPrice = computed(() => {
+  return Number(
+    pinia.state.selectedCryptoPrice?.price || 0
+  );
+});
+
+
+const cryptoAmount = computed(() => {
+
+  if (!amountUSD.value || !cryptoPrice.value) {
+    return 0;
+  }
+
+  console.log('cryptoPrice',cryptoPrice.value)
+
+  return Number(
+    amountUSD.value / cryptoPrice.value
+  ).toFixed(8);
+
+});
+
 const create_Deposit = async () => {
 
   error.value = ""
 
-  if (!amount.value || amount.value < 0.0001) {
-    error.value = `Minimum deposit is 10 ${pinia.state.selectedCryptoPrice.symbol}`
+  if (!amountUSD.value || amountUSD.value < 10) {
+    error.value = `Minimum deposit is $10 ${pinia.state.selectedCryptoPrice.symbol}`
     return
   }
 
@@ -239,7 +301,7 @@ const create_Deposit = async () => {
       userId:pinia.state.user.id,
       coin: pinia.state.selectedCryptoPrice.symbol,
       network: pinia.state.selectedCryptoPrice.network,
-      amount: Number(amount.value)
+      amount: Number(cryptoAmount.value)
     }
 
     const data = await createDeposit(payload)
