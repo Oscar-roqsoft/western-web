@@ -990,7 +990,7 @@ import { useStore } from "@/stores";
 import { Lock } from "lucide-vue-next";
 import { createWithdrawal } from "@/composables/requests/withdrawal";
 import { fetchCryptoPrices,fetchCryptoBal,fetchUserTrans } from '~/composables/actions/index'
-
+const route = useRoute()
 const notify = useNotify()
 const pinia = useStore();
 // const pinia.state.revealWithdrawal =  ref(pinia.state.revealWithdrawal)
@@ -1264,14 +1264,14 @@ const amountUSD = computed(() => {
  */
  const networkOptions = computed(() => {
 
-const network =
-  selectedBalance.value?.network;
+  const network =
+    selectedBalance.value?.network;
 
-if (!network) return [];
+  if (!network) return [];
 
-return [network];
+  return [network];
 
-});
+  });
 
 const form = ref({
   walletAddress:
@@ -1391,5 +1391,75 @@ const previousStep = () => {
   }
 
 };
+
+watch(
+  selectedBalance.value,
+  (balance) => {
+    if (!balance) return
+
+    form.value.network = balance.network
+  },
+  { immediate: true }
+)
+
+watch(
+  () => pinia.state.selectedCryptoPrice,
+  () => {
+    form.value.network = selectedBalance.value?.network || ""
+  },
+  { immediate: true, deep: true }
+)
+
+onMounted(() => {
+
+const coinSymbol = route.query.coin
+
+
+if (coinSymbol) {
+
+  pinia.state.revealWithdrawal = true
+
+
+  const prices = pinia.state.cryptoPrices
+
+
+  const arr = Array.isArray(prices)
+    ? prices
+    : Object.values(prices || {})
+
+
+  const formattedCoins = arr.map(item => ({
+    name: item.name,
+    symbol: item.symbol,
+    network:
+      item.network ||
+      (item.symbol === "USDT"
+        ? "TRC20"
+        : item.name),
+
+    icon:
+      item.image ||
+      '/img/bitcoin.png',
+
+    price:
+      item.price
+  }))
+
+
+  // find selected coin
+  const selected = formattedCoins.find(
+    item => item.symbol === coinSymbol
+  )
+
+
+  if(selected){
+
+    pinia.setSelectedCryptoPrice(selected)
+
+  }
+
+}
+
+})
 </script>
 

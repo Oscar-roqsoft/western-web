@@ -10,7 +10,7 @@
 <div>
   <h1 class="text-2xl font-bold">Deposit Funds</h1>
   <p class="text-gray-500 text-sm">
-    Add funds securely using {{ pinia.state.selectedCryptoPrice.symbol }} ({{ pinia.state.selectedCryptoPrice.network }} network)
+    Add funds securely using {{ pinia.state.selectedCryptoPrice?.symbol }} ({{ pinia.state.selectedCryptoPrice?.network }} network)
   </p>
 </div>
 
@@ -23,7 +23,7 @@
     <ul class="list-disc ml-4 space-y-1">
       <li>Enter amount you want to deposit</li>
       <li>Get your wallet address</li>
-      <li>Send {{ pinia.state.selectedCryptoPrice.symbol }} from external wallet</li>
+      <li>Send {{ pinia.state.selectedCryptoPrice?.symbol }} from external wallet</li>
       <li>Funds will be credited after approval</li>
     </ul>
   </div>
@@ -37,8 +37,8 @@
     <div class="flex items-center gap-3">
       <!-- <img src="/img/usdt.png" class="w-10 h-10 rounded-full" /> -->
       <div>
-        <p class="font-semibold">{{ pinia.state.selectedCryptoPrice.name }} ({{ pinia.state.selectedCryptoPrice.symbol }})</p>
-        <p class="text-xs text-gray-500">{{ pinia.state.selectedCryptoPrice.network }} Network</p>
+        <p class="font-semibold">{{ pinia.state.selectedCryptoPrice?.name }} ({{ pinia.state.selectedCryptoPrice?.symbol }})</p>
+        <p class="text-xs text-gray-500">{{ pinia.state.selectedCryptoPrice?.network }} Network</p>
       </div>
     </div>
 
@@ -80,14 +80,14 @@
 
       {{ cryptoAmount }}
 
-      {{ pinia.state.selectedCryptoPrice.symbol }}
+      {{ pinia.state.selectedCryptoPrice?.symbol }}
 
       </h3>
 
 
       <p class="text-xs text-gray-500 mt-1">
 
-      1 {{ pinia.state.selectedCryptoPrice.symbol }}
+      1 {{ pinia.state.selectedCryptoPrice?.symbol }}
       =
       ${{ addCommasToInteger(cryptoPrice) }}
 
@@ -130,7 +130,7 @@
 
 <!-- SECURITY -->
 <div class="bg-gray-50 border rounded-xl p-4 text-xs text-gray-500">
-  🔒 Always confirm you are sending via {{pinia.state.selectedCryptoPrice.network}} network.
+  🔒 Always confirm you are sending via {{pinia.state.selectedCryptoPrice?.network}} network.
 </div>
 
 </div>
@@ -154,15 +154,15 @@
           <div>
             <h2 class="font-bold text-xl">Deposit Address</h2>
             <p class="text-xs text-gray-500">
-              Only send {{ pinia.state.selectedCryptoPrice.symbol }} via {{ pinia.state.selectedCryptoPrice.network }}
+              Only send {{ pinia.state.selectedCryptoPrice?.symbol }} via {{ pinia.state.selectedCryptoPrice?.network }}
             </p>
           </div>
         </div>
 
         <!-- TAGS -->
         <div class="flex gap-2 mb-3">
-          <span class="badge-green capitalize">{{pinia.state.selectedCryptoPrice.symbol}}</span>
-          <span class="badge-red capitalize">{{ pinia.state.selectedCryptoPrice.network }}</span>
+          <span class="badge-green capitalize">{{pinia.state.selectedCryptoPrice?.symbol}}</span>
+          <span class="badge-red capitalize">{{ pinia.state.selectedCryptoPrice?.network }}</span>
         </div>
 
         <!-- ADDRESS -->
@@ -170,52 +170,35 @@
           {{ walletAddress }}
         </div>
 
+          <!-- QR Code -->
+        <div class="flex justify-center my-5">
+        
+          <div class="bg-white p-3 rounded-xl shadow border">
+          
+          <canvas ref="qrCanvas" class="w-full h-40"></canvas>
+          
+          </div>
+        
+        </div>
+    
+
         <!-- ACTIONS -->
         <div class="flex gap-3 mt-3">
           <button @click="copyAddress" class="btn-dark">
-            Copy
+            Copy wallet address
           </button>
 
-          <button class="btn-outline">
-            QR Code
-          </button>
+       
         </div>
 
         <!-- WARNING -->
         <div class="mt-4 bg-red-100 text-red-700 p-3 rounded-lg text-xs">
-          Send only {{ pinia.state.selectedCryptoPrice.symbol }} ({{ pinia.state.selectedCryptoPrice.network }}). Wrong network = loss of funds.
+          Send only {{ pinia.state.selectedCryptoPrice?.symbol }} ({{ pinia.state.selectedCryptoPrice?.network }}). Wrong network = loss of funds.
         </div>
 
       </div>
 
 
-      <!-- PROVIDERS -->
-      <div class="bg-white shadow rounded-2xl p-4">
-
-        <h2 class="font-semibold mb-3">
-          Buy from trusted providers
-        </h2>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-
-          <a href="https://ramp.alchemypay.org/" target="_blank" class="provider-card">
-            <img src="/image/alchemypay.png" />
-            <span>AlchemyPay</span>
-          </a>
-
-          <a href="https://exchange.mercuryo.io/" target="_blank" class="provider-card">
-            <img src="/image/mercuryo.png" />
-            <span>Mercuryo</span>
-          </a>
-
-          <a href="https://global.transak.com/" target="_blank" class="provider-card">
-            <img src="/image/transak.png" />
-            <span>Transak</span>
-          </a>
-
-        </div>
-
-      </div>
 
     </div>
 
@@ -238,9 +221,13 @@ import {
     } from "lucide-vue-next"
     import { fetchAdminWallet } from "@/composables/actions/index"
 
+    import QRCode from "qrcode"
 // import axios from "axios"
 
 const notify = useNotify()
+    
+    const qrCanvas = ref(null)
+    const copied = ref(false)
 
 const step = ref(1)
 
@@ -284,13 +271,41 @@ const cryptoAmount = computed(() => {
   ).toFixed(8);
 
 });
+const generateQRCode = async () => {
+
+if (!qrCanvas.value) return
+
+if (!walletAddress.value) return
+
+try {
+
+  await QRCode.toCanvas(
+    qrCanvas.value,
+    walletAddress.value,
+    {
+      width:180,
+      margin:2,
+      color:{
+        dark:"#111827",
+        light:"#ffffff"
+      }
+    }
+  )
+
+} catch (err) {
+
+  console.error(err)
+
+}
+
+}
 
 const create_Deposit = async () => {
 
   error.value = ""
 
   if (!amountUSD.value || amountUSD.value < 10) {
-    error.value = `Minimum deposit is $10 ${pinia.state.selectedCryptoPrice.symbol}`
+    error.value = `Minimum deposit is $10 ${pinia.state.selectedCryptoPrice?.symbol}`
     return
   }
 
@@ -299,8 +314,8 @@ const create_Deposit = async () => {
 
     const payload = {
       userId:pinia.state.user.id,
-      coin: pinia.state.selectedCryptoPrice.symbol,
-      network: pinia.state.selectedCryptoPrice.network,
+      coin: pinia.state.selectedCryptoPrice?.symbol,
+      network: pinia.state.selectedCryptoPrice?.network,
       amount: Number(cryptoAmount.value)
     }
 
@@ -310,6 +325,9 @@ const create_Deposit = async () => {
       notify.success(data.message)
       await fetchAdminWallet()
       step.value = 2
+      await nextTick()
+
+      await generateQRCode()
     }else{
       notify.error(data.message)
     }
@@ -323,16 +341,27 @@ const create_Deposit = async () => {
   }
 }
 
+watch(
+  walletAddress,
+  async (address) => {
+
+    if (!address) return
+
+    await nextTick()
+
+    generateQRCode()
+
+  },
+  {
+    immediate:true
+  }
+)
 
 const copyAddress = async () => {
   await navigator.clipboard.writeText(walletAddress.value)
   alert("Copied!")
 }
 
-onMounted(async()=>{
-    if (pinia.state.adminWalletAddress && Object.keys(pinia.state.adminWalletAddress).length > 0)return
-     await fetchAdminWallet()
-  })
 
 </script>
 

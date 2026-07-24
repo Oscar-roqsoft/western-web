@@ -65,14 +65,14 @@
         <!-- Actions -->
         <div class="grid grid-cols-4 gap-3 text-center">
         
-            <button @click="openModal('send')" class="action-btn">
+            <button @click="withdrawCoin()" class="action-btn">
             <Send class="w-5 h-5"/>
-            Send
+            withdraw
             </button>
             
-            <button @click="openModal('receive')" class="action-btn">
+            <button @click="navigateTo('/dashboard/deposit')" class="action-btn">
             <Download class="w-5 h-5"/>
-            deposit
+              deposit
             </button>
             
             <button @click="openModal('swap')" class="action-btn">
@@ -80,7 +80,7 @@
             Swap
             </button>
             
-            <button @click="navigateTo('/dashboard/deposit')" class="action-btn">
+            <button @click="navigateTo('/dashboard/buy')" class="action-btn">
             <ShoppingCart class="w-5 h-5"/>
             Buy
             </button>
@@ -99,14 +99,14 @@
         />
 
         <ReceiveModal
-        v-if="activeModal==='receive'"
+        v-if="activeModal===''"
         @close="activeModal=null"
         />
 
         <SwapModal v-if="activeModal==='swap'" :activeModal="activeModal" @close="activeModal=null" />
 
         <BuyModal
-        v-if="activeModal==='buy'"
+        v-if="activeModal===''"
         @close="activeModal=null"
         />
     </template>
@@ -170,6 +170,19 @@
       price: 0
     })
     
+
+    const withdrawCoin = async() => {
+
+      if (!selectedCoin.value) return
+
+      await navigateTo({
+        path: "/dashboard/withdrawal",
+        query: {
+          coin: selectedCoin.value?.symbol
+        }
+      })
+    }
+
     // Example balance (you can replace this with real user balances)
     const userBalance = computed(() => {
       const symbol = selectedCoin.value.symbol
@@ -212,6 +225,7 @@
               // }
             }
         })
+        
 
         onMounted(() => {
 
