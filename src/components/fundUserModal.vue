@@ -18,30 +18,81 @@
         <!-- FORM -->
         <div class="space-y-4">
   
-          <!-- COIN -->
+         <!-- COIN -->
           <div>
             <label class="label">Select Coin</label>
-  
+
             <select v-model="coin" class="input">
               <option disabled value="">Select coin</option>
-              <option v-for="c in coins" :key="c" :value="c">
+
+              <option 
+                v-for="c in coins" 
+                :key="c"
+                :value="c"
+              >
                 {{ c }}
               </option>
+
             </select>
           </div>
-  
-          <!-- AMOUNT -->
+
+
+          <!-- USD AMOUNT -->
           <div>
-            <label class="label">Amount</label>
-  
-            <input
-              v-model="amount"
-              type="number"
-              placeholder="Enter amount"
-              class="input"
-            />
+
+          <label class="label">
+            Amount (USD)
+          </label>
+
+
+          <div class="relative">
+
+         
+
+          <input
+            v-model="usdAmount"
+            type="number"
+            placeholder="Enter USD amount"
+            class="input pl-8"
+          />
+
           </div>
-  
+
+
+          </div>
+
+
+
+          <!-- COIN EQUIVALENT -->
+
+          <div 
+          v-if="coinAmount"
+          class="bg-indigo-50 border border-indigo-100 rounded-xl p-4"
+          >
+
+          <p class="text-sm text-gray-500">
+          You will receive
+          </p>
+
+
+          <h3 class="text-xl font-bold text-indigo-600">
+
+          {{ formatNumber(coinAmount) }}
+
+          {{coin}}
+
+          </h3>
+
+
+          <p class="text-xs text-gray-500 mt-1">
+
+          1 {{coin}} =
+          ${{ coinPrice }}
+
+          </p>
+
+
+          </div>
           <!-- TYPE -->
           <div>
             <label class="label">Action</label>
@@ -116,6 +167,9 @@
   const error = ref("")
   const coin = ref("")
   const amount = ref("")
+  const usdAmount = ref("")
+const coinAmount = ref(0)
+const coinPrice = ref(0) 
   const network = ref("")
   const type = ref("credit")
   const note = ref("")
@@ -128,7 +182,13 @@
   
   const btn = "flex-1 border rounded-lg py-2"
   const activeBtn = "flex-1 bg-indigo-600 text-white rounded-lg py-2"
+  const cryptoPrices = computed(()=>{
 
+return Array.isArray(pinia.state.cryptoPrices)
+? pinia.state.cryptoPrices
+: Object.values(pinia.state.cryptoPrices || {})
+
+})
 
   watch(coin, (newValue) => {
   if (!newValue) return
@@ -144,21 +204,72 @@
 
   network.value = walletNet.network
 })
+
+watch(
+ [coin, usdAmount],
+
+ ([selectedCoin, usd])=>{
+
+
+ if(!selectedCoin || !usd){
+
+  coinAmount.value = 0
+  coinPrice.value = 0
+
+  return
+
+ }
+
+
+ const priceData = cryptoPrices.value.find(
+   c => c.symbol === selectedCoin
+ )
+
+
+ if(!priceData){
+
+   coinAmount.value = 0
+   coinPrice.value = 0
+
+   return
+ }
+
+
+ coinPrice.value = priceData.price || 0
+
+
+ coinAmount.value =
+ Number(usd) / Number(priceData.price)
+
+
+})
   
   const submit = async () => {
   
-    if (!coin.value || !amount.value) return error.value = "Fill all fields"
+ if (!coin.value || !usdAmount.value)
+return error.value="Fill all fields"
   
     loading.value = true
   
     try {
   
       const payload = {
-        userId: props.user._id,
-        coin: coin.value,
-        amount: Number(amount.value),
-        network: network.value,
-      }
+
+userId: props.user._id,
+
+coin: coin.value,
+
+amount: Number(
+  coinAmount.value.toFixed(8)
+),
+
+usdAmount:Number(
+  usdAmount.value
+),
+
+network:network.value,
+
+}
 
       const data = await fundUser(payload)
 
@@ -168,7 +279,7 @@
         await sendNotification({
           userId:props.user._id,
           title: "Wallet Funded",
-          message: `Your wallet has been credited with ${amount.value} ${coin.value}`,
+          message: `Your wallet has been credited with ${formatNumber(coinAmount.value)} ${coin.value} ($${usdAmount.value})`,
           type: "deposit"
         });
         await fetchAllUsers()
