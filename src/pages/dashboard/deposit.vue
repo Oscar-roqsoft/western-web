@@ -117,7 +117,7 @@
 
   <!-- BUTTON -->
   <button
-    @click="create_Deposit"
+    @click="continueStep"
     :disabled="loading"
     class="btn-primary flex items-center justify-center gap-2"
   >
@@ -184,9 +184,20 @@
 
         <!-- ACTIONS -->
         <div class="flex gap-3 mt-3">
-          <button @click="copyAddress" class="btn-dark">
-            Copy wallet address
+        
+
+          <button
+          @click="copyAddress"
+          class="btn-dark flex justify-center items-center gap-1 text-indigo-600  font-semibold min-w-32"
+          >
+          <Copy class="w-4 h-4"/>
+          
+          <span v-if="!copied"> Copy wallet address</span>
+          <span v-else>Copied</span>
+          
           </button>
+          
+        
 
        
         </div>
@@ -196,7 +207,18 @@
           Send only {{ pinia.state.selectedCryptoPrice?.symbol }} ({{ pinia.state.selectedCryptoPrice?.network }}). Wrong network = loss of funds.
         </div>
 
+        <button
+    @click="create_Deposit"
+    :disabled="loading"
+    class="btn-primary flex items-center justify-center gap-2 my-4"
+  >
+
+    <span >Confirm to Payment</span>
+    <Spinner v-if="loading"/>
+  </button>
+
       </div>
+
 
 
 
@@ -217,7 +239,8 @@ import {
       Send,
       Download,
       RefreshCcw,
-      ShoppingCart
+      ShoppingCart,
+      Copy
     } from "lucide-vue-next"
     import { fetchAdminWallet } from "@/composables/actions/index"
 
@@ -300,6 +323,32 @@ try {
 
 }
 
+const continueStep = async () => {
+
+  error.value = ""
+
+  if (!amountUSD.value || amountUSD.value < 10) {
+    error.value = `Minimum deposit is $10 ${pinia.state.selectedCryptoPrice?.symbol}`
+    return
+  }
+
+  try {
+   
+    
+    // await fetchAdminWallet()
+    step.value = 2
+    await nextTick()
+
+    await generateQRCode()
+
+
+  } catch (err) {
+    error.value = err?.response?.data?.message || "Error creating deposit"
+  } finally {
+    loading.value = false
+  }
+}
+
 const create_Deposit = async () => {
 
   error.value = ""
@@ -323,11 +372,8 @@ const create_Deposit = async () => {
 
     if(data.success){
       notify.success(data.message)
-      await fetchAdminWallet()
       step.value = 2
-      await nextTick()
-
-      await generateQRCode()
+     
     }else{
       notify.error(data.message)
     }
@@ -357,10 +403,23 @@ watch(
   }
 )
 
+// const copyAddress = async () => {
+//   await navigator.clipboard.writeText(walletAddress.value)
+//   alert("Copied!")
+// }
+
+
 const copyAddress = async () => {
-  await navigator.clipboard.writeText(walletAddress.value)
-  alert("Copied!")
-}
+    
+    await navigator.clipboard.writeText(walletAddress.value)
+    
+    copied.value = true
+    
+    setTimeout(()=>{
+    copied.value = false
+    },2000)
+    
+  }
 
 
 </script>
