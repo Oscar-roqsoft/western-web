@@ -277,7 +277,7 @@
   ========================= */
   
   onMounted(()=>{
-     if(pinia.state.securedWallets){
+     if(pinia.state.securedWallets.length){
         wallets.value = pinia.state.securedWallets?.wallets
         totalPages.value = pinia.state.securedWallets?.pagination?.pages
      }else{
