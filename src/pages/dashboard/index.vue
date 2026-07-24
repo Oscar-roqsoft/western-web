@@ -124,7 +124,7 @@
           <!-- Decorative -->
             <div class="absolute top-0 right-0 w-24 h-24 rounded-full opacity-50 -mt-8 -mr-8" :class="coin.bgClass"></div>
 
-            <div class="relative">
+            <div class="relative" @click="openCoinModal(coin)">
               <div class="flex items-center justify-between mb-2">
 
               <div class="flex items-center gap-2">
@@ -150,7 +150,7 @@
 
               <!-- VIEW BUTTON -->
 
-              <button
+              <!-- <button
                 @click.stop="openCoinModal(coin)"
                 class="
                   w-8 h-8
@@ -167,7 +167,7 @@
 
                 <Eye class="w-4 h-4"/>
 
-              </button>
+              </button> -->
 
 
               </div>
