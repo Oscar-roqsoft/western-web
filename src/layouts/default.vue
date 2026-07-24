@@ -183,6 +183,7 @@
   
             <NuxtLink
              v-if="pinia.state.user?.name != 'admin'"
+              @click="sidebarOpen = false"
               to="/dashboard/profile"
               :class="['menu-item', route.path === '/dashboard/profile' ? 'active-menu' : '']"
             >
@@ -275,7 +276,7 @@
                 </NuxtLink>
 
                 <NuxtLink
-                    to=""
+                    to="/dashboard/listtokens"
                     class="flex items-center text-sm  gap-3 px-4 py-2 hover:bg-gray-100 transition"
                 >
                     <CreditCard class="w-5 h-5 text-gray-500"/>
@@ -283,7 +284,7 @@
                 </NuxtLink>
 
                 <NuxtLink
-                    to="/dashboard/help"
+                     @click="openSupport"
                     class="flex items-center text-sm  gap-3 px-4 py-2 hover:bg-gray-100 transition"
                 >
                     <HelpCircle class="w-5 h-5 text-gray-500"/>
@@ -357,6 +358,22 @@ function handleClickOutside(event) {
     profileDropdown.value = false
   }
 }
+
+const openSupport = () => {
+  if (process.client && window.smartsupp) {
+    if (window.smartsupp) {
+    window.smartsupp("name", pinia.state.user?.name || "");
+    window.smartsupp("email", pinia.state.user?.email || "");
+    window.smartsupp("chat:open");
+  }
+
+  notify.info(
+    "Please tell our support team: 'I need assistance applying for a QFS Card.'"
+  );
+  } else {
+    console.warn("Smartsupp is not loaded");
+  }
+};
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)

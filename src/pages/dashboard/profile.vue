@@ -56,7 +56,7 @@
     
     <div class="flex items-center gap-2 font-mono text-xs">
     0x9c3a...21d8
-    <Copy class="w-4 h-4 text-gray-400 cursor-pointer"/>
+     <Copy class="w-4 h-4 text-gray-400 cursor-pointer"/>
     </div>
     
     </div>
