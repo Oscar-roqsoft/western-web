@@ -45,77 +45,137 @@
           </thead>
   
           <tbody>
-  
-            <tr
-              v-for="user in filteredUsers"
-              :key="user._id"
-              class="border-b hover:bg-gray-50"
-            >
-  
-              <!-- USER -->
-              <td class="td flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center">
-                  {{ user?.name?.charAt(0) }}
-                </div>
-  
-                <div>
-                  <p class="font-semibold">{{ user?.name }}</p>
-                  <p class="text-gray-400 text-xs">{{ user?.email }}</p>
-                </div>
-              </td>
-  
-              
-              <!-- WALLETS -->
+
+            <tr v-if="loading">
+
+              <tr
+                v-for="i in 6"
+                :key="i"
+                class="border-b"
+              >
+
               <td class="td">
-                  {{ user?.country }}
-                </td>
-                
-                <!-- BALANCE -->
-                <td class="td font-semibold">
-                  {{ user?.phone}}
-                </td>
-              <!-- STATUS -->
-              <td class="td w-[100px_!important]">
-                <span
-                  :class="[
-                    'px-2 py-1 rounded text-xs font-semibold w-[200px]',
-                    user?.twoFactorVerification
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-red-100 text-red-600'
-                  ]"
-                >
+                <div class="flex items-center gap-3">
 
-                  {{ user?.twoFactorVerification ? 'verified' : 'not verified' }}
-                </span>
+                  <div class="skeleton w-10 h-10 rounded-full"></div>
 
-              </td>
-  
-              <!-- ACTIONS -->
-              <td class="td text-right">
-  
-                <div class="flex  gap-2">
-  
-                  <!-- View -->
-                  <button class="action-btn" @click="navigateTo(`/dashboard/admin/user/${user?._id}`)">
-                    <Eye class="icon"/>
-                  </button>
-  
-                  <!-- Fund -->
-                  <button class="action-btn"
-                  @click="openUser(user)">
-                    <Wallet class="icon"/>
-                  </button>
-  
-                  <!-- Block -->
-                  <button class="action-btn text-red-500">
-                    <Ban class="icon"/>
-                  </button>
-  
+                  <div>
+                    <div class="skeleton h-4 w-32 mb-2"></div>
+                    <div class="skeleton h-3 w-40"></div>
+                  </div>
+
                 </div>
-  
               </td>
-  
+
+
+              <td class="td">
+                <div class="skeleton h-4 w-20"></div>
+              </td>
+
+
+              <td class="td">
+                <div class="skeleton h-4 w-24"></div>
+              </td>
+
+
+              <td class="td">
+                <div class="skeleton h-5 w-20 rounded"></div>
+              </td>
+
+
+              <td class="td text-right">
+
+              <div class="flex gap-2 justify-end">
+
+              <div class="skeleton w-8 h-8 rounded"></div>
+
+              <div class="skeleton w-8 h-8 rounded"></div>
+
+              <div class="skeleton w-8 h-8 rounded"></div>
+
+              </div>
+
+              </td>
+
+
+              </tr>
+
             </tr>
+
+  
+
+
+
+                <tr
+                  v-for="user in filteredUsers"
+                  :key="user._id"
+                  class="border-b hover:bg-gray-50"
+                >
+      
+                  <!-- USER -->
+                  <td class="td flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center">
+                      {{ user?.name?.charAt(0) }}
+                    </div>
+      
+                    <div>
+                      <p class="font-semibold">{{ user?.name }}</p>
+                      <p class="text-gray-400 text-xs">{{ user?.email }}</p>
+                    </div>
+                  </td>
+      
+                  
+                  <!-- WALLETS -->
+                  <td class="td">
+                      {{ user?.country }}
+                    </td>
+                    
+                    <!-- BALANCE -->
+                    <td class="td font-semibold">
+                      {{ user?.phone}}
+                    </td>
+                  <!-- STATUS -->
+                  <td class="td w-[100px_!important]">
+                    <span
+                      :class="[
+                        'px-2 py-1 rounded text-xs font-semibold w-[200px]',
+                        user?.twoFactorVerification
+                          ? 'bg-green-100 text-green-600'
+                          : 'bg-red-100 text-red-600'
+                      ]"
+                    >
+    
+                      {{ user?.twoFactorVerification ? 'verified' : 'not verified' }}
+                    </span>
+    
+                  </td>
+      
+                  <!-- ACTIONS -->
+                  <td class="td text-right">
+      
+                    <div class="flex  gap-2">
+      
+                      <!-- View -->
+                      <button class="action-btn" @click="navigateTo(`/dashboard/admin/user/${user?._id}`)">
+                        <Eye class="icon"/>
+                      </button>
+      
+                      <!-- Fund -->
+                      <button class="action-btn"
+                      @click="openUser(user)">
+                        <Wallet class="icon"/>
+                      </button>
+      
+                      <!-- Block -->
+                      <button class="action-btn text-red-500">
+                        <Ban class="icon"/>
+                      </button>
+      
+                    </div>
+      
+                  </td>
+      
+                </tr>
   
           </tbody>
   
@@ -164,7 +224,7 @@ const showDrawer = ref(false)
 const showFundModal = ref(false)
 const selectedUser = ref(null)
 const fundUser = ref(null)
-
+const loading = ref(true)
 /* =========================
    STATE
 ========================= */
@@ -215,11 +275,23 @@ const filteredUsers = computed(() => {
 
 
 onMounted(async () => {
-  try {
-    await fetchAllUsers()
-  } catch (err) {
-    console.error(err)
-  }
+
+try {
+
+  loading.value = true
+
+  await fetchAllUsers()
+
+} catch (err) {
+
+  console.error(err)
+
+} finally {
+
+  loading.value = false
+
+}
+
 })
 </script>
 
@@ -271,4 +343,32 @@ onMounted(async () => {
   width: 16px;
   height: 16px;
 }
+
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #e5e7eb 25%,
+    #f3f4f6 37%,
+    #e5e7eb 63%
+  );
+
+  background-size: 400% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+
+@keyframes shimmer {
+
+0% {
+ background-position: 100% 0;
+}
+
+100% {
+ background-position: -100% 0;
+}
+
+}
+
+
 </style>
