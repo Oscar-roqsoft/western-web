@@ -93,22 +93,22 @@
     
     
 </main>
-        <SendModal
-        v-if="activeModal==='send'"
-        @close="activeModal=null"
-        />
-
-        <ReceiveModal
+        <!-- <SendModal
         v-if="activeModal===''"
         @close="activeModal=null"
-        />
+        /> -->
+
+        <!-- <ReceiveModal
+        v-if="activeModal===''"
+        @close="activeModal=null"
+        /> -->
 
         <SwapModal v-if="activeModal==='swap'" :activeModal="activeModal" @close="activeModal=null" />
 
-        <BuyModal
+        <!-- <BuyModal
         v-if="activeModal===''"
         @close="activeModal=null"
-        />
+        /> -->
     </template>
     
     
