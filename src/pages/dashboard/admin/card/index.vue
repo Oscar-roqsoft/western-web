@@ -236,11 +236,11 @@
     loading.value = false
   }
   
-  onMounted(()=>{
-    if (pinia.state.allCardDetails && Object.keys(pinia.state.allCardDetails).length > 0){
-      pinia.state.allCardDetails
+  onMounted(async()=>{
+    if (pinia.state.allCardDetails.length){
+      pinia.state.allCardDetails 
     }else{
-      fetchCards
+      await fetchCards()
     }
   })
   watch([page, statusFilter], fetchCards)
