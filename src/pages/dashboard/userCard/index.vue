@@ -88,7 +88,7 @@
     <section class="max-w-6xl mx-auto">
       
       <div
-      v-if="cards"
+      
       class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
       
@@ -323,11 +323,13 @@
       
       
       
+       </div>
       </div>
-      </div>
+
+
       <!-- EMPTY STATE -->
       
-      <div v-else class="text-center py-16">
+      <div v-if="cards == null " class="text-center py-16">
       
         <CreditCard
         class="mx-auto w-12 h-12 text-gray-400"
