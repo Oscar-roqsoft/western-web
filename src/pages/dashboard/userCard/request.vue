@@ -99,8 +99,8 @@
                 required
               >
                 <option disabled value="">Select Card Type</option>
-                <option value="master">Black Card</option>
-                <option value="visa">Gold Card</option>
+                <option value="black card">Black Card</option>
+                <option value="gold card">Gold Card</option>
               </select>
   
               <p class="text-gray-400 text-sm">
@@ -203,7 +203,7 @@
   
   const isSubmitting = ref(false)
   
-  const cardType = ref("visa")
+  const cardType = ref("gold card")
   
   const form = reactive({
     cardlimit: 100,

@@ -20,7 +20,7 @@
           <!-- Chip + Visa -->
           <div class="mt-6 flex justify-between items-center">
             <CreditCard class="w-8 h-8" />
-            <span class="font-bold text-lg tracking-widest">VISA</span>
+            <span class="font-bold text-lg tracking-widest">Card</span>
           </div>
   
           <!-- Number -->

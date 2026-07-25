@@ -80,6 +80,21 @@ export const approveCard = async (payload) => {
     return await asyncRequest(url, options);
 };
 
+export const rejectCard = async (payload) => {
+    const pinia = useStore();
+    const url = `${baseURL}/card/rejectCard`;
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pinia.state.user?.token}`
+        },
+        body: JSON.stringify(payload)
+    };
+
+    return await asyncRequest(url, options);
+};
+
 export const blockCard = async (payload) => {
     const pinia = useStore();
     const url = `${baseURL}/card/block`;

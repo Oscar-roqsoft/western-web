@@ -132,14 +132,7 @@
       
       <!-- STATUS BADGE -->
       
-      <span
-      class="text-xs px-3 py-1 rounded-full font-semibold"
-      :class="statusClass(card.status)"
-      >
-      
-      {{card.status}}
-      
-      </span>
+     
       
       
       </div>
@@ -258,6 +251,16 @@
       
       
       <div class="mt-3 space-y-2">
+
+
+        <div
+      class="text-xs px-3 py-2 rounded-md text-center capitalize font-semibold"
+      :class="statusClass(card.status)"
+      >
+      
+      {{card.status}}
+      
+      </div>
       
       
       
@@ -278,7 +281,7 @@
       
       <button
       
-      v-if="card.status !=='rejected'"
+      v-if="card.status ==='rejected'"
       
       @click="openEditModal(card)"
       

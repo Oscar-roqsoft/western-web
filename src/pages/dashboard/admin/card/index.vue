@@ -1,340 +1,1203 @@
 <template>
-    <main class="max-w-7xl mx-auto ">
+
+  <main class="max-w-7xl mx-auto p-4">
   
-      <!-- HEADER -->
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h1 class="text-2xl font-bold">Card Requests</h1>
-          <p class="text-gray-500 text-sm">
-            Manage and approve user card applications
-          </p>
-        </div>
   
-        <select v-model="statusFilter" class="border px-3 py-2 rounded-lg text-sm">
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="active">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-      </div>
+  <!-- =========================
+  HEADER
+  ========================= -->
   
-      <!-- TABLE -->
-      <div class="bg-white rounded-xl shadow overflow-auto">
+  <section class="mb-6">
   
-        <table class="w-full text-sm">
-          <thead class="bg-gray-50 text-gray-600">
-            <tr>
-              <th class="p-3 text-left">User</th>
-              <th class="p-3 text-left">Card Type</th>
-              <th class="p-3 text-left">Limit</th>
-              <th class="p-3 text-left">Status</th>
-              <th class="p-3 text-left">Date</th>
-              <th class="p-3 text-right">Action</th>
-            </tr>
-          </thead>
+  <div class="flex justify-between items-center">
   
-          <tbody>
   
-            <!-- SKELETON -->
-            <template v-if="loading">
-              <tr v-for="i in 6" :key="i" class="border-t">
-                <td class="p-3"><div class="skeleton h-4 w-32 mb-2"></div></td>
-                <td class="p-3"><div class="skeleton h-4 w-16"></div></td>
-                <td class="p-3"><div class="skeleton h-4 w-20"></div></td>
-                <td class="p-3"><div class="skeleton h-5 w-20 rounded-full"></div></td>
-                <td class="p-3"><div class="skeleton h-3 w-24"></div></td>
-                <td class="p-3">
-                  <div class="flex gap-2 justify-end">
-                    <div class="skeleton h-7 w-16"></div>
-                    <div class="skeleton h-7 w-16"></div>
-                  </div>
-                </td>
-              </tr>
-            </template>
+  <div>
   
-            <!-- DATA -->
-            <template v-else>
-              <tr
-                v-for="card in cards"
-                :key="card._id"
-                class="border-t hover:bg-gray-50"
-              >
+  <h1 class="text-2xl font-bold">
+  Card Requests
+  </h1>
   
-                <td class="p-3">
-                  <p class="font-semibold">{{ card.userId?.name }}</p>
-                  <p class="text-xs text-gray-400">{{ card.userId?.email }}</p>
-                </td>
+  <p class="text-gray-500 text-sm">
+  Review, approve or reject user card applications
+  </p>
   
-                <td class="p-3 uppercase">{{ card.cardType }}</td>
+  </div>
   
-                <td class="p-3">${{ card.cardLimit }}</td>
   
-                <td class="p-3">
-                  <span :class="statusClass(card.status)">
-                    {{ card.status }}
-                  </span>
-                </td>
   
-                <td class="p-3 text-xs text-gray-500">
-                  {{ formatDate(card.createdAt) }}
-                </td>
+  <select
+  v-model="statusFilter"
+  class="border rounded-xl px-4 py-2 text-sm"
+  >
   
-                <td class="p-3 text-right">
-                  <div class="flex justify-end gap-2">
+  <option value="">
+  All Status
+  </option>
   
-                    <button @click="viewCard(card)" class="btn-outline">
-                      View
-                    </button>
+  <option value="pending">
+  Pending
+  </option>
   
-                    <button
-                      v-if="card.status === 'pending'"
-                      @click="openAction(card,'approve')"
-                      class="btn-success flex items-center gap-1"
-                    >
-                      <span v-if="!rowLoading[card._id]">Approve</span>
-                      <Spinner v-else />
-                    </button>
+  <option value="active">
+  Approved
+  </option>
   
-                    <button
-                      v-if="card.status === 'pending'"
-                      @click="openAction(card,'reject')"
-                      class="btn-danger flex items-center gap-1"
-                    >
-                      <span v-if="!rowLoading[card._id]">Reject</span>
-                      <Spinner v-else />
-                    </button>
+  <option value="rejected">
+  Rejected
+  </option>
   
-                  </div>
-                </td>
+  </select>
   
-              </tr>
-            </template>
   
-          </tbody>
-        </table>
+  </div>
   
-      </div>
   
-      <!-- PAGINATION -->
-      <div class="flex justify-between items-center mt-4">
-        <button
-          @click="page--"
-          :disabled="page === 1"
-          class="px-4 py-2 border rounded-lg disabled:opacity-40"
-        >
-          Prev
-        </button>
+  </section>
   
-        <span class="text-sm">
-          Page {{ page }} of {{ totalPages }}
-        </span>
   
-        <button
-          @click="page++"
-          :disabled="page === totalPages"
-          class="px-4 py-2 border rounded-lg disabled:opacity-40"
-        >
-          Next
-        </button>
-      </div>
   
-      <!-- VIEW MODAL -->
-      <div v-if="selectedCard" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
   
-        <div class="bg-white w-full max-w-md rounded-xl p-6">
+  <!-- =========================
+  TABLE
+  ========================= -->
   
-          <h2 class="font-bold text-lg mb-4">Card Details</h2>
   
-          <div class="space-y-2 text-sm">
-            <p><b>Name:</b> {{ selectedCard.userId?.name }}</p>
-            <p><b>Email:</b> {{ selectedCard.userId?.email }}</p>
-            <p><b>Type:</b> {{ selectedCard.cardType }}</p>
-            <p><b>Limit:</b> ${{ selectedCard.cardLimit }}</p>
-            <p><b>Address:</b> {{ selectedCard.address }}</p>
-          </div>
+  <div class="bg-white rounded-2xl shadow overflow-auto">
   
-          <button
-            @click="selectedCard = null"
-            class="mt-4 w-full bg-gray-800 text-white py-2 rounded-lg"
-          >
-            Close
-          </button>
   
-        </div>
+  <table class="w-full text-sm">
   
-      </div>
   
-      <!-- ACTION MODAL -->
-      <div v-if="actionModal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+  <thead class="bg-gray-50">
   
-        <div class="bg-white w-full max-w-sm rounded-xl p-6 text-center">
+  <tr>
   
-          <h2 class="font-bold text-lg mb-2">
-            Confirm {{ actionType }}
-          </h2>
+  <th class="p-4 text-left">
+  User
+  </th>
   
-          <p class="text-gray-500 text-sm mb-4">
-            Are you sure you want to {{ actionType }} this card request?
-          </p>
+  <th class="p-4">
+  Card
+  </th>
   
-          <div class="flex gap-3">
   
-            <button
-              @click="actionModal = false"
-              class="flex-1 border py-2 rounded-lg"
-            >
-              Cancel
-            </button>
+  <th class="p-4">
+  Limit
+  </th>
   
-            <button
-              @click="confirmAction"
-              class="flex-1 bg-indigo-600 text-white py-2 rounded-lg"
-            >
-              Yes, Continue
-            </button>
   
-          </div>
+  <th class="p-4">
+  Status
+  </th>
   
-        </div>
   
-      </div>
+  <th class="p-4">
+  Date
+  </th>
   
-    </main>
+  
+  <th class="p-4 text-right">
+  Action
+  </th>
+  
+  
+  </tr>
+  
+  </thead>
+  
+  
+  
+  <tbody>
+  
+  
+  
+  <!-- LOADING -->
+  
+  <template v-if="loading">
+  
+  
+  <tr
+  v-for="i in 5"
+  :key="i"
+  class="border-t"
+  >
+  
+  <td colspan="6" class="p-4">
+  
+  <div class="skeleton h-8"></div>
+  
+  </td>
+  
+  
+  </tr>
+  
+  
   </template>
   
-  <script setup>
-  import { ref } from "vue"
-  import { fetchAllUserCards } from "@/composables/actions/index"
-  import { approveCard ,blockCard} from "@/composables/requests/card"
   
-  const pinia = useStore()
-  const notify = useNotify()
   
-  const loading = ref(false)
   
-  const cards = computed(() => pinia.state.allCardDetails || [])
   
-  const page = ref(1)
-  const totalPages = ref(1)
-  const statusFilter = ref("")
   
-  const selectedCard = ref(null)
+  <!-- DATA -->
   
-  const actionModal = ref(false)
-  const actionType = ref("")
-  const activeCard = ref(null)
+  <template v-else>
   
-  const rowLoading = ref({})
   
-  const fetchCards = async () => {
-    loading.value = true
-    try {
-      await fetchAllUserCards()
-    } catch (err) {
-      console.error(err)
-    }
-    loading.value = false
-  }
+  <tr
+  v-for="card in cards"
+  :key="card._id"
+  class="border-t hover:bg-gray-50"
+  >
   
-  onMounted(async()=>{
-    if (pinia.state.allCardDetails.length){
-      pinia.state.allCardDetails 
-    }else{
-      await fetchCards()
-    }
-  })
-  watch([page, statusFilter], fetchCards)
   
-  const openAction = (card, type) => {
-    activeCard.value = card
-    actionType.value = type
-    actionModal.value = true
-  }
+  <!-- USER -->
   
-  const confirmAction = async () => {
-    const id = activeCard.value._id
-    rowLoading.value[id] = true
+  <td class="p-4">
   
-    try {
-      let res
+  <p class="font-semibold">
+  {{card.fullname || card.userId?.name}}
+  </p>
   
-      if (actionType.value === "approve") {
-        res = await approveCard({cardId:id})
-        if(res.success){
-          await Notification.create({
-            userId: activeCard.value.userId._id,
-            title: "Card Approved",
-            message: "Your card request has been approved 🎉",
-            type: "card"
-          });
-        }
-      } else {
-        res = await blockCard({cardId:id})
-      }
   
-      if (res.success) {
-        notify.success(res.message)
-        fetchCards()
-      } else {
-        notify.error(res.message)
-      }
+  <p class="text-xs text-gray-400">
+  {{card.userId?.email}}
+  </p>
   
-    } catch (e) {
-      notify.error("Error occurred")
-    }
   
-    rowLoading.value[id] = false
-    actionModal.value = false
-  }
+  <p class="text-xs text-gray-400">
+  {{card.phoneNumber}}
+  </p>
   
-  const viewCard = (card) => {
-    selectedCard.value = card
-  }
   
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString()
-  }
+  </td>
   
-  const statusClass = (status) => {
-    return {
-      "px-2 py-1 rounded text-xs font-semibold": true,
-      "bg-yellow-100 text-yellow-700": status === "pending",
-      "bg-green-100 text-green-700": status === "active",
-      "bg-red-100 text-red-700": status === "rejected"
-    }
-  }
-  </script>
   
-  <style scoped>
-  .btn-outline {
-    @apply border px-3 py-1 rounded-lg text-xs hover:bg-gray-100;
-  }
-  .btn-success {
-    @apply bg-green-600 text-white px-3 py-1 rounded-lg text-xs;
-  }
-  .btn-danger {
-    @apply bg-red-600 text-white px-3 py-1 rounded-lg text-xs;
-  }
   
-  .skeleton {
-    position: relative;
-    overflow: hidden;
-    background: #e5e7eb;
-    border-radius: 6px;
-  }
   
-  .skeleton::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    animation: shimmer 1.2s infinite;
-  }
   
-  @keyframes shimmer {
-    100% {
-      transform: translateX(100%);
-    }
-  }
-  </style>
+  <!-- CARD TYPE -->
+  
+  <td class="p-4 uppercase font-semibold">
+  
+  {{card.cardType}}
+  
+  </td>
+  
+  
+  
+  
+  
+  
+  <!-- LIMIT -->
+  
+  
+  <td class="p-4">
+  
+  ${{formatMoney(card.cardLimit)}}
+  
+  </td>
+  
+  
+  
+  
+  
+  <!-- STATUS -->
+  
+  <td class="p-4">
+  
+  
+  <span
+  class="px-3 py-1 rounded-full text-xs font-semibold capitalize"
+  :class="statusClass(card.status)"
+  >
+  
+  {{card.status}}
+  
+  </span>
+  
+  
+  </td>
+  
+  
+  
+  
+  
+  <!-- DATE -->
+  
+  
+  <td class="p-4 text-xs text-gray-500">
+  
+  {{formatDate(card.createdAt)}}
+  
+  </td>
+  
+  
+  
+  
+  
+  
+  <!-- ACTIONS -->
+  
+  
+  <td class="p-4">
+  
+  
+  <div class="flex justify-end gap-2">
+  
+  
+  <button
+  @click="viewCard(card)"
+  class="btn-outline"
+  >
+  
+  View
+  
+  </button>
+  
+  
+  
+  
+  <button
+  
+  v-if="card.status==='pending'"
+  
+  @click="openAction(card,'approve')"
+  
+  class="btn-success"
+  >
+  
+  
+  <span v-if="!rowLoading[card._id]">
+  Approve
+  </span>
+  
+  
+  <span v-else>
+  ...
+  </span>
+  
+  
+  </button>
+  
+  
+  
+  
+  
+  <button
+  
+  v-if="card.status==='pending'"
+  
+  @click="openAction(card,'reject')"
+  
+  class="btn-danger"
+  >
+  
+  Reject
+  
+  </button>
+  
+  
+  
+  
+  <button
+  
+  v-if="card.status==='active'"
+  
+  @click="openAction(card,'block')"
+  
+  class="btn-danger"
+  >
+  
+  Block
+  
+  </button>
+  
+  
+  
+  </div>
+  
+  
+  </td>
+  
+  
+  </tr>
+  
+  
+  
+  </template>
+  
+  
+  </tbody>
+  
+  
+  </table>
+  
+  
+  
+  </div>
+  
+  
+  
+  
+  
+  
+  
+  <!-- =========================
+  EMPTY STATE
+  ========================= -->
+  
+  <div
+  v-if="!loading && !cards.length"
+  
+  class="text-center py-16"
+  >
+  
+  
+  <p class="text-gray-400">
+  No card requests found
+  </p>
+  
+  
+  </div>
+  
+  
+  
+  
+  
+  <!-- =========================
+  VIEW MODAL
+  ========================= -->
+  
+  
+  <div
+  
+  v-if="selectedCard"
+  
+  class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+  
+  >
+  
+  
+  <div class="bg-white rounded-2xl p-6 w-full max-w-md">
+  
+  
+  <div class="flex justify-between mb-5">
+  
+  
+  <h2 class="font-bold text-lg">
+  Card Details
+  </h2>
+  
+  
+  <button
+  @click="selectedCard=null"
+  >
+  ✕
+  </button>
+  
+  
+  </div>
+  
+  
+  
+  
+  
+  <div class="space-y-3 text-sm">
+  
+  
+  <p>
+  <b>Name:</b>
+  {{selectedCard.fullname}}
+  </p>
+  
+  
+  <p>
+  <b>Email:</b>
+  {{selectedCard.userId?.email}}
+  </p>
+  
+  
+  
+  <p>
+  <b>Phone:</b>
+  {{selectedCard.phoneNumber}}
+  </p>
+  
+  
+  
+  <p>
+  <b>Card Type:</b>
+  {{selectedCard.cardType}}
+  </p>
+  
+  
+  
+  <p>
+  <b>Limit:</b>
+  ${{formatMoney(selectedCard.cardLimit)}}
+  </p>
+  
+  
+  
+  <p>
+  <b>Status:</b>
+  
+  <span
+  class="ml-2 px-2 py-1 rounded-full"
+  :class="statusClass(selectedCard.status)"
+  >
+  
+  {{selectedCard.status}}
+  
+  </span>
+  
+  
+  </p>
+  
+  
+  
+  
+  
+  <p>
+  <b>Address:</b>
+  
+  {{selectedCard.address}}
+  
+  </p>
+  
+  
+  
+  
+  
+  <div
+  
+  v-if="selectedCard.status==='rejected'"
+  
+  class="bg-red-50 text-red-600 p-3 rounded-xl"
+  
+  >
+  
+  <b>
+  Rejection Reason:
+  </b>
+  
+  <br>
+  
+  {{selectedCard.rejectionReason}}
+  
+  </div>
+  
+  
+  
+  </div>
+  
+  
+  
+  <button
+  
+  @click="selectedCard=null"
+  
+  class="mt-6 w-full bg-gray-900 text-white py-3 rounded-xl"
+  
+  >
+  
+  Close
+  
+  </button>
+  
+  
+  
+  </div>
+  
+  
+  </div>
+  
+  
+  
+  
+  
+  <!-- =========================
+  ACTION MODAL
+  ========================= -->
+  
+  
+  <div
+  
+  v-if="actionModal"
+  
+  class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+  
+  >
+  
+  
+  <div class="bg-white rounded-2xl p-6 max-w-sm w-full">
+  
+  
+  <h2 class="font-bold text-lg">
+  
+  Confirm {{actionType}}
+  
+  </h2>
+  
+  
+  
+  <p class="text-gray-500 text-sm my-4">
+  
+  Are you sure you want to
+  {{actionType}}
+  this card?
+  
+  </p>
+  
+  
+  
+  
+  <textarea
+  
+  v-if="actionType==='reject'"
+  
+  v-model="rejectionReason"
+  
+  placeholder="Reason for rejection"
+  
+  class="w-full border rounded-xl p-3 mb-4"
+  
+  ></textarea>
+  
+  
+  
+  
+  <div class="flex gap-3">
+  
+  
+  <button
+  
+  @click="actionModal=false"
+  
+  class="flex-1 border rounded-xl py-2"
+  
+  >
+  
+  Cancel
+  
+  </button>
+  
+  
+  
+  <button
+  
+  @click="confirmAction"
+  
+  class="flex-1 bg-indigo-600 text-white rounded-xl py-2"
+  
+  >
+  
+  Continue
+  
+  </button>
+  
+  
+  </div>
+  
+  
+  
+  </div>
+  
+  
+  
+  </div>
+  
+  
+  </main>
+  
+  
+</template>
+<script setup>
+
+import { 
+  ref,
+  computed,
+  watch,
+  onMounted
+} from "vue"
+
+
+import {
+  fetchAllUserCards
+} from "@/composables/actions/index"
+
+
+import {
+  approveCard,
+  blockCard,
+  rejectCard
+} from "@/composables/requests/card"
+
+
+const pinia = useStore()
+
+const notify = useNotify()
+
+
+
+/*
+|--------------------------------------------------------------------------
+| STATE
+|--------------------------------------------------------------------------
+*/
+
+
+const loading = ref(false)
+
+
+const rowLoading = ref({})
+
+
+const cards = computed(()=>{
+
+  return pinia.state.allCardDetails || []
+
+})
+
+
+const page = ref(1)
+
+
+const totalPages = ref(1)
+
+
+const statusFilter = ref("")
+
+
+
+const selectedCard = ref(null)
+
+
+
+/*
+|--------------------------------------------------------------------------
+| ACTION MODAL
+|--------------------------------------------------------------------------
+*/
+
+
+const actionModal = ref(false)
+
+
+const actionType = ref("")
+
+
+const activeCard = ref(null)
+
+
+
+/*
+|--------------------------------------------------------------------------
+| REJECT MODAL
+|--------------------------------------------------------------------------
+*/
+
+
+const rejectModal = ref(false)
+
+
+const rejectionReason = ref("")
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| FETCH CARDS
+|--------------------------------------------------------------------------
+*/
+
+
+const fetchCards = async()=>{
+
+
+loading.value = true
+
+
+try{
+
+
+await fetchAllUserCards({
+ page:page.value,
+ status:statusFilter.value
+})
+
+
+}catch(error){
+
+console.log(error)
+
+}finally{
+
+
+loading.value = false
+
+
+}
+
+
+}
+
+
+
+
+
+onMounted(async()=>{
+
+
+await fetchCards()
+
+
+})
+
+
+
+
+watch(
+[
+ page,
+ statusFilter
+],
+()=>{
+
+fetchCards()
+
+})
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| OPEN ACTION
+|--------------------------------------------------------------------------
+*/
+
+
+const openAction=(card,type)=>{
+
+
+activeCard.value = card
+
+
+actionType.value = type
+
+
+
+if(type==="reject"){
+
+
+rejectModal.value=true
+
+
+}else{
+
+
+actionModal.value=true
+
+
+}
+
+
+}
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| CONFIRM APPROVE
+|--------------------------------------------------------------------------
+*/
+
+
+const confirmApprove = async()=>{
+
+
+const id = activeCard.value._id
+
+
+rowLoading.value[id]=true
+
+
+try{
+
+
+const res = await approveCard({
+
+cardId:id
+
+})
+
+
+
+if(res.success){
+
+
+notify.success(
+"Card approved successfully"
+)
+
+
+await fetchCards()
+
+
+}
+
+
+
+}catch(error){
+
+
+notify.error(
+error.message
+)
+
+
+}
+
+
+
+rowLoading.value[id]=false
+
+
+actionModal.value=false
+
+
+}
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| REJECT CARD
+|--------------------------------------------------------------------------
+*/
+
+
+const confirmReject = async()=>{
+
+
+const id = activeCard.value._id
+
+
+
+if(!rejectionReason.value.trim()){
+
+
+notify.error(
+"Please provide rejection reason"
+)
+
+
+return
+
+
+}
+
+
+
+rowLoading.value[id]=true
+
+
+
+try{
+
+
+const res = await rejectCard({
+
+cardId:id,
+
+reason:rejectionReason.value
+
+
+})
+
+
+
+if(res.success){
+
+
+notify.success(
+"Card rejected"
+)
+
+
+await fetchCards()
+
+
+}
+
+
+}catch(error){
+
+
+notify.error(
+error.message
+)
+
+
+}
+
+
+
+rowLoading.value[id]=false
+
+
+rejectModal.value=false
+
+
+rejectionReason.value=""
+
+
+}
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| BLOCK CARD
+|--------------------------------------------------------------------------
+*/
+
+
+const handleBlock = async(card)=>{
+
+
+try{
+
+
+const res = await blockCard({
+
+cardId:card._id
+
+})
+
+
+
+if(res.success){
+
+
+notify.success(
+"Card blocked"
+)
+
+
+fetchCards()
+
+
+}
+
+
+}catch(error){
+
+
+notify.error(
+error.message
+)
+
+
+}
+
+
+}
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| VIEW CARD
+|--------------------------------------------------------------------------
+*/
+
+
+const viewCard=(card)=>{
+
+
+selectedCard.value=card
+
+
+}
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| FORMAT DATE
+|--------------------------------------------------------------------------
+*/
+
+
+const formatDate=(date)=>{
+
+
+return new Date(date)
+.toLocaleDateString(
+"en-GB",
+{
+
+day:"2-digit",
+
+month:"short",
+
+year:"numeric"
+
+}
+
+)
+
+
+}
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| STATUS COLORS
+|--------------------------------------------------------------------------
+*/
+
+
+const statusClass=(status)=>{
+
+
+return [
+
+"px-3 py-1 rounded-full text-xs font-semibold capitalize",
+
+{
+
+"bg-yellow-100 text-yellow-700":
+status==="pending",
+
+
+"bg-green-100 text-green-700":
+status==="active",
+
+
+"bg-red-100 text-red-700":
+status==="rejected",
+
+
+"bg-gray-100 text-gray-700":
+status==="blocked"
+
+}
+
+]
+
+
+}
+
+
+
+</script>
+
+
+
+<style scoped>
+
+
+.btn-outline{
+
+@apply border px-3 py-1 rounded-lg text-xs hover:bg-gray-100 transition;
+
+}
+
+
+
+.btn-success{
+
+@apply bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-xs transition;
+
+}
+
+
+
+.btn-danger{
+
+@apply bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs transition;
+
+}
+
+
+
+
+.skeleton{
+
+position:relative;
+
+overflow:hidden;
+
+background:#e5e7eb;
+
+border-radius:8px;
+
+}
+
+
+
+.skeleton::after{
+
+
+content:"";
+
+
+position:absolute;
+
+
+inset:0;
+
+
+background:
+linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,.6),
+transparent
+);
+
+
+animation:
+shimmer 1.2s infinite;
+
+
+}
+
+
+
+@keyframes shimmer{
+
+
+100%{
+
+transform:translateX(100%);
+
+}
+
+
+}
+
+
+
+</style>
