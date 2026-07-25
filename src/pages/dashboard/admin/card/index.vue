@@ -349,7 +349,7 @@
   ========================= -->
   
   <div
-  v-if="!loading && !cards.length"
+  v-if="!loading && pinia.state.allCardDetails == null"
   
   class="text-center py-16"
   >
@@ -614,505 +614,565 @@
   
   
 </template>
+
 <script setup>
 
-import { 
-  ref,
-  computed,
-  watch,
-  onMounted
-} from "vue"
+    import {
+      ref,
+      computed,
+      watch,
+      onMounted
+    } from "vue"
 
 
-import {
-  fetchAllUserCards
-} from "@/composables/actions/index"
+    import {
+      fetchAllUserCards
+    } from "@/composables/actions/index"
 
 
-import {
-  approveCard,
-  blockCard,
-  rejectCard
-} from "@/composables/requests/card"
+    import {
+      approveCard,
+      blockCard,
+      rejectCard
+    } from "@/composables/requests/card"
 
 
-const pinia = useStore()
 
-const notify = useNotify()
+    const pinia = useStore()
 
+    const notify = useNotify()
 
 
-/*
-|--------------------------------------------------------------------------
-| STATE
-|--------------------------------------------------------------------------
-*/
 
+    /*
+    |--------------------------------------------------------------------------
+    | DATA
+    |--------------------------------------------------------------------------
+    */
 
-const loading = ref(false)
 
+    // loading table state
+    const loading = ref(false)
 
-const rowLoading = ref({})
 
+    // prevent multiple clicks on same row
+    const rowLoading = ref({})
 
-const cards = computed(()=>{
 
-  return pinia.state.allCardDetails || []
+    // all cards from store
+    const cards = computed(()=>{
 
-})
+      return pinia.state.allCardDetails || []
 
+    })
 
-const page = ref(1)
 
 
-const totalPages = ref(1)
+    // pagination
+    const page = ref(1)
 
+    const totalPages = ref(1)
 
-const statusFilter = ref("")
 
 
+    // filter
+    const statusFilter = ref("")
 
-const selectedCard = ref(null)
 
 
 
-/*
-|--------------------------------------------------------------------------
-| ACTION MODAL
-|--------------------------------------------------------------------------
-*/
+    // selected card for view modal
+    const selectedCard = ref(null)
 
 
-const actionModal = ref(false)
 
+    /*
+    |--------------------------------------------------------------------------
+    | ACTION MODAL
+    |--------------------------------------------------------------------------
+    */
 
-const actionType = ref("")
 
+    const actionModal = ref(false)
 
-const activeCard = ref(null)
 
+    // approve | reject | block
+    const actionType = ref("")
 
 
-/*
-|--------------------------------------------------------------------------
-| REJECT MODAL
-|--------------------------------------------------------------------------
-*/
+    // card selected for action
+    const activeCard = ref(null)
 
 
-const rejectModal = ref(false)
 
+    // rejection reason
+    const rejectionReason = ref("")
 
-const rejectionReason = ref("")
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | FETCH CARD REQUESTS
+    |--------------------------------------------------------------------------
+    */
 
 
+    const fetchCards = async()=>{
 
-/*
-|--------------------------------------------------------------------------
-| FETCH CARDS
-|--------------------------------------------------------------------------
-*/
 
+      loading.value = true
 
-const fetchCards = async()=>{
 
+      try{
 
-loading.value = true
 
+        const res = await fetchAllUserCards({
 
-try{
+          page: page.value,
 
+          status: statusFilter.value
 
-await fetchAllUserCards({
- page:page.value,
- status:statusFilter.value
-})
+        })
 
 
-}catch(error){
+        /*
+          If your backend returns pagination
+          update total pages here
+        */
 
-console.log(error)
+        if(res?.totalPages){
 
-}finally{
+          totalPages.value = res.totalPages
 
+        }
 
-loading.value = false
 
+      }catch(error){
 
-}
 
+        console.error(
+          "Fetch cards error:",
+          error
+        )
 
-}
 
+        notify.error(
+          error.message || "Failed loading cards"
+        )
 
 
+      }finally{
 
 
-onMounted(async()=>{
+        loading.value = false
 
 
-await fetchCards()
+      }
 
 
-})
+    }
 
 
 
 
-watch(
-[
- page,
- statusFilter
-],
-()=>{
 
-fetchCards()
+    /*
+    |--------------------------------------------------------------------------
+    | INITIAL LOAD
+    |--------------------------------------------------------------------------
+    */
 
-})
 
+    onMounted(async()=>{
 
 
+      await fetchCards()
 
 
-/*
-|--------------------------------------------------------------------------
-| OPEN ACTION
-|--------------------------------------------------------------------------
-*/
+    })
 
 
-const openAction=(card,type)=>{
 
 
-activeCard.value = card
 
+    /*
+    |--------------------------------------------------------------------------
+    | WATCH FILTER / PAGE CHANGE
+    |--------------------------------------------------------------------------
+    */
 
-actionType.value = type
 
+    watch(
 
+    [
+    page,
+    statusFilter
+    ],
 
-if(type==="reject"){
+    ()=>{
 
+      fetchCards()
 
-rejectModal.value=true
+    }
 
+    )
 
-}else{
 
 
-actionModal.value=true
 
 
-}
+    /*
+    |--------------------------------------------------------------------------
+    | OPEN ACTION MODAL
+    |--------------------------------------------------------------------------
+    */
 
 
-}
+    const openAction=(card,type)=>{
 
 
+      activeCard.value = card
 
 
+      actionType.value = type
 
-/*
-|--------------------------------------------------------------------------
-| CONFIRM APPROVE
-|--------------------------------------------------------------------------
-*/
 
+      actionModal.value = true
 
-const confirmApprove = async()=>{
 
+    }
 
-const id = activeCard.value._id
 
 
-rowLoading.value[id]=true
 
 
-try{
 
 
-const res = await approveCard({
+    /*
+    |--------------------------------------------------------------------------
+    | CONFIRM ACTION
+    |--------------------------------------------------------------------------
+    */
 
-cardId:id
 
-})
+    const confirmAction = async()=>{
 
 
+      const cardId = activeCard.value?._id
 
-if(res.success){
 
 
-notify.success(
-"Card approved successfully"
-)
+      if(!cardId){
 
+        return
 
-await fetchCards()
+      }
 
 
-}
 
+      rowLoading.value[cardId] = true
 
 
-}catch(error){
 
+      try{
 
-notify.error(
-error.message
-)
 
+        let res
 
-}
 
 
+        /*
+        ==========================
+        APPROVE CARD
+        ==========================
+        */
 
-rowLoading.value[id]=false
 
+        if(actionType.value === "approve"){
 
-actionModal.value=false
 
+          res = await approveCard({
 
-}
+            cardId
 
+          })
 
 
+        }
 
 
-/*
-|--------------------------------------------------------------------------
-| REJECT CARD
-|--------------------------------------------------------------------------
-*/
 
 
-const confirmReject = async()=>{
 
+        /*
+        ==========================
+        REJECT CARD
+        ==========================
+        */
 
-const id = activeCard.value._id
 
+        else if(actionType.value === "reject"){
 
 
-if(!rejectionReason.value.trim()){
 
+          if(!rejectionReason.value.trim()){
 
-notify.error(
-"Please provide rejection reason"
-)
 
+            notify.error(
+              "Please enter rejection reason"
+            )
 
-return
 
+            return
 
-}
 
+          }
 
 
-rowLoading.value[id]=true
 
+          res = await rejectCard({
 
+            cardId,
 
-try{
+            reason: rejectionReason.value
 
+          })
 
-const res = await rejectCard({
 
-cardId:id,
 
-reason:rejectionReason.value
+        }
 
 
-})
 
 
 
-if(res.success){
+        /*
+        ==========================
+        BLOCK CARD
+        ==========================
+        */
 
 
-notify.success(
-"Card rejected"
-)
+        else if(actionType.value === "block"){
 
 
-await fetchCards()
 
+          res = await blockCard({
 
-}
+            cardId
 
+          })
 
-}catch(error){
 
 
-notify.error(
-error.message
-)
+        }
 
 
-}
 
 
 
-rowLoading.value[id]=false
+        if(res?.success){
 
 
-rejectModal.value=false
+          notify.success(
+            res.message
+          )
 
 
-rejectionReason.value=""
+          await fetchCards()
 
 
-}
 
+        }else{
 
 
+          notify.error(
+            res?.message || "Action failed"
+          )
 
 
-/*
-|--------------------------------------------------------------------------
-| BLOCK CARD
-|--------------------------------------------------------------------------
-*/
+        }
 
 
-const handleBlock = async(card)=>{
 
 
-try{
+      }catch(error){
 
 
-const res = await blockCard({
+        console.error(error)
 
-cardId:card._id
 
-})
+        notify.error(
 
+          error.message ||
+          "Something went wrong"
 
+        )
 
-if(res.success){
 
+      }finally{
 
-notify.success(
-"Card blocked"
-)
 
+        rowLoading.value[cardId] = false
 
-fetchCards()
 
+        actionModal.value = false
 
-}
 
+        activeCard.value = null
 
-}catch(error){
 
+        actionType.value = ""
 
-notify.error(
-error.message
-)
 
+        rejectionReason.value = ""
 
-}
 
+      }
 
-}
 
+    }
 
 
 
 
-/*
-|--------------------------------------------------------------------------
-| VIEW CARD
-|--------------------------------------------------------------------------
-*/
 
 
-const viewCard=(card)=>{
 
+    /*
+    |--------------------------------------------------------------------------
+    | VIEW CARD DETAILS
+    |--------------------------------------------------------------------------
+    */
 
-selectedCard.value=card
 
+    const viewCard=(card)=>{
 
-}
 
+      selectedCard.value = card
 
 
+    }
 
 
-/*
-|--------------------------------------------------------------------------
-| FORMAT DATE
-|--------------------------------------------------------------------------
-*/
 
 
-const formatDate=(date)=>{
 
 
-return new Date(date)
-.toLocaleDateString(
-"en-GB",
-{
 
-day:"2-digit",
+    /*
+    |--------------------------------------------------------------------------
+    | DATE FORMAT
+    |--------------------------------------------------------------------------
+    */
 
-month:"short",
 
-year:"numeric"
+    const formatDate=(date)=>{
 
-}
 
-)
+      if(!date){
 
+        return "--"
 
-}
+      }
 
 
 
+      return new Date(date)
+      .toLocaleDateString(
+        "en-GB",
+        {
 
+          day:"2-digit",
 
-/*
-|--------------------------------------------------------------------------
-| STATUS COLORS
-|--------------------------------------------------------------------------
-*/
+          month:"short",
 
+          year:"numeric"
 
-const statusClass=(status)=>{
+        }
+      )
 
 
-return [
+    }
 
-"px-3 py-1 rounded-full text-xs font-semibold capitalize",
 
-{
 
-"bg-yellow-100 text-yellow-700":
-status==="pending",
 
 
-"bg-green-100 text-green-700":
-status==="active",
 
 
-"bg-red-100 text-red-700":
-status==="rejected",
+    /*
+    |--------------------------------------------------------------------------
+    | MONEY FORMAT
+    |--------------------------------------------------------------------------
+    */
 
 
-"bg-gray-100 text-gray-700":
-status==="blocked"
+    const formatMoney=(value)=>{
 
-}
 
-]
+      return Number(value || 0)
 
+      .toLocaleString(
+        "en-US",
+        {
 
-}
+          minimumFractionDigits:2,
+
+          maximumFractionDigits:2
+
+        }
+      )
+
+
+    }
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS COLORS
+    |--------------------------------------------------------------------------
+    */
+
+
+    const statusClass=(status)=>{
+
+
+      return {
+
+
+        "bg-yellow-100 text-yellow-700":
+        status === "pending",
+
+
+
+        "bg-green-100 text-green-700":
+        status === "active",
+
+
+
+        "bg-red-100 text-red-700":
+        status === "rejected",
+
+
+
+        "bg-gray-100 text-gray-700":
+        status === "blocked"
+
+
+      }
+
+
+    }
 
 
 
 </script>
-
 
 
 <style scoped>

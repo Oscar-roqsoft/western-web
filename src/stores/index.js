@@ -24,9 +24,9 @@ export const useStore = defineStore('Crypto', () => {
     current_page:'home',
     selectedNavMenu:'home',
     walletInfo:[],
-    cardDetails:[],
+    cardDetails:null,
     securedWallets:[],
-    allCardDetails:[],
+    allCardDetails:null,
     selected_dispute_status:'all',
     isloadingPriceCard:false,
     isFetchingCryptobal:false,
@@ -132,6 +132,8 @@ export const useStore = defineStore('Crypto', () => {
     state.selectedTransaction = null
     state.notification = []
     state.cryptoBalance = null
+    state.cardDetails = null
+    state.allCardDetails = null
   }
 
 
@@ -143,9 +145,9 @@ export const useStore = defineStore('Crypto', () => {
     state.allTransaction = []
     state.userTransaction = []
     state.walletInfo = []
-    state.cardDetails = []
+    state.cardDetails = null
     state.securedWallets = []
-    state.allCardDetails = []
+    state.allCardDetails = null
     state.selectedCryptoPrice = null
     state.user = null
     state.adminWalletAddress = null

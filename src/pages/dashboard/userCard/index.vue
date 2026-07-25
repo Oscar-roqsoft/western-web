@@ -300,7 +300,7 @@
       
       <!-- REJECTION MESSAGE -->
       
-      <div
+      <!-- <div
       
       v-if="card.status==='rejected'"
       
@@ -319,7 +319,7 @@
       </p>
       
       
-      </div>
+      </div> -->
       
       
       
@@ -329,7 +329,7 @@
 
       <!-- EMPTY STATE -->
       
-      <div v-if="cards == null " class="text-center py-16">
+      <div v-if="store.state.cardDetails == null " class="text-center py-16">
       
         <CreditCard
         class="mx-auto w-12 h-12 text-gray-400"
@@ -1060,7 +1060,7 @@ loading.value=false
 onMounted(async()=>{
 
 
-if(!cards.value){
+if(store.state.cardDetails == null){
    await fetchMyUserCards()
 
 }
