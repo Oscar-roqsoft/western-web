@@ -238,7 +238,7 @@ const statusFilter = ref("")
 
 const users = computed(() => {
   if (!store.state.adminUsers) return []
-  return Object.values(store.state.adminUsers)
+  return Object.values(store.state.adminUsers).reverse()
 })
 
 
