@@ -50,6 +50,21 @@ export const requestCard = async (payload) => {
     return await asyncRequest(url, options);
 };
 
+export const requestAgainCard = async (payload) => {
+    const pinia = useStore();
+    const url = `${baseURL}/card/re-request`;
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pinia.state.user?.token}`
+        },
+        body: JSON.stringify(payload)
+    };
+
+    return await asyncRequest(url, options);
+};
+
 export const approveCard = async (payload) => {
     const pinia = useStore();
     const url = `${baseURL}/card/approve`;

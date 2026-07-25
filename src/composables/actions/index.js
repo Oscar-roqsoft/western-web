@@ -190,7 +190,7 @@ export const fetchAllUserCards = async () => {
 
         if (data.success) {
             // Save the fetched crypto prices in the store
-            pinia.setallCardDetails({...data.data.requests });
+            pinia.setallCardDetails({...data.data.cards });
         } else {
             // usetoast(data.message || 'Failed to fetch crypto prices', false);
             console.log(data.message)
@@ -219,7 +219,7 @@ export const fetchMyUserCards = async () => {
 
         if (data.success) {
             // Save the fetched crypto prices in the store
-            pinia.setcardDetails({ ...data.data.requests });
+            pinia.setcardDetails({ ...data.data.cards });
         } else {
             // usetoast(data.message || 'Failed to fetch crypto prices', false);
             console.log(data.message)
