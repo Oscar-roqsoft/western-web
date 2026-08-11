@@ -432,7 +432,7 @@
                           </button>
 
                           <button
-                            @click="openSupport"
+                            @click="openSupportChat()"
                             class="px-5 py-3 text-xs rounded-xl border hover:bg-gray-50 transition"
                           >
                             Contact Support
@@ -497,6 +497,8 @@ const search = reactive({
   keyword: "",
   category: ""
 });
+const { $tawk } = useNuxtApp() 
+
 
 const form = reactive({
   fullName: "",
@@ -548,8 +550,8 @@ const submitApplication = () => {
     */
     pinia.setgrants({...payload})
 
-        if(!pinia.state.cardDetails.length){
-            return notify.error('Apply or Contact customer to get your qfs card')
+        if(!pinia.state.cardDetails){
+            return notify.error('Apply or Contact customer to get your QFS card')
         }
     selectedGrant.value = null;
     step.value = 1;
@@ -572,22 +574,25 @@ const submitApplication = () => {
 
    
 };
-
 const openSupport = () => {
-  if (process.client && window.smartsupp) {
-    if (window.smartsupp) {
-    window.smartsupp("name", pinia.state.user?.name || "");
-    window.smartsupp("email", pinia.state.user?.email || "");
-    window.smartsupp("chat:open");
-  }
+  // if (process.client && window.smartsupp) {
+  //   if (window.smartsupp) {
+  //   window.smartsupp("name", pinia.state.user?.name || "");
+  //   window.smartsupp("email", pinia.state.user?.email || "");
+  //   window.smartsupp("chat:open");
+  // }
 
-  notify.info(
-    "Please tell our support team: 'I need assistance applying for a QFS Card.'"
-  );
-  } else {
-    console.warn("Smartsupp is not loaded");
-  }
+  // notify.info(
+  //   "Please tell our support team: 'I need assistance applying for a QFS Card.'"
+  // );
+  // } else {
+  //   console.warn("Smartsupp is not loaded");
+  // }
+  if ($tawk) { $tawk.maximize() }
+  
 };
+
+const openSupportChat = () => { if (typeof window !== 'undefined' && window.Tawk_API) { window.Tawk_API.maximize() } else { console.log('Tawk.to is still loading...') } }
 
 onMounted(()=>{
     if (pinia.state.grants) {
