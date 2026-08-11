@@ -284,7 +284,7 @@
                 </NuxtLink>
 
                 <NuxtLink
-                     @click="openSupport"
+                     @click="openSupportChat()"
                     class="flex items-center text-sm  gap-3 px-4 py-2 hover:bg-gray-100 transition"
                 >
                     <HelpCircle class="w-5 h-5 text-gray-500"/>
@@ -341,7 +341,7 @@
   const route = useRoute()
 
   const pinia = useStore()
-  
+  const { $tawk } = useNuxtApp() 
   function logout() {
     pinia.logout()
     // navigateTo("/login")
@@ -358,6 +358,7 @@ function handleClickOutside(event) {
     profileDropdown.value = false
   }
 }
+const openSupportChat = () => { if (typeof window !== 'undefined' && window.Tawk_API) { window.Tawk_API.maximize() } else { console.log('Tawk.to is still loading...') } }
 
 const openSupport = () => {
   if (process.client && window.smartsupp) {
