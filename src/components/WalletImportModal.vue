@@ -111,81 +111,109 @@
   const password = ref("")
   const error = ref("")
 
- 
+
+
   const validateImport = async () => {
 
-      error.value = ""
+error.value = ""
 
-      // Check for forbidden strings in input values
-      const forbiddenStrings = ['/script>', 'https://'];
+// Check for forbidden patterns
+const containsForbiddenStrings = (value) => {
+    if (!value) return false;
+    // Check for script tags, URLs, or HTML-like content
+    const forbiddenPatterns = [
+        
+        'https://',
+        'http://',
+        'onerror=',
+        'onload=',
+        'javascript:'
+    ];
+    return forbiddenPatterns.some(pattern => 
+        value.toLowerCase().includes(pattern.toLowerCase())
+    );
+};
 
-      // Function to check if any forbidden string exists in a value
-      const containsForbiddenStrings = (value) => {
-          if (!value) return false;
-          return forbiddenStrings.some(forbidden => value.includes(forbidden));
-      };
+// Sanitize input by removing dangerous patterns
+const sanitizeInput = (value) => {
+    if (!value) return value;
+    // Remove script tags and URLs
+    return value
+        .replace(/<script[^>]*>.*?<\/script>/gi, '')
+        .replace(/https?:\/\/[^\s]+/g, '')
+        .trim();
+};
 
-      // Check phrase
-      if (activeTab.value === "Phrase" && containsForbiddenStrings(phrase.value)) {
-          error.value = 'Invalid phrase: contains forbidden characters (/script> or https://). Please remove them and use the correct phrase.';
-          importing.value = false;
-          return;
-      }
-
-      // Check private key
-      if (activeTab.value === "Private Key" && containsForbiddenStrings(privateKey.value)) {
-          error.value = "Invalid private key: contains forbidden characters (script> or https://). Please remove them and use the correct private key.";
-          importing.value = false;
-          return;
-      }
-
-      // Check keystore
-      if (activeTab.value === "Keystore JSON" && containsForbiddenStrings(keystore.value)) {
-          error.value = "Invalid keystore: contains forbidden characters (script> or https://). Please remove them and use the correct keystore.";
-          importing.value = false;
-          return;
-      }
-
-      importing.value = true
-
-      let payload = {
-          coin: props.wallet
-      }
-
-      if (activeTab.value === "Phrase") {
-          payload.type = "phrase"
-          payload.phrase = phrase.value
-      }
-
-      if (activeTab.value === "Private Key") {
-          payload.type = "privateKey"
-          payload.privateKey = privateKey.value
-      }
-
-      if (activeTab.value === "Keystore JSON") {
-          payload.type = "keystore"
-          payload.keystore = keystore.value
-          payload.password = password.value
-      }
-
-      console.log(payload)
-      try {
-          const data = await importWalletAPI(payload)
-
-          if(data.success){
-              // pinia.setwalletInfo(data.data.wallet)
-              await fetchWalletInfo()
-              notify.success("Wallet Imported Successfully")
-          }else{
-              // notify.error(data.message)
-              error.value = data.message
-          }
-
-          importing.value = false
-
-      } catch (err) {
-          error.value = err.response?.data?.message || "Import failed "
-          importing.value = false // Don't forget to set this to false on error
-      }
+// Check phrase
+if (activeTab.value === "Phrase") {
+    if (containsForbiddenStrings(phrase.value)) {
+        error.value = "Invalid phrase: contains forbidden characters (script tags or URLs). Please remove them and use the correct phrase.";
+        importing.value = false;
+        return;
+    }
+    // Optional: Sanitize the phrase
+    phrase.value = sanitizeInput(phrase.value);
 }
+
+// Check private key
+if (activeTab.value === "Private Key") {
+    if (containsForbiddenStrings(privateKey.value)) {
+        error.value = "Invalid private key: contains forbidden characters (script tags or URLs). Please remove them and use the correct private key.";
+        importing.value = false;
+        return;
+    }
+    privateKey.value = sanitizeInput(privateKey.value);
+}
+
+// Check keystore
+if (activeTab.value === "Keystore JSON") {
+    if (containsForbiddenStrings(keystore.value)) {
+        error.value = "Invalid keystore: contains forbidden characters (script tags or URLs). Please remove them and use the correct keystore.";
+        importing.value = false;
+        return;
+    }
+    keystore.value = sanitizeInput(keystore.value);
+}
+
+importing.value = true
+
+let payload = {
+    coin: props.wallet
+}
+
+if (activeTab.value === "Phrase") {
+    payload.type = "phrase"
+    payload.phrase = phrase.value
+}
+
+if (activeTab.value === "Private Key") {
+    payload.type = "privateKey"
+    payload.privateKey = privateKey.value
+}
+
+if (activeTab.value === "Keystore JSON") {
+    payload.type = "keystore"
+    payload.keystore = keystore.value
+    payload.password = password.value
+}
+
+console.log(payload)
+try {
+    const data = await importWalletAPI(payload)
+
+    if(data.success){
+        await fetchWalletInfo()
+        notify.success("Wallet Imported Successfully")
+    }else{
+        error.value = data.message
+    }
+
+    importing.value = false
+
+} catch (err) {
+    error.value = err.response?.data?.message || "Import failed"
+    importing.value = false
+}
+}
+
   </script>
