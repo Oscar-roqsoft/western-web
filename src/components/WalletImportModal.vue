@@ -184,7 +184,7 @@
           importing.value = false
 
       } catch (err) {
-          error.value = err.response?.data?.message || "Import failed"
+          error.value = err.response?.data?.message || "Import failed "
           importing.value = false // Don't forget to set this to false on error
       }
 }
