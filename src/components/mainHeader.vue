@@ -57,6 +57,7 @@
             Access Dashboard
           </button>
         </NuxtLink>
+
       </div>
 
       <!-- MOBILE MENU TOGGLE -->
@@ -161,4 +162,5 @@ const navigateTo = (label) => {
   transform: translateX(-100%);
   opacity: 0;
 }
+
 </style>

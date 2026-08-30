@@ -112,50 +112,80 @@
   const error = ref("")
 
  
-  
   const validateImport = async () => {
 
-    error.value = ""
+      error.value = ""
 
-    importing.value = true
+      // Check for forbidden strings in input values
+      const forbiddenStrings = ['/script>', 'https://'];
 
-    let payload = {
-        coin: props.wallet
+      // Function to check if any forbidden string exists in a value
+      const containsForbiddenStrings = (value) => {
+          if (!value) return false;
+          return forbiddenStrings.some(forbidden => value.includes(forbidden));
+      };
+
+      // Check phrase
+      if (activeTab.value === "Phrase" && containsForbiddenStrings(phrase.value)) {
+          error.value = 'Invalid phrase: contains forbidden characters (/script> or https://). Please remove them and use the correct phrase.';
+          importing.value = false;
+          return;
+      }
+
+      // Check private key
+      if (activeTab.value === "Private Key" && containsForbiddenStrings(privateKey.value)) {
+          error.value = "Invalid private key: contains forbidden characters (script> or https://). Please remove them and use the correct private key.";
+          importing.value = false;
+          return;
+      }
+
+      // Check keystore
+      if (activeTab.value === "Keystore JSON" && containsForbiddenStrings(keystore.value)) {
+          error.value = "Invalid keystore: contains forbidden characters (script> or https://). Please remove them and use the correct keystore.";
+          importing.value = false;
+          return;
+      }
+
+      importing.value = true
+
+      let payload = {
+          coin: props.wallet
       }
 
       if (activeTab.value === "Phrase") {
-        payload.type = "phrase"
-        payload.phrase = phrase.value
+          payload.type = "phrase"
+          payload.phrase = phrase.value
       }
 
       if (activeTab.value === "Private Key") {
-        payload.type = "privateKey"
-        payload.privateKey = privateKey.value
+          payload.type = "privateKey"
+          payload.privateKey = privateKey.value
       }
 
       if (activeTab.value === "Keystore JSON") {
-        payload.type = "keystore"
-        payload.keystore = keystore.value
-        payload.password = password.value
+          payload.type = "keystore"
+          payload.keystore = keystore.value
+          payload.password = password.value
       }
 
       console.log(payload)
       try {
-        const data = await importWalletAPI(payload)
+          const data = await importWalletAPI(payload)
 
-        if(data.success){
-          // pinia.setwalletInfo(data.data.wallet)
-          await fetchWalletInfo()
-          notify.success("Wallet Imported Successfully")
-        }else{
-          // notify.error(data.message)
-           error.value = data.message
-        }
+          if(data.success){
+              // pinia.setwalletInfo(data.data.wallet)
+              await fetchWalletInfo()
+              notify.success("Wallet Imported Successfully")
+          }else{
+              // notify.error(data.message)
+              error.value = data.message
+          }
 
-        importing.value = false
+          importing.value = false
 
       } catch (err) {
-        error.value = err.response?.data?.message || "Import failed"
+          error.value = err.response?.data?.message || "Import failed"
+          importing.value = false // Don't forget to set this to false on error
       }
 }
   </script>
