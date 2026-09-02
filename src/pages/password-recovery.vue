@@ -155,7 +155,7 @@
 <script setup>
 
 import { ref } from "vue"
-import { sendCode, verifyCode,updatePassword } from '@/composables/requests/auth'
+import { sendCode, verifyCode,updatePassword ,verifyEmailCode} from '@/composables/requests/auth'
 
 definePageMeta({
 layout:"custom2",
@@ -233,7 +233,7 @@ const verifyOtp = async()=>{
 
     try{
 
-    const data = await verifyCode({
+    const data = await verifyEmailCode({
     email:email.value,
     otp:code
     })
