@@ -665,12 +665,32 @@
     import { CreditCard} from 'lucide-vue-next'
 
 
+
     definePageMeta(
         {
         layout: 'custom',
         middleware: ["auth"],
         }
     );
+
+    useSeoMeta({
+  title: 'Quantum Systems Web3',
+  description:
+    'Discover Quantum Systems Web3 and explore our blockchain and digital asset services.',
+  ogTitle: 'Quantum Systems Web3',
+  ogDescription:
+    'Discover Quantum Systems Web3 and explore our services.',
+  ogType: 'website',
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://quantumsystemsweb3.com/',
+    },
+  ],
+})
     
     const images = [
       '/c.jpg',

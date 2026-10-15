@@ -1,75 +1,101 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
-  devtools: { enabled: true },
-  modules: ['nuxtjs-naive-ui', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt',],
- 
-  ssr:false,
-  debug: true, // Enable debugging
-
-  // debug: true, 
-
-  srcDir: "src",
+  
+  devtools: {
+  enabled: false,
+  },
+  
+  ssr: true,
+  debug: false,
+  
+  srcDir: 'src',
+  
+  modules: [
+  'nuxtjs-naive-ui',
+  '@pinia/nuxt',
+  '@pinia-plugin-persistedstate/nuxt',
+  ],
+  
   css: ['~/assets/css/main.css'],
-
-
-  // modules: ['nuxtjs-naive-ui'],
+  
   postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
+  plugins: {
+  tailwindcss: {},
+  autoprefixer: {},
   },
-
+  },
+  
   build: {
-    transpile: ['vueuc'],
+    transpile: ['naive-ui', 'vueuc'],
   },
-
-
-
+  
   app: {
-    head: {
-      link: [
-        { rel: 'icon', type: 'image/png', href: '/q.png' },
-        // { rel: 'icon', type: 'image/x-icon', href: '/Asset18.png' }, // For the standard favicon
-        // { rel: 'icon', type: 'image/png', href: '/favicon-32x32.png' }, // Example for other formats
-        // { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }, // For iOS devices
-      ],
+  head: {
+  title: 'Quantum Systems Web3',
+  titleTemplate: '%s | Quantum Systems Web3',
+  
+  
+    htmlAttrs: {
+      lang: 'en',
     },
+  
+    meta: [
+      {
+        name: 'description',
+        content:
+          'Explore Quantum Systems Web3, a digital platform for cryptocurrency and blockchain services.',
+      },
+      {
+        name: 'robots',
+        content: 'index, follow',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        property: 'og:site_name',
+        content: 'Quantum Systems Web3',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:title',
+        content: 'Quantum Systems Web3',
+      },
+      {
+        property: 'og:description',
+        content:
+          'Explore Quantum Systems Web3, a digital platform for cryptocurrency and blockchain services.',
+      },
+      {
+        property: 'og:url',
+        content: 'https://quantumsystemsweb3.com/',
+      },
+    ],
+  
+    link: [
+      {
+        rel: 'icon',
+        type: 'image/png',
+        href: '/q.png',
+      },
+      {
+        rel: 'canonical',
+        href: 'https://quantumsystemsweb3.com/',
+      },
+    ],
   },
-  runtimeConfig: {
-    public: {
-      smartsuppKey: process.env.NUXT_PUBLIC_SMARTSUPP_KEY
-    }
-  }
- 
-
-
-  // nitro: {
-  //   prerender: {
-  //     crawlLinks: true,
-  //     routes: ['/'],
-  //     failOnError: false,
-  //     ignore: ['/404', '/200'], // Ignore these routes
-  //   },
-  // },
-
 
   
-
-
-  // nitro: {
-  //   prerender: {
-  //     routes: ['/404', '/200'],
-  //   },
-  // },
-
-
-  // nitro: {
-  //   prerender: {
-  //     ignore: ['/'], // Ignore the root route
-  //   },
-  // },
-
- 
-})
+  },
+  
+  runtimeConfig: {
+  public: {
+  // smartsuppKey: process.env.NUXT_PUBLIC_SMARTSUPP_KEY,
+  },
+  },
+  })
+  
