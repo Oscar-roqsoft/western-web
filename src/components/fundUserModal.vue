@@ -205,99 +205,167 @@ return Array.isArray(pinia.state.cryptoPrices)
   network.value = walletNet.network
 })
 
-watch(
- [coin, usdAmount],
+const walletBalances = computed(() => {
+  const balances = pinia.state.cryptoBalance?.balances
 
- ([selectedCoin, usd])=>{
+  if (Array.isArray(balances)) return balances
 
-
- if(!selectedCoin || !usd){
-
-  coinAmount.value = 0
-  coinPrice.value = 0
-
-  return
-
- }
-
-
- const priceData = cryptoPrices.value.find(
-   c => c.symbol === selectedCoin
- )
-
-
- if(!priceData){
-
-   coinAmount.value = 0
-   coinPrice.value = 0
-
-   return
- }
-
-
- coinPrice.value = priceData.price || 0
-
-
- coinAmount.value =
- Number(usd) / Number(priceData.price)
-
-
+  return Object.values(balances || {})
 })
-  
-  const submit = async () => {
-  
- if (!coin.value || !usdAmount.value)
-return error.value="Fill all fields"
-  
-    loading.value = true
-  
-    try {
-  
-      const payload = {
 
-userId: props.user._id,
+watch(
+  [coin, usdAmount],
+  ([selectedCoin, usd]) => {
+    const wallet = walletBalances.value.find(
+      item => item.coin === selectedCoin
+    )
 
-coin: coin.value,
-
-amount: Number(
-  coinAmount.value.toFixed(8)
-),
-
-usdAmount:Number(
-  usdAmount.value
-),
-
-network:network.value,
-
-}
-
-      const data = await fundUser(payload)
-
-      if(data.success){
-        notify.success(data.message)
-
-        await sendNotification({
-          userId:props.user._id,
-          title: "Wallet Funded",
-          message: `Your wallet has been credited with ${formatNumber(coinAmount.value)} ${coin.value} ($${usdAmount.value})`,
-          type: "deposit"
-        });
-        await fetchAllUsers()
-        emit("success")
-        emit("close")
-    }else{
-          notify.error(data.message)
-
-      }
-  
-  
-  
-    } catch (err) {
-      console.error(err)
+    if (!wallet || !usd || Number(usd) <= 0) {
+      coinAmount.value = 0
+      coinPrice.value = 0
+      network.value = wallet?.network || ""
+      return
     }
+
+    network.value = wallet.network
+
+    // USDT is treated as $1 for funding calculations.
+    coinPrice.value =
+      selectedCoin === "USDT"
+        ? 1
+        : Number(wallet.usdPrice || 0)
+
+    if (!coinPrice.value) {
+      coinAmount.value = 0
+      return
+    }
+
+    coinAmount.value = Number(usd) / coinPrice.value
+  },
+  { immediate: true }
+)
+
+
   
+//   const submit = async () => {
+  
+//  if (!coin.value || !usdAmount.value)
+// return error.value="Fill all fields"
+  
+//     loading.value = true
+  
+//     try {
+  
+//       const payload = {
+
+// userId: props.user._id,
+
+// coin: coin.value,
+
+// amount: Number(
+//   coinAmount.value.toFixed(8)
+// ),
+
+// usdAmount:Number(
+//   usdAmount.value
+// ),
+
+// network:network.value,
+
+// }
+
+//       const data = await fundUser(payload)
+
+//       if(data.success){
+//         notify.success(data.message)
+
+//         await sendNotification({
+//           userId:props.user._id,
+//           title: "Wallet Funded",
+//           message: `Your wallet has been credited with ${formatNumber(coinAmount.value)} ${coin.value} ($${usdAmount.value})`,
+//           type: "deposit"
+//         });
+//         await fetchAllUsers()
+//         emit("success")
+//         emit("close")
+//     }else{
+//           notify.error(data.message)
+
+//       }
+  
+  
+  
+//     } catch (err) {
+//       console.error(err)
+//     }
+  
+//     loading.value = false
+//   }
+
+
+const submit = async () => {
+  error.value = ""
+
+  if (!props.user?._id || !coin.value || !usdAmount.value) {
+    error.value = "Fill all required fields"
+    return
+  }
+
+  if (Number(usdAmount.value) <= 0) {
+    error.value = "Amount must be greater than zero"
+    return
+  }
+
+  if (!network.value || !coinPrice.value || !coinAmount.value) {
+    error.value = "Unable to determine coin price or network"
+    return
+  }
+
+  loading.value = true
+
+  try {
+    const payload = {
+      userId: props.user._id,
+      coin: coin.value,
+      amount: Number(coinAmount.value.toFixed(8)),
+      usdAmount: Number(usdAmount.value),
+      network: network.value,
+      type: type.value,
+      note: note.value.trim()
+    }
+
+    console.log("Funding payload:", payload)
+
+    const data = await fundUser(payload)
+
+    if (data.success) {
+      notify.success(data.message)
+
+      await sendNotification({
+        userId: props.user._id,
+        title: type.value === "credit" ? "Wallet Funded" : "Wallet Debited",
+        message: `Your wallet has been ${
+          type.value === "credit" ? "credited with" : "debited by"
+        } ${formatNumber(coinAmount.value)} ${coin.value} ($${Number(
+          usdAmount.value
+        ).toFixed(2)})`,
+        type: type.value === "credit" ? "deposit" : "withdrawal"
+      })
+
+      await fetchAllUsers()
+
+      emit("success")
+      emit("close")
+    } else {
+      notify.error(data.message)
+    }
+  } catch (err) {
+    console.error("Funding error:", err)
+    error.value = err?.response?.data?.message || err.message || "Funding failed"
+  } finally {
     loading.value = false
   }
+}
   </script>
   
   <style scoped>
@@ -311,4 +379,6 @@ network:network.value,
     font-size: 13px;
     font-weight: 600;
   }
+
+
   </style>
