@@ -677,13 +677,14 @@
     useSeoMeta({
   title: 'Quantum Systems Web3 | Official Website',
   description:
-    'Visit Quantum Systems Web3 to learn about our platform, technology, and services.',
+    'Explore Quantum Systems Web3, its platform, technology, and services.',
   ogTitle: 'Quantum Systems Web3 | Official Website',
   ogDescription:
-    'Learn more about Quantum Systems Web3 and its services.',
+    'Learn about Quantum Systems Web3 and the services offered on its official website.',
   ogUrl: 'https://quantumsystemsweb3.com/',
   ogType: 'website',
-  twitterCard: 'summary_large_image'
+  twitterCard: 'summary_large_image',
+  robots: 'index, follow'
 })
 
 useHead({
@@ -691,6 +692,19 @@ useHead({
     {
       rel: 'canonical',
       href: 'https://quantumsystemsweb3.com/'
+    }
+  ],
+  script: [
+    {
+      key: 'website-schema',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Quantum Systems Web3',
+        alternateName: 'QuantumSystemsWeb3',
+        url: 'https://quantumsystemsweb3.com/'
+      })
     }
   ]
 })
