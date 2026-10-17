@@ -22,14 +22,15 @@
           <p
             class="text-[#fcb900] uppercase tracking-widest text-sm font-semibold animate-fade-up"
           >
-            Quantum Financial System
+          Quantum Systems Web3
+
           </p>
   
           <!-- Title -->
           <h1
             class="text-white text-4xl md:text-5xl xl:text-6xl font-extrabold leading-tight animate-fade-up delay-200"
           >
-            Quantum Financial System (QFS)
+          Quantum Systems Web3 (QFS)
             <span class="inline-flex items-center gap-2">
               IS
              
@@ -674,22 +675,24 @@
     );
 
     useSeoMeta({
-  title: 'Quantum Systems Web3',
+  title: 'Quantum Systems Web3 | Official Website',
   description:
-    'Discover Quantum Systems Web3 and explore our blockchain and digital asset services.',
-  ogTitle: 'Quantum Systems Web3',
+    'Visit Quantum Systems Web3 to learn about our platform, technology, and services.',
+  ogTitle: 'Quantum Systems Web3 | Official Website',
   ogDescription:
-    'Discover Quantum Systems Web3 and explore our services.',
+    'Learn more about Quantum Systems Web3 and its services.',
+  ogUrl: 'https://quantumsystemsweb3.com/',
   ogType: 'website',
+  twitterCard: 'summary_large_image'
 })
 
 useHead({
   link: [
     {
       rel: 'canonical',
-      href: 'https://quantumsystemsweb3.com/',
-    },
-  ],
+      href: 'https://quantumsystemsweb3.com/'
+    }
+  ]
 })
     
     const images = [
